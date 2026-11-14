@@ -997,6 +997,41 @@
             }
         }
 
+        // Generate crisp 180x180 PNG Apple Touch Icon from SVG
+        (function setupAppleTouchIcon() {
+            try {
+                const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" width="180" height="180" viewBox="0 0 120 120">
+                    <defs>
+                        <linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#10b981"/>
+                            <stop offset="100%" stop-color="#047857"/>
+                        </linearGradient>
+                    </defs>
+                    <rect x="0" y="0" width="120" height="120" rx="26" fill="url(#g)"/>
+                    <path d="M60 92 C60 92 26 70 26 46 C26 34 35 26 46 26 C53 26 58 30 60 35 C62 30 67 26 74 26 C85 26 94 34 94 46 C94 70 60 92 60 92 Z" fill="#ffffff"/>
+                    <path d="M31 54 H44 L50 41 L58 67 L65 48 L70 54 H89" fill="none" stroke="#c026d3" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+                    <circle cx="88" cy="28" r="6.5" fill="#e879f9" stroke="#ffffff" stroke-width="2"/>
+                </svg>`;
+                const img = new Image();
+                const svgBlob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
+                const url = URL.createObjectURL(svgBlob);
+                img.onload = function () {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 180;
+                    canvas.height = 180;
+                    const ctx = canvas.getContext('2d');
+                    if (ctx) {
+                        ctx.drawImage(img, 0, 0, 180, 180);
+                        const pngUrl = canvas.toDataURL('image/png');
+                        const appleLink = document.getElementById('app-apple-icon');
+                        if (appleLink) appleLink.href = pngUrl;
+                    }
+                    URL.revokeObjectURL(url);
+                };
+                img.src = url;
+            } catch (e) {}
+        })();
+
         document.addEventListener('DOMContentLoaded', () => {
             // --- LOCAL DATE HELPERS (Timezone-safe YYYY-MM-DD) ---
             function formatDateToStr(dateObj) {
@@ -1102,7 +1137,7 @@
             function normalizeHeightMeters(val) {
                 let h = parseFloat(val);
                 if (isNaN(h) || h <= 0) return 1.68;
-                if (h > 3) h = h / 100; // Αν δοθεί π.χ. 175 αντί για 1.75, μετατρέπεται αυτόματα σε 1.75m
+                if (h > 3) h = h / 100;
                 return Number(h.toFixed(2));
             }
 
@@ -1254,14 +1289,12 @@
                 };
                 saveSettings(updated);
 
-                // Sync initial weight if user only had the default initial entry
                 const wHistory = getWeightHistory();
                 if (wHistory.length === 1 && Math.abs(Number(wHistory[0].weight) - Number(prevSettings.startWeight)) < 0.05) {
                     wHistory[0].weight = updated.startWeight;
                     saveWeightHistory(wHistory);
                 }
 
-                // Refresh all UI sections globally so new settings propagate everywhere
                 initAll();
                 settingsModal.classList.add('hidden');
                 showMessage('backup-status-msg', 'Οι ρυθμίσεις αποθηκεύτηκαν & ενημερώθηκαν παντού!', false);
@@ -1813,7 +1846,7 @@
             // Normalizes meal text:
             // 1. Converts "μία", "μια", "ένα", "ενα", "ένας", "ενας" -> "1"
             // 2. Converts any gram notation ("200 g", "200g", "200 γ", "200γ", "200 γ.", "200 γρ", "200γρ", "200 γρ.", "200 γραμμάρια", "200 gr.") -> "200g"
-            // 3. Removes all periods '.' from food entries (except decimal digits like 1.5)
+            // 3. Never uses periods '.' when adding foods (keeps only decimal points between digits like 1.5)
             function normalizeGramsFormat(text) {
                 if (!text) return '';
                 let res = text;
@@ -1840,4 +1873,1382 @@
             }
 
             function highlightActiveMealInput(inputId) {
-// ... existing code ... -->
+                activeMealInputId = inputId;
+                MEAL_FIELDS.forEach(m => {
+                    const el = document.getElementById(m.id);
+                    if (!el) return;
+                    if (m.id === inputId) {
+                        el.classList.add('ring-2', 'ring-emerald-400', 'bg-white');
+                        el.classList.remove('bg-slate-50');
+                    } else {
+                        el.classList.remove('ring-2', 'ring-emerald-400', 'bg-white');
+                        el.classList.add('bg-slate-50');
+                    }
+                });
+            }
+
+            MEAL_FIELDS.forEach(m => {
+                const el = document.getElementById(m.id);
+                if (el) {
+                    el.addEventListener('focus', () => highlightActiveMealInput(m.id));
+                    el.addEventListener('click', () => highlightActiveMealInput(m.id));
+                    el.addEventListener('blur', () => {
+                        if (el.value.trim()) {
+                            el.value = normalizeGramsFormat(el.value);
+                        }
+                    });
+                    el.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            closeAllAutocompleteDropdowns();
+                            if (el.value.trim()) {
+                                el.value = normalizeGramsFormat(el.value);
+                            }
+                            const calcBtn = document.getElementById('calc-calories-btn');
+                            if (calcBtn) calcBtn.click();
+                        }
+                    });
+                }
+            });
+
+            function normalizeGreek(str) {
+                return (str || '')
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .trim();
+            }
+
+            function getCustomProducts() {
+                try {
+                    const saved = localStorage.getItem(STORAGE_KEY_CUSTOM_PRODUCTS);
+                    if (saved) return JSON.parse(saved);
+                } catch (e) {}
+                return [];
+            }
+
+            function saveCustomProducts(list) {
+                localStorage.setItem(STORAGE_KEY_CUSTOM_PRODUCTS, JSON.stringify(list));
+            }
+
+            function renderCustomProductsList() {
+                const list = getCustomProducts();
+                const ul = document.getElementById('custom-products-list');
+                if (!ul) return;
+
+                if (list.length === 0) {
+                    ul.innerHTML = `<li class="text-xs text-slate-400 italic py-3 text-center">Δεν έχεις προσθέσει δικές σου ετικέτες ακόμα.</li>`;
+                    return;
+                }
+
+                ul.innerHTML = list.map((p, idx) => `
+                    <li class="flex items-center justify-between bg-slate-50 border border-slate-200/80 rounded-xl px-3 py-2 text-xs">
+                        <div>
+                            <div class="font-bold text-slate-800">${p.name}</div>
+                            <div class="text-[11px] text-slate-500 mt-0.5">
+                                <strong class="text-fuchsia-700">${p.calories} kcal</strong> • 
+                                <strong class="text-emerald-700">${p.protein}g πρωτ.</strong> • 
+                                ${p.fat || 0}g λιπ. • ${p.fiber || 0}g ίνες
+                            </div>
+                        </div>
+                        <button type="button" data-del-prod="${idx}" class="text-slate-400 hover:text-red-600 p-1 text-sm" title="Διαγραφή">✕</button>
+                    </li>
+                `).join('');
+            }
+
+            const productsModal = document.getElementById('products-modal');
+            document.getElementById('open-products-btn').addEventListener('click', () => {
+                renderCustomProductsList();
+                productsModal.classList.remove('hidden');
+            });
+            document.getElementById('products-close-btn').addEventListener('click', () => productsModal.classList.add('hidden'));
+
+            document.getElementById('add-custom-product-btn').addEventListener('click', () => {
+                const name = normalizeGramsFormat(document.getElementById('prod-name-input').value);
+                const calories = parseFloat(document.getElementById('prod-cal-input').value);
+                const protein = parseFloat(document.getElementById('prod-prot-input').value) || 0;
+                const fat = parseFloat(document.getElementById('prod-fat-input').value) || 0;
+                const fiber = parseFloat(document.getElementById('prod-fiber-input').value) || 0;
+
+                if (!name || isNaN(calories)) return;
+
+                const list = getCustomProducts().filter(p => normalizeGreek(p.name) !== normalizeGreek(name));
+                list.unshift({ name, calories, protein, fat, fiber });
+                saveCustomProducts(list);
+
+                document.getElementById('prod-name-input').value = '';
+                document.getElementById('prod-cal-input').value = '';
+                document.getElementById('prod-prot-input').value = '';
+                document.getElementById('prod-fat-input').value = '';
+                document.getElementById('prod-fiber-input').value = '';
+                renderCustomProductsList();
+            });
+
+            document.getElementById('custom-products-list').addEventListener('click', (e) => {
+                const delBtn = e.target.closest('[data-del-prod]');
+                if (!delBtn) return;
+                const idx = parseInt(delBtn.getAttribute('data-del-prod'), 10);
+                const list = getCustomProducts();
+                list.splice(idx, 1);
+                saveCustomProducts(list);
+                renderCustomProductsList();
+            });
+
+            // Smart Product Autocomplete Dropdown in Meal Inputs
+            function closeAllAutocompleteDropdowns() {
+                document.querySelectorAll('.meal-autocomplete-dropdown').forEach(dd => dd.classList.add('hidden'));
+            }
+
+            function renderProductDropdownForInput(inputEl, showAll) {
+                const dd = document.getElementById(`dropdown-${inputEl.id}`);
+                if (!dd) return;
+                const products = getCustomProducts();
+                if (products.length === 0) {
+                    dd.innerHTML = `
+                        <div class="p-3 text-center">
+                            <p class="text-xs text-slate-500 mb-2">Δεν έχεις αποθηκεύσει ετικέτες προϊόντων.</p>
+                            <button type="button" class="open-products-shortcut px-3 py-1.5 rounded-xl bg-fuchsia-600 text-white text-xs font-bold">+ Προσθήκη Ετικέτας</button>
+                        </div>
+                    `;
+                    dd.classList.remove('hidden');
+                    return;
+                }
+
+                // Extract last segment separated by comma, "και", or "συν"
+                const segments = splitMealString(inputEl.value);
+                const lastSegment = segments.length > 0 ? segments[segments.length - 1] : '';
+                const qtyMatch = lastSegment.match(/^(\d+(?:[.,]\d+)?\s*(?:g|x|×)?\s*)(.*)$/i);
+                const typedQuery = qtyMatch ? qtyMatch[2].trim() : lastSegment;
+                const normQuery = normalizeGreek(typedQuery);
+
+                let matches = products;
+                if (!showAll && normQuery.length > 0) {
+                    matches = products.filter(p => normalizeGreek(p.name).includes(normQuery))
+                        .sort((a, b) => {
+                            const aStarts = normalizeGreek(a.name).startsWith(normQuery) ? 0 : 1;
+                            const bStarts = normalizeGreek(b.name).startsWith(normQuery) ? 0 : 1;
+                            return aStarts - bStarts;
+                        });
+                } else if (!showAll && normQuery.length === 0) {
+                    dd.classList.add('hidden');
+                    return;
+                }
+
+                if (matches.length === 0) {
+                    dd.classList.add('hidden');
+                    return;
+                }
+
+                dd.innerHTML = matches.map(p => `
+                    <button type="button" data-select-product="${p.name.replace(/"/g, '&quot;')}" data-target-input="${inputEl.id}" class="w-full text-left px-3 py-2 hover:bg-emerald-50 border-b border-slate-100 last:border-b-0 flex items-center justify-between gap-2 transition-colors">
+                        <span class="text-xs font-bold text-slate-800">${p.name}</span>
+                        <span class="text-[10px] font-extrabold text-fuchsia-700 bg-fuchsia-50 px-2 py-0.5 rounded-md shrink-0">${p.calories} kcal • ${p.protein}g πρωτ.</span>
+                    </button>
+                `).join('') + `
+                    <div class="p-1.5 bg-slate-50 border-t border-slate-100 text-center">
+                        <button type="button" class="open-products-shortcut text-[11px] font-bold text-emerald-700 hover:underline">+ Προσθήκη νέας ετικέτας προϊόντος</button>
+                    </div>
+                `;
+                dd.classList.remove('hidden');
+            }
+
+            document.querySelectorAll('.meal-autocomplete-input').forEach(inp => {
+                inp.addEventListener('input', () => renderProductDropdownForInput(inp, false));
+            });
+
+            document.querySelectorAll('.meal-picker-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const targetId = btn.getAttribute('data-picker-for');
+                    const inputEl = document.getElementById(targetId);
+                    if (!inputEl) return;
+                    highlightActiveMealInput(targetId);
+                    const dd = document.getElementById(`dropdown-${targetId}`);
+                    const wasHidden = dd && dd.classList.contains('hidden');
+                    closeAllAutocompleteDropdowns();
+                    if (wasHidden) renderProductDropdownForInput(inputEl, true);
+                });
+            });
+
+            document.addEventListener('click', (e) => {
+                const selectBtn = e.target.closest('[data-select-product]');
+                if (selectBtn) {
+                    const prodName = selectBtn.getAttribute('data-select-product');
+                    const targetId = selectBtn.getAttribute('data-target-input');
+                    const inputEl = document.getElementById(targetId);
+                    if (inputEl) {
+                        const normalizedCurrent = normalizeGramsFormat(inputEl.value);
+                        const segMatch = normalizedCurrent.match(/^(.*?(?:,|(?<![\p{L}\p{N}])(?:και|συν)(?![\p{L}\p{N}]))\s*)?(.*)$/iu);
+                        const leadingHistory = segMatch && segMatch[1] ? segMatch[1] : '';
+                        const lastSegment = segMatch && segMatch[2] ? segMatch[2].trim() : '';
+                        const qtyMatch = lastSegment.match(/^(\d+(?:\.\d+)?g\s+|\d+(?:\.\d+)?\s*(?:x|×)?\s*)(.*)$/i);
+                        const prefixQty = qtyMatch ? qtyMatch[1] : '';
+                        inputEl.value = normalizeGramsFormat(`${leadingHistory}${prefixQty}${prodName}`);
+                        inputEl.focus();
+                    }
+                    closeAllAutocompleteDropdowns();
+                    return;
+                }
+
+                const shortcutBtn = e.target.closest('.open-products-shortcut');
+                if (shortcutBtn) {
+                    closeAllAutocompleteDropdowns();
+                    renderCustomProductsList();
+                    productsModal.classList.remove('hidden');
+                    return;
+                }
+
+                if (!e.target.closest('.meal-autocomplete-input') && !e.target.closest('.meal-autocomplete-dropdown') && !e.target.closest('.meal-picker-btn')) {
+                    closeAllAutocompleteDropdowns();
+                }
+            });
+
+            // Built-in Greek Foods Database (portion + per100g nutrition values)
+            const BUILTIN_FOODS = [
+                { keys: ['γιαουρτι 2%', 'γιαουρτι'], cal: 140, prot: 16, fiber: 0, per100: { cal: 70, prot: 8, fiber: 0 } },
+                { keys: ['cottage', 'κοτατζ'], cal: 110, prot: 14, fiber: 0, per100: { cal: 98, prot: 11, fiber: 0 } },
+                { keys: ['αυγο', 'αυγα'], cal: 75, prot: 6.5, fiber: 0, per100: { cal: 155, prot: 13, fiber: 0 } },
+                { keys: ['τονος', 'τονου', 'τονοσαλατα'], cal: 150, prot: 28, fiber: 1, per100: { cal: 116, prot: 26, fiber: 0 } },
+                { keys: ['κοτοπουλο', 'στηθος κοτοπουλο'], cal: 220, prot: 34, fiber: 0, per100: { cal: 165, prot: 31, fiber: 0 } },
+                { keys: ['σολομος', 'σολομο'], cal: 230, prot: 24, fiber: 1, per100: { cal: 208, prot: 20, fiber: 0 } },
+                { keys: ['μοσχαρι', 'μπιφτεκι', 'κιμας', 'κρεας'], cal: 240, prot: 28, fiber: 0, per100: { cal: 215, prot: 26, fiber: 0 } },
+                { keys: ['γαλοπουλα'], cal: 35, prot: 6, fiber: 0, per100: { cal: 110, prot: 20, fiber: 0 } },
+                { keys: ['τυρι', 'φετα', 'ανθοτυρο', 'κατικι'], cal: 80, prot: 6, fiber: 0, per100: { cal: 240, prot: 17, fiber: 0 } },
+                { keys: ['μπανανα'], cal: 105, prot: 1.3, fiber: 3, per100: { cal: 89, prot: 1.1, fiber: 2.6 } },
+                { keys: ['μηλο'], cal: 80, prot: 0.4, fiber: 4, per100: { cal: 52, prot: 0.3, fiber: 2.4 } },
+                { keys: ['πορτοκαλι'], cal: 65, prot: 1.2, fiber: 3, per100: { cal: 47, prot: 0.9, fiber: 2.4 } },
+                { keys: ['αχλαδι'], cal: 85, prot: 0.5, fiber: 5, per100: { cal: 57, prot: 0.4, fiber: 3.1 } },
+                { keys: ['φρουτο', 'φρουτα'], cal: 80, prot: 0.8, fiber: 3, per100: { cal: 60, prot: 0.6, fiber: 2.5 } },
+                { keys: ['ψωμι', 'φετα ολικης', 'φρυγανια'], cal: 120, prot: 3.5, fiber: 3.5, per100: { cal: 250, prot: 9, fiber: 7 } },
+                { keys: ['παξιμαδι'], cal: 145, prot: 4, fiber: 2.5, per100: { cal: 360, prot: 10, fiber: 6 } },
+                { keys: ['ρυζογκοφρετα', 'ρυζογκοφρετες'], cal: 35, prot: 0.8, fiber: 0.4, per100: { cal: 380, prot: 8, fiber: 4 } },
+                { keys: ['βρωμη'], cal: 150, prot: 5, fiber: 4, per100: { cal: 375, prot: 13, fiber: 10 } },
+                { keys: ['ρυζι'], cal: 200, prot: 4, fiber: 1, per100: { cal: 130, prot: 2.7, fiber: 0.4 } },
+                { keys: ['μακαρονια', 'ζυμαρικα'], cal: 240, prot: 8, fiber: 2.5, per100: { cal: 155, prot: 5.5, fiber: 1.8 } },
+                { keys: ['πατατα', 'πατατες'], cal: 160, prot: 3, fiber: 3, per100: { cal: 87, prot: 1.9, fiber: 1.8 } },
+                { keys: ['φακες', 'ρεβιθια', 'φασολια', 'οσπρια'], cal: 260, prot: 15, fiber: 10, per100: { cal: 135, prot: 8.5, fiber: 6 } },
+                { keys: ['σαλατα', 'μαρουλι', 'ντοματα', 'αγγουρι', 'λαχανικα'], cal: 60, prot: 2, fiber: 3.5, per100: { cal: 25, prot: 1.2, fiber: 2 } },
+                { keys: ['ελαιολαδο'], cal: 90, prot: 0, fiber: 0, per100: { cal: 884, prot: 0, fiber: 0 } },
+                { keys: ['αμυγδαλα', 'καρυδια', 'ξηροι καρποι'], cal: 85, prot: 3, fiber: 1.5, per100: { cal: 580, prot: 21, fiber: 12 } },
+                { keys: ['μελι'], cal: 45, prot: 0, fiber: 0, per100: { cal: 304, prot: 0.3, fiber: 0.2 } },
+                { keys: ['καφες', 'φρεντο', 'espresso', 'γαλα'], cal: 15, prot: 0.5, fiber: 0, per100: { cal: 45, prot: 3.2, fiber: 0 } },
+                { keys: ['πρωτεινη', 'scoop', 'whey'], cal: 120, prot: 24, fiber: 0, per100: { cal: 380, prot: 78, fiber: 0 } }
+            ];
+
+            function parseLeadingQuantity(segment) {
+                const normalized = normalizeGramsFormat(segment);
+
+                // Check for gram-based quantity first (e.g. "200g κοτόπουλο")
+                const gramMatch = normalized.match(/^(\d+(?:\.\d+)?)g\s+(.+)$/i);
+                if (gramMatch) {
+                    return {
+                        qty: parseFloat(gramMatch[1]),
+                        isGrams: true,
+                        rest: gramMatch[2].trim()
+                    };
+                }
+
+                // Check for unit/portion quantity (e.g. "2 αυγά", "1 μπανάνα")
+                const numMatch = normalized.match(/^(\d+(?:\.\d+)?)\s*(?:x|×)?\s+(.+)$/i);
+                if (numMatch) {
+                    return {
+                        qty: parseFloat(numMatch[1]),
+                        isGrams: false,
+                        rest: numMatch[2].trim()
+                    };
+                }
+
+                const wordMap = {
+                    'δυο': 2, 'τρεις': 3, 'τρια': 3,
+                    'τεσσερις': 4, 'τεσσερα': 4, 'πεντε': 5,
+                    'μισο': 0.5, 'μιση': 0.5
+                };
+                const firstWord = normalizeGreek(normalized.split(/\s+/)[0]);
+                if (wordMap[firstWord] !== undefined && normalized.split(/\s+/).length > 1) {
+                    return {
+                        qty: wordMap[firstWord],
+                        isGrams: false,
+                        rest: normalized.split(/\s+/).slice(1).join(' ').trim()
+                    };
+                }
+
+                return { qty: 1, isGrams: false, rest: normalized };
+            }
+
+            function estimateMealNutrition(text) {
+                if (!text || !text.trim()) return { calories: 0, protein: 0, fiber: 0 };
+
+                const customProducts = [...getCustomProducts()].sort((a, b) => b.name.length - a.name.length);
+                const rawSegments = splitMealString(normalizeGramsFormat(text));
+
+                let totalCal = 0;
+                let totalProt = 0;
+                let totalFiber = 0;
+
+                rawSegments.forEach(seg => {
+                    const { qty, isGrams, rest } = parseLeadingQuantity(seg);
+                    const normRest = normalizeGreek(rest);
+                    const mult = isGrams ? (qty / 100) : qty;
+
+                    // 1. Check Custom Saved Products FIRST
+                    const matchedCustom = customProducts.find(p => {
+                        const normP = normalizeGreek(p.name);
+                        return normRest === normP || normRest.includes(normP) || (normRest.length >= 3 && normP.includes(normRest));
+                    });
+
+                    if (matchedCustom) {
+                        totalCal += Number(matchedCustom.calories) * mult;
+                        totalProt += Number(matchedCustom.protein || 0) * mult;
+                        totalFiber += Number(matchedCustom.fiber || 0) * mult;
+                        return;
+                    }
+
+                    // 2. Check Built-in Greek Foods
+                    let matchedBuiltin = null;
+                    for (const item of BUILTIN_FOODS) {
+                        if (item.keys.some(k => normRest.includes(normalizeGreek(k)))) {
+                            matchedBuiltin = item;
+                            break;
+                        }
+                    }
+
+                    if (matchedBuiltin) {
+                        if (isGrams && matchedBuiltin.per100) {
+                            totalCal += matchedBuiltin.per100.cal * mult;
+                            totalProt += matchedBuiltin.per100.prot * mult;
+                            totalFiber += matchedBuiltin.per100.fiber * mult;
+                        } else {
+                            totalCal += matchedBuiltin.cal * qty;
+                            totalProt += matchedBuiltin.prot * qty;
+                            totalFiber += matchedBuiltin.fiber * qty;
+                        }
+                    } else {
+                        // Neutral fallback for unknown free-text item (per 100g if grams specified, else per portion)
+                        totalCal += 150 * mult;
+                        totalProt += 6 * mult;
+                        totalFiber += 1.5 * mult;
+                    }
+                });
+
+                return {
+                    calories: Math.round(totalCal),
+                    protein: Math.round(totalProt),
+                    fiber: Math.round(totalFiber)
+                };
+            }
+
+            // Calories & Meals Storage
+            function getCaloriesHistory() {
+                try {
+                    const saved = localStorage.getItem(STORAGE_KEY_CALORIES_HISTORY);
+                    if (saved) return JSON.parse(saved);
+                } catch (e) {}
+                return {};
+            }
+
+            function saveCaloriesHistory(map) {
+                localStorage.setItem(STORAGE_KEY_CALORIES_HISTORY, JSON.stringify(map));
+            }
+
+            function getMealDrafts() {
+                try {
+                    const saved = localStorage.getItem(STORAGE_KEY_MEAL_DRAFTS);
+                    if (saved) return JSON.parse(saved);
+                } catch (e) {}
+                return {};
+            }
+
+            function saveMealDrafts(map) {
+                localStorage.setItem(STORAGE_KEY_MEAL_DRAFTS, JSON.stringify(map));
+            }
+
+            // Water Tracker
+            function getWaterHistory() {
+                try {
+                    const saved = localStorage.getItem(STORAGE_KEY_WATER_HISTORY);
+                    if (saved) return JSON.parse(saved);
+                } catch (e) {}
+                return {};
+            }
+
+            function renderWaterTracker() {
+                const s = getSettings();
+                const goal = Number(s.waterGoal) || 8;
+                const dStr = document.getElementById('food-date').value || todayStr;
+                const waterMap = getWaterHistory();
+                const count = Number(waterMap[dStr]) || 0;
+
+                const labelEl = document.getElementById('water-count-label');
+                const rowEl = document.getElementById('water-glasses-row');
+                if (labelEl) labelEl.textContent = `${count} / ${goal} ποτήρια`;
+                if (rowEl) {
+                    let html = '';
+                    for (let i = 1; i <= goal; i++) {
+                        const filled = i <= count;
+                        html += `
+                            <button type="button" data-water-glass="${i}" class="w-7 h-7 rounded-xl border text-xs flex items-center justify-center transition-all ${filled ? 'bg-teal-500 border-teal-600 text-white shadow-xs scale-105' : 'bg-white border-slate-200 text-slate-300 hover:border-teal-300'}" title="${i} ποτήρια">
+                                💧
+                            </button>
+                        `;
+                    }
+                    rowEl.innerHTML = html;
+                }
+            }
+
+            document.getElementById('water-glasses-row').addEventListener('click', (e) => {
+                const btn = e.target.closest('[data-water-glass]');
+                if (!btn) return;
+                const clickedNum = parseInt(btn.getAttribute('data-water-glass'), 10);
+                const dStr = document.getElementById('food-date').value || todayStr;
+                const waterMap = getWaterHistory();
+                const current = Number(waterMap[dStr]) || 0;
+                waterMap[dStr] = current === clickedNum ? clickedNum - 1 : clickedNum;
+                localStorage.setItem(STORAGE_KEY_WATER_HISTORY, JSON.stringify(waterMap));
+                renderWaterTracker();
+            });
+
+            // Quick Meal Chips (Splits comma, "και", and "συν" into individual normalized chips)
+            function renderQuickMealChips() {
+                const container = document.getElementById('quick-meal-chips');
+                if (!container) return;
+
+                const drafts = getMealDrafts();
+                const sortedDates = Object.keys(drafts).sort((a, b) => parseLocalDate(b) - parseLocalDate(a));
+                const uniqueItems = [];
+                const seenNorm = new Set();
+
+                for (const d of sortedDates) {
+                    const dayObj = drafts[d];
+                    if (!dayObj) continue;
+                    for (const m of MEAL_FIELDS) {
+                        const val = dayObj[m.key];
+                        if (!val) continue;
+                        const subItems = splitMealString(normalizeGramsFormat(val));
+                        for (const item of subItems) {
+                            const cleanItem = normalizeGramsFormat(item);
+                            const norm = normalizeGreek(cleanItem);
+                            if (norm && !seenNorm.has(norm)) {
+                                seenNorm.add(norm);
+                                uniqueItems.push(cleanItem);
+                            }
+                            if (uniqueItems.length >= 12) break;
+                        }
+                        if (uniqueItems.length >= 12) break;
+                    }
+                    if (uniqueItems.length >= 12) break;
+                }
+
+                if (uniqueItems.length === 0) {
+                    container.innerHTML = `<span class="text-[11px] text-slate-400 italic">Τα πρόσφατα τρόφιμά σου θα εμφανίζονται εδώ για άμεση προσθήκη.</span>`;
+                    return;
+                }
+
+                container.innerHTML = uniqueItems.map(item => `
+                    <button type="button" data-quick-chip="${item.replace(/"/g, '&quot;')}" class="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white hover:bg-emerald-50 border border-slate-200 hover:border-emerald-300 text-xs font-semibold text-slate-700 transition-colors shadow-2xs">
+                        <span class="text-emerald-600 font-black">+</span> ${item}
+                    </button>
+                `).join('');
+            }
+
+            document.getElementById('quick-meal-chips').addEventListener('click', (e) => {
+                const chip = e.target.closest('[data-quick-chip]');
+                if (!chip) return;
+                const itemText = normalizeGramsFormat(chip.getAttribute('data-quick-chip'));
+                const targetInput = document.getElementById(activeMealInputId) || document.getElementById('food-breakfast');
+                if (!targetInput) return;
+
+                const currentVal = normalizeGramsFormat(targetInput.value);
+                targetInput.value = currentVal ? `${currentVal}, ${itemText}` : itemText;
+                highlightActiveMealInput(targetInput.id);
+            });
+
+            // Copy Yesterday's Meals
+            document.getElementById('copy-yesterday-btn').addEventListener('click', () => {
+                const dStr = document.getElementById('food-date').value || todayStr;
+                const yesterdayStr = addDaysStr(dStr, -1);
+                const drafts = getMealDrafts();
+                const yDraft = drafts[yesterdayStr];
+                if (!yDraft) {
+                    showMessage('calories-msg', 'Δεν βρέθηκαν καταχωρημένα γεύματα για την προηγούμενη ημέρα.', true);
+                    return;
+                }
+                MEAL_FIELDS.forEach(m => {
+                    const el = document.getElementById(m.id);
+                    if (el) el.value = normalizeGramsFormat(yDraft[m.key] || '');
+                });
+                showMessage('calories-msg', 'Αντιγράφηκαν τα γεύματα από χθες! Πάτησε «Υπολογισμός & Αποθήκευση».', false);
+            });
+
+            function loadMealsForSelectedDate() {
+                const dStr = document.getElementById('food-date').value || todayStr;
+                const drafts = getMealDrafts();
+                const dayDraft = drafts[dStr] || {};
+                MEAL_FIELDS.forEach(m => {
+                    const el = document.getElementById(m.id);
+                    if (el) el.value = normalizeGramsFormat(dayDraft[m.key] || '');
+                });
+                renderWaterTracker();
+                renderDailyNutritionCard();
+            }
+
+            document.getElementById('food-date').addEventListener('change', loadMealsForSelectedDate);
+
+            let editingMealKey = null;
+
+            function renderDailyNutritionCard() {
+                const dStr = document.getElementById('food-date').value || todayStr;
+                const calMap = getCaloriesHistory();
+                const dayRecord = calMap[dStr];
+                const cardEl = document.getElementById('daily-nutrition-summary-card');
+                if (!cardEl) return;
+
+                if (!dayRecord || !dayRecord.meals || dayRecord.meals.length === 0) {
+                    cardEl.classList.add('hidden');
+                    return;
+                }
+
+                cardEl.classList.remove('hidden');
+
+                const s = getSettings();
+                const dyn = getDynamicNutritionTargets(latestKnownWeight, s);
+                const calGoal = dyn.calorieGoal;
+                const protGoal = dyn.proteinGoal;
+
+                const totalCal = Number(dayRecord.calories) || 0;
+                const totalProt = Number(dayRecord.protein) || 0;
+                const totalFiber = Number(dayRecord.fiber) || 0;
+
+                const calPct = Math.round((totalCal / Math.max(1, calGoal)) * 100);
+                const protPct = Math.round((totalProt / Math.max(1, protGoal)) * 100);
+                const remCal = calGoal - totalCal;
+
+                document.getElementById('cal-percent-badge').textContent = `${calPct}%`;
+                document.getElementById('cal-dynamic-note').textContent = `Προσαρμοσμένο στα ${latestKnownWeight.toFixed(1)} kg & προφίλ (${dyn.isMaintenance ? 'Συντήρηση' : '-750g/εβδ.'})`;
+                document.getElementById('cal-current-big').textContent = totalCal.toLocaleString('el-GR');
+                document.getElementById('cal-goal-display').textContent = calGoal.toLocaleString('el-GR');
+
+                const remEl = document.getElementById('cal-remaining-text');
+                if (remCal >= 0) {
+                    remEl.textContent = `Υπόλοιπο: ${remCal.toLocaleString('el-GR')} kcal`;
+                    remEl.className = 'text-xs font-bold text-slate-700 bg-white px-2.5 py-1 rounded-lg border border-slate-200';
+                } else {
+                    remEl.textContent = `Υπέρβαση: +${Math.abs(remCal).toLocaleString('el-GR')} kcal`;
+                    remEl.className = 'text-xs font-bold text-red-700 bg-red-50 px-2.5 py-1 rounded-lg border border-red-200';
+                }
+
+                const calBarEl = document.getElementById('cal-bar-fill');
+                calBarEl.style.width = `${Math.min(100, calPct)}%`;
+                calBarEl.className = `h-2.5 rounded-full transition-all duration-500 ${totalCal > calGoal ? 'bg-red-500' : 'bg-fuchsia-600'}`;
+
+                document.getElementById('fiber-val-text').textContent = `🌿 ${totalFiber}g ίνες`;
+                document.getElementById('protein-val-text').textContent = `${totalProt} / ${protGoal}g`;
+                document.getElementById('protein-percent-badge').textContent = `${protPct}%`;
+                document.getElementById('protein-bar-fill').style.width = `${Math.min(100, protPct)}%`;
+
+                const breakdownUl = document.getElementById('daily-meals-breakdown-list');
+                if (breakdownUl) {
+                    breakdownUl.innerHTML = dayRecord.meals.map(m => `
+                        <li class="bg-white border border-emerald-200/80 rounded-xl px-3 py-2 flex items-center justify-between gap-2 text-xs">
+                            <div class="min-w-0">
+                                <span class="font-extrabold text-emerald-900">${m.label}:</span>
+                                <span class="text-slate-700 font-medium">${normalizeGramsFormat(m.text)}</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                <span class="px-2 py-0.5 rounded-md bg-fuchsia-50 text-fuchsia-800 font-extrabold">${m.calories} kcal</span>
+                                <button type="button" data-edit-meal="${m.key}" class="p-1 rounded-lg hover:bg-fuchsia-50 text-slate-500 hover:text-fuchsia-700" title="Επεξεργασία">✏️</button>
+                                <button type="button" data-del-meal="${m.key}" class="p-1 rounded-lg hover:bg-red-50 text-slate-400 hover:text-red-600" title="Διαγραφή">🗑️</button>
+                            </div>
+                        </li>
+                    `).join('');
+                }
+            }
+
+            document.getElementById('calc-calories-btn').addEventListener('click', () => {
+                const dStr = document.getElementById('food-date').value || todayStr;
+                const drafts = getMealDrafts();
+                const dayDraft = {};
+                const mealsBreakdown = [];
+
+                let totalCal = 0;
+                let totalProt = 0;
+                let totalFiber = 0;
+
+                MEAL_FIELDS.forEach(m => {
+                    const inpEl = document.getElementById(m.id);
+                    const val = normalizeGramsFormat(inpEl ? inpEl.value : '');
+                    if (inpEl) inpEl.value = val;
+                    dayDraft[m.key] = val;
+                    if (val) {
+                        const est = estimateMealNutrition(val);
+                        totalCal += est.calories;
+                        totalProt += est.protein;
+                        totalFiber += est.fiber;
+                        mealsBreakdown.push({
+                            key: m.key,
+                            label: m.label,
+                            text: val,
+                            calories: est.calories,
+                            protein: est.protein,
+                            fiber: est.fiber
+                        });
+                    }
+                });
+
+                drafts[dStr] = dayDraft;
+                saveMealDrafts(drafts);
+
+                const calMap = getCaloriesHistory();
+                if (mealsBreakdown.length === 0) {
+                    delete calMap[dStr];
+                    saveCaloriesHistory(calMap);
+                    renderDailyNutritionCard();
+                    renderCaloriesSection();
+                    showMessage('calories-msg', 'Συμπλήρωσε τουλάχιστον ένα γεύμα.', true);
+                    return;
+                }
+
+                calMap[dStr] = {
+                    calories: totalCal,
+                    protein: totalProt,
+                    fiber: totalFiber,
+                    meals: mealsBreakdown
+                };
+                saveCaloriesHistory(calMap);
+
+                renderQuickMealChips();
+                renderDailyNutritionCard();
+                renderCaloriesSection();
+                showMessage('calories-msg', `Αποθηκεύτηκαν ${totalCal.toLocaleString('el-GR')} kcal & ${totalProt}g πρωτεΐνης!`, false);
+            });
+
+            // Edit & Delete Individual Logged Meal
+            const editMealModal = document.getElementById('edit-meal-modal');
+            document.getElementById('daily-meals-breakdown-list').addEventListener('click', (e) => {
+                const dStr = document.getElementById('food-date').value || todayStr;
+                const calMap = getCaloriesHistory();
+                const dayRecord = calMap[dStr];
+                if (!dayRecord || !dayRecord.meals) return;
+
+                const editBtn = e.target.closest('[data-edit-meal]');
+                if (editBtn) {
+                    const mealKey = editBtn.getAttribute('data-edit-meal');
+                    const mealObj = dayRecord.meals.find(m => m.key === mealKey);
+                    if (mealObj) {
+                        editingMealKey = mealKey;
+                        document.getElementById('edit-meal-label-subtitle').textContent = `${mealObj.label} (${formatFullDisplayDate(dStr)})`;
+                        document.getElementById('edit-meal-text').value = normalizeGramsFormat(mealObj.text);
+                        document.getElementById('edit-meal-calories').value = mealObj.calories;
+                        editMealModal.classList.remove('hidden');
+                    }
+                    return;
+                }
+
+                const delBtn = e.target.closest('[data-del-meal]');
+                if (delBtn) {
+                    const mealKey = delBtn.getAttribute('data-del-meal');
+                    const fieldMeta = MEAL_FIELDS.find(f => f.key === mealKey);
+                    if (fieldMeta) {
+                        const inp = document.getElementById(fieldMeta.id);
+                        if (inp) inp.value = '';
+                    }
+                    const drafts = getMealDrafts();
+                    if (drafts[dStr]) {
+                        drafts[dStr][mealKey] = '';
+                        saveMealDrafts(drafts);
+                    }
+
+                    dayRecord.meals = dayRecord.meals.filter(m => m.key !== mealKey);
+                    if (dayRecord.meals.length === 0) {
+                        delete calMap[dStr];
+                    } else {
+                        dayRecord.calories = dayRecord.meals.reduce((acc, m) => acc + (Number(m.calories) || 0), 0);
+                        dayRecord.protein = dayRecord.meals.reduce((acc, m) => acc + (Number(m.protein) || 0), 0);
+                        dayRecord.fiber = dayRecord.meals.reduce((acc, m) => acc + (Number(m.fiber) || 0), 0);
+                    }
+                    saveCaloriesHistory(calMap);
+                    renderDailyNutritionCard();
+                    renderCaloriesSection();
+                }
+            });
+
+            document.getElementById('edit-meal-close-btn').addEventListener('click', () => editMealModal.classList.add('hidden'));
+            document.getElementById('edit-meal-cancel-btn').addEventListener('click', () => editMealModal.classList.add('hidden'));
+            document.getElementById('edit-meal-save-btn').addEventListener('click', () => {
+                const dStr = document.getElementById('food-date').value || todayStr;
+                const calMap = getCaloriesHistory();
+                const dayRecord = calMap[dStr];
+                if (!dayRecord || !dayRecord.meals || !editingMealKey) return;
+
+                const newText = normalizeGramsFormat(document.getElementById('edit-meal-text').value);
+                const newCal = parseFloat(document.getElementById('edit-meal-calories').value);
+                if (!newText || isNaN(newCal) || newCal < 0) return;
+
+                const mealObj = dayRecord.meals.find(m => m.key === editingMealKey);
+                if (mealObj) {
+                    const est = estimateMealNutrition(newText);
+                    mealObj.text = newText;
+                    mealObj.calories = Math.round(newCal);
+                    mealObj.protein = est.protein;
+                    mealObj.fiber = est.fiber;
+                }
+
+                const fieldMeta = MEAL_FIELDS.find(f => f.key === editingMealKey);
+                if (fieldMeta) {
+                    const inp = document.getElementById(fieldMeta.id);
+                    if (inp) inp.value = newText;
+                }
+                const drafts = getMealDrafts();
+                if (!drafts[dStr]) drafts[dStr] = {};
+                drafts[dStr][editingMealKey] = newText;
+                saveMealDrafts(drafts);
+
+                dayRecord.calories = dayRecord.meals.reduce((acc, m) => acc + (Number(m.calories) || 0), 0);
+                dayRecord.protein = dayRecord.meals.reduce((acc, m) => acc + (Number(m.protein) || 0), 0);
+                dayRecord.fiber = dayRecord.meals.reduce((acc, m) => acc + (Number(m.fiber) || 0), 0);
+                saveCaloriesHistory(calMap);
+
+                editMealModal.classList.add('hidden');
+                renderQuickMealChips();
+                renderDailyNutritionCard();
+                renderCaloriesSection();
+            });
+
+            // --- CALORIES ANALYTICS (WEEK & MONTH) ---
+            let calViewMode = 'week';
+            let calWeekMonday = getMonday(todayStr);
+            let calMonthFirst = todayStr.slice(0, 7) + '-01';
+            let caloriesChartInstance = null;
+
+            function setCalTab(mode) {
+                calViewMode = mode;
+                const wBtn = document.getElementById('cal-tab-week');
+                const mBtn = document.getElementById('cal-tab-month');
+                const wAvg = document.getElementById('week-avg-container');
+                const mAvg = document.getElementById('month-avg-container');
+                const mLog = document.getElementById('month-calories-log-wrapper');
+
+                if (mode === 'week') {
+                    wBtn.className = 'px-3 py-1 rounded-lg text-xs font-bold bg-white text-emerald-700 shadow-xs transition-all';
+                    mBtn.className = 'px-3 py-1 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-700 transition-all';
+                    wAvg.classList.remove('hidden');
+                    mAvg.classList.add('hidden');
+                    mLog.classList.add('hidden');
+                } else {
+                    mBtn.className = 'px-3 py-1 rounded-lg text-xs font-bold bg-white text-emerald-700 shadow-xs transition-all';
+                    wBtn.className = 'px-3 py-1 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-700 transition-all';
+                    wAvg.classList.add('hidden');
+                    mAvg.classList.remove('hidden');
+                    mLog.classList.remove('hidden');
+                }
+                renderCaloriesSection();
+            }
+
+            document.getElementById('cal-tab-week').addEventListener('click', () => setCalTab('week'));
+            document.getElementById('cal-tab-month').addEventListener('click', () => setCalTab('month'));
+
+            document.getElementById('cal-prev-btn').addEventListener('click', () => {
+                if (calViewMode === 'week') {
+                    calWeekMonday = addDaysStr(calWeekMonday, -7);
+                } else {
+                    calMonthFirst = addMonthsStr(calMonthFirst, -1);
+                }
+                renderCaloriesSection();
+            });
+
+            document.getElementById('cal-next-btn').addEventListener('click', () => {
+                if (calViewMode === 'week') {
+                    calWeekMonday = addDaysStr(calWeekMonday, 7);
+                } else {
+                    calMonthFirst = addMonthsStr(calMonthFirst, 1);
+                }
+                renderCaloriesSection();
+            });
+
+            function renderCaloriesSection() {
+                const calMap = getCaloriesHistory();
+                const periodEl = document.getElementById('cal-period-display');
+                const canvasEl = document.getElementById('caloriesChart');
+                if (!canvasEl || typeof Chart === 'undefined') return;
+
+                let labels = [];
+                let calData = [];
+                let barColors = [];
+
+                const s = getSettings();
+                const dyn = getDynamicNutritionTargets(latestKnownWeight, s);
+                const calGoal = dyn.calorieGoal;
+
+                if (calViewMode === 'week') {
+                    const sunStr = addDaysStr(calWeekMonday, 6);
+                    if (periodEl) periodEl.textContent = `${formatDisplayDate(calWeekMonday)} - ${formatDisplayDate(sunStr)}`;
+
+                    const dayNames = ['Δευ', 'Τρι', 'Τετ', 'Πεμ', 'Παρ', 'Σαβ', 'Κυρ'];
+                    let sumCal = 0;
+                    let sumProt = 0;
+                    let activeDays = 0;
+
+                    for (let i = 0; i < 7; i++) {
+                        const dStr = addDaysStr(calWeekMonday, i);
+                        const rec = calMap[dStr];
+                        const c = rec ? Number(rec.calories) || 0 : 0;
+                        const p = rec ? Number(rec.protein) || 0 : 0;
+                        labels.push(`${dayNames[i]} ${formatDisplayDate(dStr)}`);
+                        calData.push(c);
+                        barColors.push(c > calGoal ? '#ef4444' : '#c026d3');
+                        if (c > 0) {
+                            sumCal += c;
+                            sumProt += p;
+                            activeDays++;
+                        }
+                    }
+
+                    document.getElementById('week-avg-val').textContent = activeDays > 0 ? Math.round(sumCal / activeDays).toLocaleString('el-GR') : '0';
+                    document.getElementById('week-protein-avg-val').textContent = activeDays > 0 ? Math.round(sumProt / activeDays) : '0';
+                } else {
+                    if (periodEl) periodEl.textContent = formatMonthOnly(calMonthFirst);
+                    const [y, m] = calMonthFirst.split('-').map(Number);
+                    const daysInMonth = new Date(y, m, 0).getDate();
+
+                    let sumCal = 0;
+                    let sumProt = 0;
+                    let activeDays = 0;
+                    const monthLogs = [];
+
+                    for (let d = 1; d <= daysInMonth; d++) {
+                        const dStr = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                        const rec = calMap[dStr];
+                        const c = rec ? Number(rec.calories) || 0 : 0;
+                        const p = rec ? Number(rec.protein) || 0 : 0;
+                        labels.push(`${d}`);
+                        calData.push(c);
+                        barColors.push(c > calGoal ? '#ef4444' : '#059669');
+                        if (c > 0) {
+                            sumCal += c;
+                            sumProt += p;
+                            activeDays++;
+                            monthLogs.push({ date: dStr, calories: c, protein: p });
+                        }
+                    }
+
+                    document.getElementById('month-avg-val').textContent = activeDays > 0 ? Math.round(sumCal / activeDays).toLocaleString('el-GR') : '0';
+                    document.getElementById('month-protein-avg-val').textContent = activeDays > 0 ? Math.round(sumProt / activeDays) : '0';
+                    document.getElementById('month-cal-days-count').textContent = String(activeDays);
+
+                    const mLogUl = document.getElementById('month-calories-log');
+                    if (mLogUl) {
+                        if (monthLogs.length === 0) {
+                            mLogUl.innerHTML = `<li class="text-xs text-slate-400 italic py-2 text-center">Δεν υπάρχουν καταγραφές αυτόν τον μήνα.</li>`;
+                        } else {
+                            mLogUl.innerHTML = [...monthLogs].reverse().map(item => `
+                                <li>
+                                    <button type="button" data-jump-food-date="${item.date}" class="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200/80 text-xs transition-colors">
+                                        <span class="font-bold text-slate-700">${formatFullDisplayDate(item.date)}</span>
+                                        <span class="font-extrabold text-fuchsia-700">${item.calories.toLocaleString('el-GR')} kcal <span class="text-emerald-700">• ${item.protein}g πρωτ.</span></span>
+                                    </button>
+                                </li>
+                            `).join('');
+                        }
+                    }
+                }
+
+                if (caloriesChartInstance) {
+                    caloriesChartInstance.destroy();
+                }
+
+                caloriesChartInstance = new Chart(canvasEl.getContext('2d'), {
+                    type: 'bar',
+                    data: {
+                        labels,
+                        datasets: [{
+                            label: 'Θερμίδες (kcal)',
+                            data: calData,
+                            backgroundColor: barColors,
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            x: {
+                                ticks: { font: { size: 10, weight: '600', family: 'Inter' } },
+                                grid: { display: false }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                ticks: { font: { size: 10, weight: '600', family: 'Inter' } },
+                                grid: { color: 'rgba(148, 163, 184, 0.15)' }
+                            }
+                        }
+                    }
+                });
+            }
+
+            document.getElementById('month-calories-log').addEventListener('click', (e) => {
+                const btn = e.target.closest('[data-jump-food-date]');
+                if (!btn) return;
+                const dStr = btn.getAttribute('data-jump-food-date');
+                document.getElementById('food-date').value = dStr;
+                loadMealsForSelectedDate();
+            });
+
+            // --- 3. DYNAMIC WORKOUT TRACKER (UP TO 2 WORKOUTS PER DAY) ---
+            const AEROBIC_TYPES = new Set([
+                'Run/Walk', 'Power Walk', 'Τρέξιμο', 'Ποδήλατο', 'Κολύμβηση', 'Ελλειπτικό / Κωπηλατική'
+            ]);
+            const ANAEROBIC_TYPES = new Set([
+                'Ενδυνάμωση Σπίτι', 'TRX', 'Βάρη / Kettlebell', 'HIIT / Κυκλική'
+            ]);
+
+            function getWorkoutCategory(type) {
+                if (AEROBIC_TYPES.has(type)) return 'Αερόβια';
+                if (ANAEROBIC_TYPES.has(type)) return 'Αναερόβια';
+                return 'Αποκατάσταση';
+            }
+
+            function getWorkoutHistory() {
+                try {
+                    const saved = localStorage.getItem(STORAGE_KEY_WORKOUT_HISTORY);
+                    if (saved) return JSON.parse(saved);
+                } catch (e) {}
+                return {};
+            }
+
+            function saveWorkoutHistory(map) {
+                localStorage.setItem(STORAGE_KEY_WORKOUT_HISTORY, JSON.stringify(map));
+            }
+
+            function normalizeDayWorkouts(rawEntry) {
+                if (!rawEntry) return [];
+                if (Array.isArray(rawEntry)) return rawEntry;
+                if (rawEntry.type) return [rawEntry];
+                return [];
+            }
+
+            let wViewMode = 'week';
+            let wWeekMonday = getMonday(todayStr);
+            let wMonthFirst = todayStr.slice(0, 7) + '-01';
+            let editingWorkoutDate = null;
+
+            function setWorkoutTab(mode) {
+                wViewMode = mode;
+                const wBtn = document.getElementById('w-tab-week');
+                const mBtn = document.getElementById('w-tab-month');
+                const wView = document.getElementById('workout-week-view');
+                const mView = document.getElementById('workout-month-view');
+
+                if (mode === 'week') {
+                    wBtn.className = 'px-3 py-1 rounded-lg text-xs font-bold bg-white text-emerald-700 shadow-xs transition-all';
+                    mBtn.className = 'px-3 py-1 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-700 transition-all';
+                    wView.classList.remove('hidden');
+                    mView.classList.add('hidden');
+                } else {
+                    mBtn.className = 'px-3 py-1 rounded-lg text-xs font-bold bg-white text-emerald-700 shadow-xs transition-all';
+                    wBtn.className = 'px-3 py-1 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-700 transition-all';
+                    wView.classList.add('hidden');
+                    mView.classList.remove('hidden');
+                }
+                renderDynamicWorkoutSection();
+            }
+
+            document.getElementById('w-tab-week').addEventListener('click', () => setWorkoutTab('week'));
+            document.getElementById('w-tab-month').addEventListener('click', () => setWorkoutTab('month'));
+
+            document.getElementById('w-prev-week-btn').addEventListener('click', () => {
+                wWeekMonday = addDaysStr(wWeekMonday, -7);
+                renderDynamicWorkoutSection();
+            });
+            document.getElementById('w-next-week-btn').addEventListener('click', () => {
+                wWeekMonday = addDaysStr(wWeekMonday, 7);
+                renderDynamicWorkoutSection();
+            });
+            document.getElementById('w-prev-month-btn').addEventListener('click', () => {
+                wMonthFirst = addMonthsStr(wMonthFirst, -1);
+                renderDynamicWorkoutSection();
+            });
+            document.getElementById('w-next-month-btn').addEventListener('click', () => {
+                wMonthFirst = addMonthsStr(wMonthFirst, 1);
+                renderDynamicWorkoutSection();
+            });
+
+            function renderDynamicWorkoutSection() {
+                const s = getSettings();
+                const wMap = getWorkoutHistory();
+
+                // Auto Phase Banner based on Run Unlock Weight
+                const phaseBannerEl = document.getElementById('auto-phase-banner');
+                if (phaseBannerEl) {
+                    const runUnlock = Number(s.runUnlock) || 85;
+                    const finalGoal = Number(s.finalGoal) || 65;
+                    const maxKm = Number(s.weeklyKmGoal) || 40;
+
+                    if (latestKnownWeight > runUnlock) {
+                        const diff = (latestKnownWeight - runUnlock).toFixed(1);
+                        phaseBannerEl.innerHTML = `
+                            <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-3 flex items-center justify-between gap-2 text-xs">
+                                <div>
+                                    <span class="font-extrabold text-emerald-900">ΦΑΣΗ 1: ΠΡΟΣΤΑΣΙΑ ΑΡΘΡΩΣΕΩΝ</span>
+                                    <p class="text-emerald-800/85 mt-0.5">Power Walk, Run/Walk &amp; Ενδυνάμωση (απομένουν <strong>${diff} kg</strong> για ξεκλείδωμα τρεξίματος στα ${runUnlock} kg).</p>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-xl bg-emerald-600 text-white font-extrabold shrink-0">3-4x/εβδ.</span>
+                            </div>
+                        `;
+                    } else {
+                        const span = Math.max(1, runUnlock - finalGoal);
+                        const progress = Math.min(1, Math.max(0, (runUnlock - latestKnownWeight) / span));
+                        const dynamicKmTarget = Math.round(12 + progress * (maxKm - 12));
+                        phaseBannerEl.innerHTML = `
+                            <div class="bg-fuchsia-50 border border-fuchsia-200 rounded-2xl p-3 flex items-center justify-between gap-2 text-xs">
+                                <div>
+                                    <span class="font-extrabold text-fuchsia-900">ΦΑΣΗ 2: ΤΡΕΞΙΜΟ ΞΕΚΛΕΙΔΩΘΗΚΕ!</span>
+                                    <p class="text-fuchsia-800/85 mt-0.5">Προοδευτική αύξηση χιλιομέτρων προς τον στόχο (${maxKm} km/εβδ.).</p>
+                                </div>
+                                <span class="px-2.5 py-1 rounded-xl bg-fuchsia-600 text-white font-extrabold shrink-0">Στόχος: ${dynamicKmTarget} km</span>
+                            </div>
+                        `;
+                    }
+                }
+
+                if (wViewMode === 'week') {
+                    const sunStr = addDaysStr(wWeekMonday, 6);
+                    document.getElementById('current-w-week-display').textContent = `${formatDisplayDate(wWeekMonday)} - ${formatDisplayDate(sunStr)}`;
+
+                    const dayNames = ['Δευτέρα', 'Τρίτη', 'Τετάρτη', 'Πέμπτη', 'Παρασκευή', 'Σάββατο', 'Κυριακή'];
+                    const listEl = document.getElementById('dynamic-week-list');
+                    if (!listEl) return;
+
+                    let html = '';
+                    for (let i = 0; i < 7; i++) {
+                        const dStr = addDaysStr(wWeekMonday, i);
+                        const isToday = dStr === todayStr;
+                        const workouts = normalizeDayWorkouts(wMap[dStr]);
+
+                        let rightHtml = `<span class="text-xs font-semibold text-slate-400">+ Καταγραφή</span>`;
+                        if (workouts.length > 0) {
+                            rightHtml = `<div class="flex flex-wrap items-center justify-end gap-1.5">` + workouts.map(w => {
+                                const cat = getWorkoutCategory(w.type);
+                                const badgeClass = cat === 'Αερόβια'
+                                    ? 'bg-emerald-100 text-emerald-900 border-emerald-200'
+                                    : (cat === 'Αναερόβια' ? 'bg-fuchsia-100 text-fuchsia-900 border-fuchsia-200' : 'bg-teal-100 text-teal-900 border-teal-200');
+                                const extra = [
+                                    w.duration ? `${w.duration}'` : '',
+                                    w.distance ? `${w.distance} km` : ''
+                                ].filter(Boolean).join(' • ');
+                                return `
+                                    <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border text-[11px] font-bold ${badgeClass}">
+                                        <span>${w.type}</span>
+                                        <span class="opacity-75">(${cat}${extra ? ' • ' + extra : ''})</span>
+                                    </span>
+                                `;
+                            }).join('') + `</div>`;
+                        }
+
+                        html += `
+                            <button type="button" data-open-workout-date="${dStr}" class="w-full text-left p-3 rounded-2xl border transition-all flex items-center justify-between gap-2 ${isToday ? 'bg-emerald-50/80 border-emerald-400 shadow-2xs' : 'bg-slate-50/70 hover:bg-white border-slate-200/80'}">
+                                <div class="shrink-0">
+                                    <div class="text-xs sm:text-sm font-extrabold text-slate-800 flex items-center gap-1.5">
+                                        <span>${dayNames[i]}</span>
+                                        ${isToday ? '<span class="px-1.5 py-0.5 rounded-md bg-emerald-600 text-white text-[9px] font-black uppercase">Σήμερα</span>' : ''}
+                                    </div>
+                                    <div class="text-[11px] font-semibold text-slate-400">${formatDisplayDate(dStr)}</div>
+                                </div>
+                                ${rightHtml}
+                            </button>
+                        `;
+                    }
+                    listEl.innerHTML = html;
+                } else {
+                    document.getElementById('current-w-month-display').textContent = formatMonthOnly(wMonthFirst);
+                    const [y, m] = wMonthFirst.split('-').map(Number);
+                    const daysInMonth = new Date(y, m, 0).getDate();
+
+                    let totalSessions = 0;
+                    let totalMins = 0;
+                    let totalKm = 0;
+                    const catStats = { 'Αερόβια': { count: 0, mins: 0 }, 'Αναερόβια': { count: 0, mins: 0 }, 'Αποκατάσταση': { count: 0, mins: 0 } };
+                    const monthEntries = [];
+
+                    for (let d = 1; d <= daysInMonth; d++) {
+                        const dStr = `${y}-${String(m).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+                        const workouts = normalizeDayWorkouts(wMap[dStr]);
+                        if (workouts.length > 0) {
+                            workouts.forEach(w => {
+                                if (w.type === 'Ξεκούραση') return;
+                                totalSessions++;
+                                const mins = Number(w.duration) || 0;
+                                const km = Number(w.distance) || 0;
+                                totalMins += mins;
+                                totalKm += km;
+                                const cat = getWorkoutCategory(w.type);
+                                if (catStats[cat]) {
+                                    catStats[cat].count++;
+                                    catStats[cat].mins += mins;
+                                }
+                            });
+                            monthEntries.push({ date: dStr, workouts });
+                        }
+                    }
+
+                    document.getElementById('month-total-workouts').textContent = String(totalSessions);
+                    document.getElementById('month-total-mins').textContent = `${totalMins}'`;
+                    document.getElementById('month-total-km').innerHTML = `${totalKm.toFixed(1)} <span class="text-xs font-bold">km</span>`;
+
+                    const breakdownEl = document.getElementById('month-breakdown-list');
+                    if (breakdownEl) {
+                        breakdownEl.innerHTML = Object.entries(catStats).map(([catName, st]) => `
+                            <div class="flex items-center justify-between bg-slate-50 border border-slate-200/80 rounded-xl px-3 py-2 text-xs">
+                                <span class="font-bold text-slate-700">${catName}</span>
+                                <span class="font-extrabold text-emerald-800">${st.count} προπ. • ${st.mins}'</span>
+                            </div>
+                        `).join('');
+                    }
+
+                    const logUl = document.getElementById('month-workouts-log');
+                    if (logUl) {
+                        if (monthEntries.length === 0) {
+                            logUl.innerHTML = `<li class="text-xs text-slate-400 italic py-2 text-center">Δεν υπάρχουν καταγραφές αυτόν τον μήνα.</li>`;
+                        } else {
+                            logUl.innerHTML = [...monthEntries].reverse().map(entry => {
+                                const desc = entry.workouts.map(w => `${w.type}${w.duration ? ` (${w.duration}')` : ''}`).join(' + ');
+                                return `
+                                    <li>
+                                        <button type="button" data-open-workout-date="${entry.date}" class="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200/80 text-xs transition-colors">
+                                            <span class="font-bold text-slate-700">${formatFullDisplayDate(entry.date)}</span>
+                                            <span class="font-extrabold text-emerald-800">${desc}</span>
+                                        </button>
+                                    </li>
+                                `;
+                            }).join('');
+                        }
+                    }
+                }
+            }
+
+            // Workout Modal Logic (Supports 1 or 2 workouts per day)
+            const workoutModal = document.getElementById('workout-modal');
+            const secondWorkoutSec = document.getElementById('second-workout-section');
+            const addSecondWorkoutBtn = document.getElementById('add-second-workout-btn');
+
+            function updateWorkoutModalFields(slot) {
+                const typeSel = document.getElementById(slot === 1 ? 'modal-workout-type' : 'modal-workout-type-2');
+                const durGroup = document.getElementById(slot === 1 ? 'modal-duration-group' : 'modal-duration-group-2');
+                const distGroup = document.getElementById(slot === 1 ? 'modal-distance-group' : 'modal-distance-group-2');
+                const catBadge = document.getElementById(slot === 1 ? 'modal-cat-badge-1' : 'modal-cat-badge-2');
+
+                const val = typeSel.value;
+                const cat = getWorkoutCategory(val);
+                if (catBadge) {
+                    catBadge.textContent = cat;
+                    catBadge.className = `text-[10px] font-extrabold px-2 py-0.5 rounded-md ${cat === 'Αερόβια' ? 'bg-emerald-100 text-emerald-800' : (cat === 'Αναερόβια' ? 'bg-fuchsia-100 text-fuchsia-800' : 'bg-teal-100 text-teal-800')}`;
+                }
+
+                if (val === 'Ξεκούραση') {
+                    durGroup.classList.add('hidden');
+                    distGroup.classList.add('hidden');
+                } else {
+                    durGroup.classList.remove('hidden');
+                    if (AEROBIC_TYPES.has(val)) {
+                        distGroup.classList.remove('hidden');
+                    } else {
+                        distGroup.classList.add('hidden');
+                    }
+                }
+            }
+
+            document.getElementById('modal-workout-type').addEventListener('change', () => updateWorkoutModalFields(1));
+            document.getElementById('modal-workout-type-2').addEventListener('change', () => updateWorkoutModalFields(2));
+
+            addSecondWorkoutBtn.addEventListener('click', () => {
+                secondWorkoutSec.classList.remove('hidden');
+                addSecondWorkoutBtn.classList.add('hidden');
+                const firstCat = getWorkoutCategory(document.getElementById('modal-workout-type').value);
+                document.getElementById('modal-workout-type-2').value = firstCat === 'Αναερόβια' ? 'Run/Walk' : 'Ενδυνάμωση Σπίτι';
+                document.getElementById('modal-duration-2').value = '';
+                document.getElementById('modal-distance-2').value = '';
+                updateWorkoutModalFields(2);
+            });
+
+            document.getElementById('remove-second-workout-btn').addEventListener('click', () => {
+                secondWorkoutSec.classList.add('hidden');
+                addSecondWorkoutBtn.classList.remove('hidden');
+                document.getElementById('modal-duration-2').value = '';
+                document.getElementById('modal-distance-2').value = '';
+            });
+
+            function openWorkoutModalForDate(dStr) {
+                editingWorkoutDate = dStr;
+                document.getElementById('modal-date-title').textContent = formatFullDisplayDate(dStr);
+                const wMap = getWorkoutHistory();
+                const workouts = normalizeDayWorkouts(wMap[dStr]);
+                const delBtn = document.getElementById('modal-delete-btn');
+
+                if (workouts.length > 0) {
+                    delBtn.classList.remove('hidden');
+                    document.getElementById('modal-workout-type').value = workouts[0].type || 'Run/Walk';
+                    document.getElementById('modal-duration').value = workouts[0].duration || '';
+                    document.getElementById('modal-distance').value = workouts[0].distance || '';
+                } else {
+                    delBtn.classList.add('hidden');
+                    document.getElementById('modal-workout-type').value = 'Run/Walk';
+                    document.getElementById('modal-duration').value = '';
+                    document.getElementById('modal-distance').value = '';
+                }
+                updateWorkoutModalFields(1);
+
+                if (workouts.length > 1) {
+                    secondWorkoutSec.classList.remove('hidden');
+                    addSecondWorkoutBtn.classList.add('hidden');
+                    document.getElementById('modal-workout-type-2').value = workouts[1].type || 'Ενδυνάμωση Σπίτι';
+                    document.getElementById('modal-duration-2').value = workouts[1].duration || '';
+                    document.getElementById('modal-distance-2').value = workouts[1].distance || '';
+                    updateWorkoutModalFields(2);
+                } else {
+                    secondWorkoutSec.classList.add('hidden');
+                    addSecondWorkoutBtn.classList.remove('hidden');
+                    document.getElementById('modal-duration-2').value = '';
+                    document.getElementById('modal-distance-2').value = '';
+                }
+
+                workoutModal.classList.remove('hidden');
+            }
+
+            document.getElementById('dynamic-week-list').addEventListener('click', (e) => {
+                const btn = e.target.closest('[data-open-workout-date]');
+                if (btn) openWorkoutModalForDate(btn.getAttribute('data-open-workout-date'));
+            });
+
+            document.getElementById('month-workouts-log').addEventListener('click', (e) => {
+                const btn = e.target.closest('[data-open-workout-date]');
+                if (btn) openWorkoutModalForDate(btn.getAttribute('data-open-workout-date'));
+            });
+
+            document.getElementById('modal-close-btn').addEventListener('click', () => workoutModal.classList.add('hidden'));
+
+            document.getElementById('modal-save-btn').addEventListener('click', () => {
+                if (!editingWorkoutDate) return;
+                const wMap = getWorkoutHistory();
+                const list = [];
+
+                const t1 = document.getElementById('modal-workout-type').value;
+                const d1 = parseInt(document.getElementById('modal-duration').value, 10) || 0;
+                const km1 = parseFloat(document.getElementById('modal-distance').value) || 0;
+                list.push({ type: t1, duration: t1 === 'Ξεκούραση' ? 0 : d1, distance: AEROBIC_TYPES.has(t1) ? km1 : 0 });
+
+                if (!secondWorkoutSec.classList.contains('hidden')) {
+                    const t2 = document.getElementById('modal-workout-type-2').value;
+                    const d2 = parseInt(document.getElementById('modal-duration-2').value, 10) || 0;
+                    const km2 = parseFloat(document.getElementById('modal-distance-2').value) || 0;
+                    list.push({ type: t2, duration: t2 === 'Ξεκούραση' ? 0 : d2, distance: AEROBIC_TYPES.has(t2) ? km2 : 0 });
+                }
+
+                wMap[editingWorkoutDate] = list;
+                saveWorkoutHistory(wMap);
+                workoutModal.classList.add('hidden');
+                renderDynamicWorkoutSection();
+            });
+
+            document.getElementById('modal-delete-btn').addEventListener('click', () => {
+                if (!editingWorkoutDate) return;
+                const wMap = getWorkoutHistory();
+                delete wMap[editingWorkoutDate];
+                saveWorkoutHistory(wMap);
+                workoutModal.classList.add('hidden');
+                renderDynamicWorkoutSection();
+            });
+
+            // --- 4. BACKUP EXPORT & IMPORT ---
+            document.getElementById('export-backup-btn').addEventListener('click', () => {
+                const payload = {
+                    app: 'Live Coach',
+                    exportedAt: new Date().toISOString(),
+                    settings: getSettings(),
+                    weightHistory: getWeightHistory(),
+                    workoutHistory: getWorkoutHistory(),
+                    caloriesHistory: getCaloriesHistory(),
+                    mealDrafts: getMealDrafts(),
+                    waistHistory: getWaistHistory(),
+                    waterHistory: getWaterHistory(),
+                    notesHistory: getNotesHistory(),
+                    customProducts: getCustomProducts()
+                };
+                const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `live-coach-backup-${todayStr}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showMessage('backup-status-msg', 'Το αρχείο Backup αποθηκεύτηκε!', false);
+            });
+
+            let pendingRestorePayload = null;
+            const restoreModal = document.getElementById('restore-modal');
+
+            document.getElementById('import-backup-input').addEventListener('change', (e) => {
+                const file = e.target.files && e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    try {
+                        const data = JSON.parse(ev.target.result);
+                        pendingRestorePayload = data;
+                        const wCount = Array.isArray(data.weightHistory) ? data.weightHistory.length : 0;
+                        const pCount = Array.isArray(data.customProducts) ? data.customProducts.length : 0;
+                        document.getElementById('restore-summary-text').textContent =
+                            `Βρέθηκαν ${wCount} ζυγίσεις και ${pCount} αποθηκευμένα προϊόντα. Θέλεις να γίνει επαναφορά;`;
+                        restoreModal.classList.remove('hidden');
+                    } catch (err) {
+                        showMessage('backup-status-msg', 'Μη έγκυρο αρχείο JSON backup.', true);
+                    }
+                    e.target.value = '';
+                };
+                reader.readAsText(file);
+            });
+
+            document.getElementById('restore-cancel-btn').addEventListener('click', () => {
+                pendingRestorePayload = null;
+                restoreModal.classList.add('hidden');
+            });
+
+            document.getElementById('restore-confirm-btn').addEventListener('click', () => {
+                if (!pendingRestorePayload) return;
+                const d = pendingRestorePayload;
+                if (d.settings) saveSettings({ ...DEFAULT_SETTINGS, ...d.settings });
+                if (Array.isArray(d.weightHistory)) saveWeightHistory(d.weightHistory);
+                if (d.workoutHistory) saveWorkoutHistory(d.workoutHistory);
+                if (d.caloriesHistory) saveCaloriesHistory(d.caloriesHistory);
+                if (d.mealDrafts) saveMealDrafts(d.mealDrafts);
+                if (Array.isArray(d.waistHistory)) localStorage.setItem(STORAGE_KEY_WAIST_HISTORY, JSON.stringify(d.waistHistory));
+                if (d.waterHistory) localStorage.setItem(STORAGE_KEY_WATER_HISTORY, JSON.stringify(d.waterHistory));
+                if (Array.isArray(d.notesHistory)) localStorage.setItem(STORAGE_KEY_NOTES_HISTORY, JSON.stringify(d.notesHistory));
+                if (Array.isArray(d.customProducts)) saveCustomProducts(d.customProducts);
+
+                pendingRestorePayload = null;
+                restoreModal.classList.add('hidden');
+                initAll();
+                showMessage('backup-status-msg', 'Η επαναφορά ολοκληρώθηκε επιτυχώς!', false);
+            });
+
+            // --- INITIALIZE EVERYTHING ---
+            function initAll() {
+                applySettingsToUI();
+                renderDailyQuote();
+                renderWeightSection();
+                renderWaistSection();
+                renderNotesSection();
+                renderQuickMealChips();
+                loadMealsForSelectedDate();
+                renderCaloriesSection();
+                renderDynamicWorkoutSection();
+            }
+
+            initAll();
+        });
+    </script>
+</body>
+</html>

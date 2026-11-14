@@ -1,0 +1,3026 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Coach</title>
+    <!-- Google Font: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            color: #0f172a;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 5px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 9999px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-emerald-50/60 text-slate-900 pb-12">
+
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 pt-6">
+
+        <!-- Header & Daily Auto-Rotating Motivation Banner -->
+        <header class="bg-white rounded-3xl p-6 shadow-md shadow-emerald-950/5 border border-emerald-100 border-t-4 border-t-emerald-600 mb-6">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+                <div>
+                    <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-fuchsia-600 text-white text-xs font-extrabold mb-2 shadow-xs">
+                        <span>⚡</span> Personal Fitness &amp; Nutrition
+                    </div>
+                    <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Live Coach</h1>
+                    <p id="header-goals-summary" class="text-sm text-slate-600 mt-1">Αρχικό: <strong>106 kg</strong> • Τελικός Στόχος: <strong>72 kg</strong></p>
+
+                    <!-- Backup, Product Labels & Settings Toolbar -->
+                    <div class="flex flex-wrap items-center gap-2 mt-3">
+                        <button id="open-settings-btn" type="button" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-100 hover:bg-emerald-200 text-emerald-900 border border-emerald-300/80 text-xs font-bold transition-colors">
+                            <span>⚙️</span> Στόχοι &amp; Ρυθμίσεις
+                        </button>
+                        <button id="open-products-btn" type="button" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-fuchsia-100 hover:bg-fuchsia-200 text-fuchsia-900 border border-fuchsia-300/80 text-xs font-bold transition-colors">
+                            <span>🏷️</span> Τα Προϊόντα μου
+                        </button>
+                        <button id="export-backup-btn" type="button" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-teal-50 hover:bg-teal-100 text-teal-800 border border-teal-200 text-xs font-bold transition-colors">
+                            <span>⬇️</span> Εξαγωγή Backup
+                        </button>
+                        <label for="import-backup-input" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition-colors cursor-pointer">
+                            <span>⬆️</span> Εισαγωγή Backup
+                        </label>
+                        <input type="file" id="import-backup-input" accept=".json" class="hidden">
+                        <span id="backup-status-msg" class="text-xs font-bold text-emerald-600"></span>
+                    </div>
+                </div>
+
+                <!-- Daily Auto-Refreshing Quote Box -->
+                <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 md:max-w-md shadow-xs">
+                    <div class="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-emerald-800 mb-1">
+                        <span>🌿</span> Σκέψη της Ημέρας
+                    </div>
+                    <p id="quote-text" class="text-sm font-semibold text-slate-800 italic leading-relaxed">
+                        «Η σταθερότητα κερδίζει την τελειότητα. Μία μέρα τη φορά.»
+                    </p>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Dashboard Grid -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <!-- LEFT COLUMN: WEIGHT, BMI, TREND & WAIST (5 cols) -->
+            <div class="lg:col-span-5 space-y-6">
+                <div class="bg-white rounded-3xl p-6 shadow-md shadow-emerald-950/5 border border-emerald-100 border-t-4 border-t-emerald-600">
+                    <div class="flex items-center gap-3 mb-5">
+                        <div class="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-xl shadow-xs">
+                            ⚖️
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-extrabold text-slate-900">Ιστορικό Βάρους</h2>
+                            <p class="text-xs text-slate-500">Καταγραφή &amp; Δείκτης Μάζας Σώματος</p>
+                        </div>
+                    </div>
+
+                    <!-- Date + Weight Input Bar -->
+                    <div class="flex flex-col sm:flex-row gap-2 mb-2">
+                        <input type="date" id="weight-date" class="bg-slate-50 border border-slate-200 rounded-2xl px-3 py-2.5 text-sm font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <div class="flex flex-1 gap-2">
+                            <input type="number" id="weight-input" step="0.1" min="40" max="250" placeholder="Κιλά" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-base font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <button id="update-weight-btn" type="button" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-2xl text-sm transition-colors shadow-xs shrink-0">
+                                Προσθήκη
+                            </button>
+                        </div>
+                    </div>
+                    <div id="weight-msg" class="text-xs font-semibold min-h-[1.25rem] mb-3 px-1"></div>
+
+                    <!-- Big Goal Boxes (Side by Side) -->
+                    <div id="progress-container" class="mb-6"></div>
+
+                    <!-- Clean Visual BMI Gauge Section (Green / Yellow / Red / Burgundy) -->
+                    <div class="bg-slate-50/90 border border-slate-200/80 rounded-2xl p-4 mb-6">
+                        <div class="flex items-center justify-between mb-1">
+                            <span class="text-xs font-extrabold uppercase tracking-wider text-slate-600">Δείκτης Μάζας Σώματος (BMI)</span>
+                            <span id="bmi-value-display" class="text-2xl font-black text-slate-900">32.7</span>
+                        </div>
+                        <p id="bmi-category-display" class="text-xs text-slate-600 mb-4">Ύψος: <strong>1.80m</strong> &nbsp;|&nbsp; Κατηγορία: <strong class="text-red-600">Παχυσαρκία 1</strong></p>
+
+                        <!-- Smooth 4-Zone Gradient Bar: Green -> Yellow -> Red -> Deep Burgundy -->
+                        <div class="relative pt-2 pb-1">
+                            <div class="h-4 w-full rounded-full shadow-inner" style="background: linear-gradient(90deg, #10b981 0%, #10b981 12.5%, #facc15 37.5%, #dc2626 62.5%, #4c0519 87.5%, #4c0519 100%);"></div>
+                            <!-- Moving Circle Indicator -->
+                            <div id="bmi-circle-indicator" class="w-6 h-6 rounded-full bg-white border-4 border-slate-900 shadow-md absolute top-1 -translate-x-1/2 transition-all duration-500 flex items-center justify-center" style="left: 63.5%;" title="Η θέση σου τώρα">
+                                <span class="w-2 h-2 rounded-full bg-slate-900"></span>
+                            </div>
+                        </div>
+
+                        <!-- Clean Non-Overlapping Text Labels (No Numbers) -->
+                        <div class="grid grid-cols-4 gap-1 text-center text-[11px] font-extrabold mt-2">
+                            <span class="text-emerald-700 leading-tight">Φυσιολογικό</span>
+                            <span class="text-yellow-600 leading-tight">Υπέρβαρο</span>
+                            <span class="text-red-600 leading-tight">Παχυσαρκία 1</span>
+                            <span class="text-rose-950 leading-tight">Παχυσαρκία 2+</span>
+                        </div>
+                    </div>
+
+                    <!-- Weight Evolution, Proportional Timeline & Forecast Chart -->
+                    <div class="mb-5">
+                        <div class="flex flex-wrap items-center justify-between gap-1 mb-2">
+                            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Εξέλιξη &amp; Πρόβλεψη (600-800g/εβδ)</h3>
+                            <span id="weight-forecast-summary" class="text-[11px] font-extrabold text-emerald-800 bg-emerald-50 px-2.5 py-0.5 rounded-md border border-emerald-200"></span>
+                        </div>
+                        <div class="h-56 relative">
+                            <canvas id="weightChart"></canvas>
+                        </div>
+                    </div>
+
+                    <!-- Weight History Grid with Edit & Delete Buttons -->
+                    <div class="border-t border-slate-100 pt-4 mb-5">
+                        <div class="flex items-center justify-between mb-2.5">
+                            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Καταγραφές Βάρους</h3>
+                            <span id="weight-entries-count" class="text-[11px] font-bold text-slate-400"></span>
+                        </div>
+                        <ul id="weight-history-list" class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-44 overflow-y-auto pr-1 custom-scrollbar">
+                            <!-- Populated by JS -->
+                        </ul>
+                    </div>
+
+                    <!-- Monthly Waist Circumference Tracker -->
+                    <div class="border-t border-slate-100 pt-4">
+                        <div class="flex items-center justify-between mb-2.5">
+                            <div>
+                                <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-600">Περίμετρος Μέσης (1 φορά/μήνα)</h3>
+                                <p id="waist-summary-text" class="text-xs text-slate-400 mt-0.5">Καμία καταγραφή ακόμα</p>
+                            </div>
+                            <span id="waist-diff-badge" class="hidden px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200"></span>
+                        </div>
+                        <div class="flex flex-wrap sm:flex-nowrap gap-2">
+                            <input type="date" id="waist-date" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <input type="number" id="waist-input" step="0.5" min="50" max="200" placeholder="Εκατοστά" class="flex-1 bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <button id="save-waist-btn" type="button" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-3.5 py-2 rounded-xl text-xs transition-colors shrink-0">Αποθήκευση</button>
+                        </div>
+                        <div id="waist-history-pills" class="flex flex-wrap gap-1.5 mt-2.5"></div>
+                    </div>
+                </div>
+
+                <!-- CARD: DAILY NOTES & MOOD (Πώς Αισθάνομαι) -->
+                <div class="bg-white rounded-3xl p-6 shadow-md shadow-emerald-950/5 border border-emerald-100 border-t-4 border-t-teal-600">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 rounded-2xl bg-teal-600 text-white flex items-center justify-center text-xl shadow-xs">
+                            📝
+                        </div>
+                        <div>
+                            <h2 class="text-lg font-extrabold text-slate-900">Σημειώσεις &amp; Πώς Αισθάνομαι</h2>
+                            <p class="text-xs text-slate-500">Ενέργεια, ύπνος, πείνα &amp; αίσθηση σώματος</p>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap items-center gap-2 mb-3">
+                        <input type="date" id="note-date" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <div id="mood-selector-pills" class="flex flex-wrap gap-1.5">
+                            <button type="button" data-mood="⚡ Γεμάτος ενέργεια" class="mood-pill px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200 text-xs font-semibold text-slate-700 transition-colors">⚡ Ενέργεια</button>
+                            <button type="button" data-mood="🙂 Καλά / Σταθερά" class="mood-pill px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200 text-xs font-semibold text-slate-700 transition-colors">🙂 Καλά</button>
+                            <button type="button" data-mood="😴 Κουρασμένος" class="mood-pill px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-fuchsia-50 border border-slate-200 text-xs font-semibold text-slate-700 transition-colors">😴 Κούραση</button>
+                            <button type="button" data-mood="🦵 Πιασμένος" class="mood-pill px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-fuchsia-50 border border-slate-200 text-xs font-semibold text-slate-700 transition-colors">🦵 Πιασμένος</button>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-2 mb-2">
+                        <input type="text" id="note-text-input" placeholder="Γράψε πώς ένιωσες σήμερα..." class="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-xs sm:text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <button id="save-note-btn" type="button" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-2xl text-xs sm:text-sm transition-colors shrink-0">Αποθήκευση</button>
+                    </div>
+                    <div id="note-msg" class="text-xs font-semibold min-h-[1rem] mb-2 px-1"></div>
+
+                    <ul id="notes-history-list" class="space-y-2 max-h-44 overflow-y-auto pr-1 custom-scrollbar">
+                        <!-- Populated by JS -->
+                    </ul>
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: CALORIES/PROTEIN & DYNAMIC WORKOUTS (7 cols) -->
+            <div class="lg:col-span-7 space-y-6">
+
+                <!-- CARD 2: CALORIES, PROTEIN & WATER TRACKER -->
+                <div class="bg-white rounded-3xl p-6 shadow-md shadow-emerald-950/5 border border-emerald-100 border-t-4 border-t-fuchsia-600">
+                    <div class="flex items-center justify-between mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-xl shadow-xs">
+                                🥗
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-extrabold text-slate-900">Θερμίδες &amp; Πρωτεΐνη Ημέρας</h2>
+                                <p class="text-xs text-slate-500">Συμπλήρωσε σταδιακά τα γεύματα της ημέρας</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Date & Water Tracker Bar -->
+                    <div class="flex flex-wrap items-end justify-between gap-3 mb-3 bg-emerald-50/70 p-3 rounded-2xl border border-emerald-200/80">
+                        <div>
+                            <label for="food-date" class="block text-xs font-bold text-slate-600 mb-1">Ημερομηνία Γευμάτων</label>
+                            <input type="date" id="food-date" class="bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-700">
+                        </div>
+                        <!-- Water Tracker -->
+                        <div class="flex flex-col items-start sm:items-end">
+                            <div class="text-xs font-bold text-emerald-800 mb-1 flex items-center gap-1.5">
+                                <span>💧 Νερό:</span>
+                                <span id="water-count-label" class="font-extrabold">0 / 8 ποτήρια</span>
+                            </div>
+                            <div id="water-glasses-container" class="flex items-center gap-1 flex-wrap">
+                                <!-- Water drops populated by JS -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Meals Quick Add & Copy Yesterday -->
+                    <div class="mb-3">
+                        <div class="flex items-center justify-between mb-1.5">
+                            <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">Γρήγορη προσθήκη:</span>
+                            <button id="copy-yesterday-btn" type="button" class="text-xs font-bold text-fuchsia-700 hover:text-fuchsia-900 hover:bg-fuchsia-50 px-2 py-1 rounded-lg transition-colors flex items-center gap-1">
+                                <span>📋</span> Αντιγραφή χθεσινών
+                            </button>
+                        </div>
+                        <div class="flex flex-wrap gap-1.5" id="quick-meal-chips">
+                            <!-- Dynamically populated with your most recent meals -->
+                        </div>
+                    </div>
+
+                    <!-- Clean 5-Meal Inputs -->
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-3">
+                        <div>
+                            <label for="food-breakfast" class="block text-[11px] font-bold text-slate-600 mb-0.5">Πρωινό</label>
+                            <input type="text" id="food-breakfast" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                        <div>
+                            <label for="food-snack1" class="block text-[11px] font-bold text-slate-600 mb-0.5">Σνακ 1</label>
+                            <input type="text" id="food-snack1" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                        <div>
+                            <label for="food-lunch" class="block text-[11px] font-bold text-slate-600 mb-0.5">Μεσημεριανό</label>
+                            <input type="text" id="food-lunch" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                        <div>
+                            <label for="food-snack2" class="block text-[11px] font-bold text-slate-600 mb-0.5">Σνακ 2</label>
+                            <input type="text" id="food-snack2" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                        <div class="sm:col-span-2">
+                            <label for="food-dinner" class="block text-[11px] font-bold text-slate-600 mb-0.5">Βραδινό</label>
+                            <input type="text" id="food-dinner" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                    </div>
+                    <button id="calc-calories-btn" type="button" class="w-full bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-extrabold py-2.5 px-4 rounded-2xl text-sm transition-colors shadow-sm flex items-center justify-center gap-2 mb-2">
+                        <span>Υπολογισμός Συνόλου Ημέρας</span>
+                        <svg id="ai-loading" class="animate-spin h-4 w-4 text-white hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                    </button>
+
+                    <div id="calories-msg" class="text-sm font-medium min-h-[1.25rem] mb-2 px-1 transition-colors"></div>
+
+                    <!-- Prominent Daily Calories & Protein Summary Card + Visible Per-Meal Breakdown -->
+                    <div id="daily-nutrition-summary-card" class="hidden bg-emerald-50/75 border border-emerald-200 rounded-2xl p-4 mb-4 shadow-xs">
+                        <!-- Calories Big Display -->
+                        <div class="mb-3.5">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-900">🔥 Θερμίδες μέχρι στιγμής</span>
+                                <span id="cal-percent-badge" class="px-2.5 py-0.5 rounded-full bg-fuchsia-600 text-white text-xs font-extrabold">0%</span>
+                            </div>
+                            <div class="flex items-baseline justify-between flex-wrap gap-2 my-1">
+                                <div>
+                                    <span id="cal-current-big" class="text-3xl sm:text-4xl font-black text-emerald-800 tracking-tight">0</span>
+                                    <span class="text-sm sm:text-base font-bold text-slate-600 ml-1">/ <span id="cal-goal-display">1.800</span> kcal</span>
+                                </div>
+                                <span id="cal-remaining-text" class="text-xs font-bold text-slate-700 bg-white px-2.5 py-1 rounded-lg border border-slate-200">Απομένουν: 1.800 kcal</span>
+                            </div>
+                            <div class="w-full bg-emerald-200/70 rounded-full h-2.5 overflow-hidden mt-2">
+                                <div id="cal-bar-fill" class="bg-fuchsia-600 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Protein & Fiber Display -->
+                        <div class="pt-3 border-t border-emerald-200/70">
+                            <div class="flex flex-wrap justify-between items-center gap-2 text-xs font-semibold mb-1.5">
+                                <span class="text-slate-800 font-bold">💪 Πρωτεΐνη &amp; 🌾 Φυτικές Ίνες</span>
+                                <div class="flex items-center gap-2">
+                                    <span id="fiber-val-text" class="px-2 py-0.5 rounded-md bg-teal-100 text-teal-900 text-[11px] font-extrabold">🌾 0g ίνες</span>
+                                    <span id="protein-val-text" class="text-emerald-700 font-black text-sm">0 / 130g</span>
+                                    <span id="protein-percent-badge" class="px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 text-[11px] font-extrabold">0%</span>
+                                </div>
+                            </div>
+                            <div class="w-full bg-slate-200/80 rounded-full h-2 overflow-hidden">
+                                <div id="protein-bar-fill" class="bg-emerald-600 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+
+                        <!-- Visible Per-Meal Breakdown List with Edit & Delete -->
+                        <div id="daily-meals-breakdown-wrapper" class="mt-3.5 pt-3 border-t border-emerald-200/70">
+                            <div class="text-[11px] font-extrabold uppercase tracking-wider text-slate-600 mb-2">🍽️ Τι έφαγες σήμερα (Επεξεργασία / Διαγραφή):</div>
+                            <ul id="daily-meals-breakdown-list" class="space-y-1.5">
+                                <!-- Populated dynamically by JS -->
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- Calories Analytics Tabs & Chart (Week & Month Navigation) -->
+                    <div class="border-t border-slate-100 pt-4">
+                        <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+                            <span class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Ιστορικό Θερμίδων &amp; Πρωτεΐνης</span>
+                            <div class="inline-flex bg-slate-100 p-1 rounded-xl">
+                                <button id="cal-tab-week" type="button" class="px-3 py-1 rounded-lg text-xs font-bold bg-white text-emerald-700 shadow-xs transition-all">Εβδομάδα</button>
+                                <button id="cal-tab-month" type="button" class="px-3 py-1 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-700 transition-all">Μήνας</button>
+                            </div>
+                        </div>
+
+                        <!-- Period Navigation Bar -->
+                        <div class="flex items-center justify-between bg-slate-50 p-2 rounded-xl border border-slate-200 mb-3">
+                            <button id="cal-prev-btn" type="button" class="px-3 py-1 rounded-lg bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs">&lt; Προηγ.</button>
+                            <span id="cal-period-display" class="text-xs sm:text-sm font-bold text-slate-800">-</span>
+                            <button id="cal-next-btn" type="button" class="px-3 py-1 rounded-lg bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs">Επόμ. &gt;</button>
+                        </div>
+
+                        <!-- Weekly Average Banner -->
+                        <div id="week-avg-container" class="text-center text-xs text-slate-700 mb-3 bg-slate-50 py-2 px-3 rounded-xl border border-slate-200/80 font-semibold">
+                            Μέσος Όρος Εβδομάδας: <strong id="week-avg-val" class="text-fuchsia-700">0</strong> kcal • <strong id="week-protein-avg-val" class="text-emerald-700">0</strong>g Πρωτεΐνη / ημέρα
+                        </div>
+
+                        <!-- Monthly Summary Cards (Shown on Month Tab) -->
+                        <div id="month-avg-container" class="hidden mb-3">
+                            <div class="grid grid-cols-3 gap-2 mb-3">
+                                <div class="bg-fuchsia-50 border border-fuchsia-200/80 rounded-2xl p-2.5 text-center">
+                                    <div class="text-[11px] font-bold text-fuchsia-800">Μ.Ο. Θερμίδων</div>
+                                    <div class="text-lg sm:text-xl font-black text-fuchsia-800 mt-0.5"><span id="month-avg-val">0</span> <span class="text-[11px] font-bold">kcal</span></div>
+                                </div>
+                                <div class="bg-emerald-50 border border-emerald-200/80 rounded-2xl p-2.5 text-center">
+                                    <div class="text-[11px] font-bold text-emerald-800">Μ.Ο. Πρωτεΐνης</div>
+                                    <div class="text-lg sm:text-xl font-black text-emerald-800 mt-0.5"><span id="month-protein-avg-val">0</span><span class="text-xs font-bold">g</span></div>
+                                </div>
+                                <div class="bg-teal-50 border border-teal-200/80 rounded-2xl p-2.5 text-center">
+                                    <div class="text-[11px] font-bold text-teal-800">Ημέρες</div>
+                                    <div id="month-cal-days-count" class="text-lg sm:text-xl font-black text-teal-900 mt-0.5">0</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="h-44 relative">
+                            <canvas id="caloriesChart"></canvas>
+                        </div>
+
+                        <!-- Monthly Day-by-Day Nutrition Log (Shown on Month Tab) -->
+                        <div id="month-calories-log-wrapper" class="hidden mt-4 pt-3 border-t border-slate-100">
+                            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2">Ημερολόγιο Μήνα (Πάτησε για προβολή)</h3>
+                            <ul id="month-calories-log" class="space-y-1.5 max-h-44 overflow-y-auto pr-1 custom-scrollbar"></ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CARD 3: DYNAMIC WORKOUT TRACKER (WEEK & MONTH) -->
+                <div class="bg-white rounded-3xl p-6 shadow-md shadow-emerald-950/5 border border-emerald-100 border-t-4 border-t-emerald-600">
+                    <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-xl shadow-xs">
+                                🏃
+                            </div>
+                            <div>
+                                <h2 class="text-lg font-extrabold text-slate-900">Πρόγραμμα &amp; Καταγραφή Άσκησης</h2>
+                                <p class="text-xs text-slate-500">Πάτησε σε οποιαδήποτε μέρα για καταγραφή</p>
+                            </div>
+                        </div>
+
+                        <!-- Week / Month Tabs -->
+                        <div class="inline-flex bg-slate-100 p-1 rounded-xl">
+                            <button id="w-tab-week" type="button" class="px-3 py-1 rounded-lg text-xs font-bold bg-white text-emerald-700 shadow-xs transition-all">Εβδομάδα</button>
+                            <button id="w-tab-month" type="button" class="px-3 py-1 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-700 transition-all">Μήνας</button>
+                        </div>
+                    </div>
+
+                    <!-- Week View -->
+                    <div id="workout-week-view">
+                        <!-- Dynamic Auto-Adjust Phase & Weekly Target Banner -->
+                        <div id="auto-phase-banner" class="mb-3"></div>
+
+                        <div class="flex items-center justify-between bg-slate-50 p-2 rounded-xl border border-slate-200 mb-3">
+                            <button id="w-prev-week-btn" type="button" class="px-3 py-1 rounded-lg bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs">&lt; Προηγ.</button>
+                            <span id="current-w-week-display" class="text-xs sm:text-sm font-bold text-slate-800">-</span>
+                            <button id="w-next-week-btn" type="button" class="px-3 py-1 rounded-lg bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs">Επόμ. &gt;</button>
+                        </div>
+
+                        <div id="dynamic-week-list" class="space-y-2">
+                            <!-- 7 Day Buttons Populated by JS -->
+                        </div>
+                    </div>
+
+                    <!-- Month View -->
+                    <div id="workout-month-view" class="hidden">
+                        <div class="flex items-center justify-between bg-slate-50 p-2 rounded-xl border border-slate-200 mb-4">
+                            <button id="w-prev-month-btn" type="button" class="px-3 py-1 rounded-lg bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs">&lt; Προηγ.</button>
+                            <span id="current-w-month-display" class="text-xs sm:text-sm font-bold text-slate-800">-</span>
+                            <button id="w-next-month-btn" type="button" class="px-3 py-1 rounded-lg bg-white hover:bg-slate-100 border border-slate-200 text-slate-700 font-bold text-xs">Επόμ. &gt;</button>
+                        </div>
+
+                        <!-- Monthly Totals Grid -->
+                        <div class="grid grid-cols-3 gap-2.5 mb-4">
+                            <div class="bg-emerald-50 border border-emerald-200/80 rounded-2xl p-3 text-center">
+                                <div class="text-[11px] font-bold text-emerald-800">Προπονήσεις</div>
+                                <div id="month-total-workouts" class="text-2xl font-black text-emerald-800 mt-0.5">0</div>
+                            </div>
+                            <div class="bg-teal-50 border border-teal-200/80 rounded-2xl p-3 text-center">
+                                <div class="text-[11px] font-bold text-teal-800">Σύνολο Λεπτών</div>
+                                <div id="month-total-mins" class="text-2xl font-black text-teal-800 mt-0.5">0'</div>
+                            </div>
+                            <div class="bg-fuchsia-50 border border-fuchsia-200/80 rounded-2xl p-3 text-center">
+                                <div class="text-[11px] font-bold text-fuchsia-800">Απόσταση</div>
+                                <div id="month-total-km" class="text-2xl font-black text-fuchsia-900 mt-0.5">0 <span class="text-xs font-bold">χλμ</span></div>
+                            </div>
+                        </div>
+
+                        <!-- Aerobic vs Strength Breakdown -->
+                        <div class="mb-4">
+                            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2">Ανάλυση ανά Είδος Άσκησης</h3>
+                            <div id="month-breakdown-list" class="space-y-2"></div>
+                        </div>
+
+                        <!-- Detailed Month Log -->
+                        <div>
+                            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2">Ημερολόγιο Μήνα</h3>
+                            <ul id="month-workouts-log" class="space-y-1.5 max-h-48 overflow-y-auto pr-1 custom-scrollbar"></ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOTTOM SECTION: QUICK MEALS (5') & HOME STRENGTH IDEAS (15') -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
+
+            <!-- CARD 4: QUICK 5-MINUTE MEAL IDEAS -->
+            <div class="bg-white rounded-3xl p-6 shadow-md shadow-emerald-950/5 border border-emerald-100 border-t-4 border-t-fuchsia-600">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 rounded-2xl bg-fuchsia-100 text-fuchsia-700 flex items-center justify-center text-xl">
+                        ⏱️
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-extrabold text-slate-900">Γρήγορες Ιδέες Γευμάτων (5')</h2>
+                        <p class="text-xs text-slate-500">Απλά υλικά, χωρίς στερήσεις &amp; μαγείρεμα</p>
+                    </div>
+                </div>
+
+                <div class="space-y-2.5">
+                    <!-- Breakfast Accordion -->
+                    <div class="border border-slate-200/80 rounded-2xl overflow-hidden">
+                        <button type="button" onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-slate-100/80 text-left font-bold text-sm text-slate-800 transition-colors">
+                            <span>🍳 Πρωινό (Ενέργεια &amp; Πρωτεΐνη)</span>
+                            <span class="accordion-icon text-slate-400 transition-transform duration-200">▼</span>
+                        </button>
+                        <div class="hidden p-4 bg-white text-xs sm:text-sm text-slate-600 space-y-2 border-t border-slate-100">
+                            <p>• <strong>Γιαούρτι 2% (200g)</strong> + 1 φρούτο εποχής + κανέλα ή 5-6 αμύγδαλα.</p>
+                            <p>• <strong>2 βραστά αυγά</strong> (ή ομελέτα σε αντικολλητικό) + 1 παξιμάδι χαρουπιού + ντοματίνια.</p>
+                            <p>• <strong>Τορτίγια ολικής</strong> με cottage cheese, γαλοπούλα ή αυγό και αγγούρι.</p>
+                            <p>• <strong>Παξιμάδι χαρουπιού</strong> βρεγμένο ελαφρά + cottage cheese + 1 φρούτο.</p>
+                        </div>
+                    </div>
+
+                    <!-- Snacks Accordion -->
+                    <div class="border border-slate-200/80 rounded-2xl overflow-hidden">
+                        <button type="button" onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-slate-100/80 text-left font-bold text-sm text-slate-800 transition-colors">
+                            <span>🍎 Ενδιάμεσα Σνακ (Χωρίς Πείνα)</span>
+                            <span class="accordion-icon text-slate-400 transition-transform duration-200">▼</span>
+                        </button>
+                        <div class="hidden p-4 bg-white text-xs sm:text-sm text-slate-600 space-y-2 border-t border-slate-100">
+                            <p>• <strong>1-2 φρούτα εποχής</strong> (μήλο, μπανάνα, πορτοκάλι, αχλάδι).</p>
+                            <p>• <strong>1 μικρό γιαούρτι 2%</strong> σκέτο ή με λίγη κανέλα.</p>
+                            <p>• <strong>1 βραστό αυγό</strong> + 1 μικρό παξιμαδάκι χαρουπιού.</p>
+                            <p>• <strong>3-4 κουταλιές cottage</strong> με αγγουράκι ή καρότο.</p>
+                        </div>
+                    </div>
+
+                    <!-- Lunch Accordion -->
+                    <div class="border border-slate-200/80 rounded-2xl overflow-hidden">
+                        <button type="button" onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-slate-100/80 text-left font-bold text-sm text-slate-800 transition-colors">
+                            <span>🥗 Μεσημεριανό (Έτοιμο σε 5 Λεπτά)</span>
+                            <span class="accordion-icon text-slate-400 transition-transform duration-200">▼</span>
+                        </button>
+                        <div class="hidden p-4 bg-white text-xs sm:text-sm text-slate-600 space-y-2 border-t border-slate-100">
+                            <p>• <strong>Τονοσαλάτα Express:</strong> 1 κονσέρβα τόνου σε νερό + έτοιμη πράσινη σαλάτα/ντομάτα + 1 κ.σ. ελαιόλαδο + 1 παξιμάδι χαρουπιού.</p>
+                            <p>• <strong>Όσπρια στον ατμό (φακές/ρεβίθια):</strong> Ανακατεμένα με ντομάτα, αγγούρι, λεμόνι &amp; 2 κ.σ. cottage για έξτρα πρωτεΐνη.</p>
+                            <p>• <strong>Γρήγορα Αυγά:</strong> 3 αυγά μάτια ή στραπατσάδα με ντομάτα + σαλάτα + 1 τορτίγια ολικής.</p>
+                            <p>• <strong>Τορτίγια Wrap:</strong> Μεγάλη τορτίγια ολικής γεμιστή με τόνο ή αυγό, cottage και άφθονη σαλάτα.</p>
+                        </div>
+                    </div>
+
+                    <!-- Dinner Accordion -->
+                    <div class="border border-slate-200/80 rounded-2xl overflow-hidden">
+                        <button type="button" onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-slate-100/80 text-left font-bold text-sm text-slate-800 transition-colors">
+                            <span>🌙 Βραδινό (Ελαφρύ &amp; Χορταστικό)</span>
+                            <span class="accordion-icon text-slate-400 transition-transform duration-200">▼</span>
+                        </button>
+                        <div class="hidden p-4 bg-white text-xs sm:text-sm text-slate-600 space-y-2 border-t border-slate-100">
+                            <p>• <strong>Ντάκος Χαρουπιού:</strong> Παξιμάδι χαρουπιού + τριμμένη ντομάτα + cottage cheese + ρίγανη &amp; 1 κ.γ. ελαιόλαδο.</p>
+                            <p>• <strong>Γιαούρτι 2% Bowl:</strong> 200g γιαούρτι 2% + 1 φρούτο κομμένο + 1 κ.γ. μέλι ή κανέλα.</p>
+                            <p>• <strong>Σαλάτα με Αυγά:</strong> Πράσινη σαλάτα με 2 βραστά αυγά και 1 μικρή τορτίγια ολικής.</p>
+                            <p>• <strong>Ελαφρύς Τόνος:</strong> Μισή ή μία κονσέρβα τόνος με αγγούρι, ντομάτα και λεμόνι.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CARD 5: 15-MINUTE STRENGTH ROUTINES -->
+            <div class="bg-white rounded-3xl p-6 shadow-md shadow-emerald-900/5 border border-emerald-100 border-t-4 border-t-emerald-500">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 rounded-2xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl">
+                        💪
+                    </div>
+                    <div>
+                        <h2 class="text-lg font-extrabold text-slate-900">Ιδέες Ενδυνάμωσης Σπιτιού (15')</h2>
+                        <p class="text-xs text-slate-500">2 φορές/εβδ για προστασία μυών &amp; αρθρώσεων</p>
+                    </div>
+                </div>
+
+                <div class="space-y-2.5">
+                    <!-- Routine 1 -->
+                    <div class="border border-slate-200/80 rounded-2xl overflow-hidden">
+                        <button type="button" onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-slate-100/80 text-left font-bold text-sm text-slate-800 transition-colors">
+                            <span>1️⃣ Βασικό Ολόσωμο (Οι 4 Βασικές)</span>
+                            <span class="accordion-icon text-slate-400 transition-transform duration-200">▼</span>
+                        </button>
+                        <div class="hidden p-4 bg-white text-xs sm:text-sm text-slate-600 space-y-2 border-t border-slate-100">
+                            <p class="text-xs text-emerald-700 font-semibold">3 γύροι • 45'' διάλειμμα ανάμεσα στους γύρους:</p>
+                            <p>• <strong>Καθίσματα σε καρέκλα (Box Squats):</strong> 12-15 επαναλήψεις (ακουμπάς ελαφρά και ανεβαίνεις).</p>
+                            <p>• <strong>Κωπηλατική / Πιέσεις με βαράκια ή Kettlebell:</strong> 12 επαναλήψεις ανά χέρι.</p>
+                            <p>• <strong>Κάμψεις στον τοίχο ή σε πάγκο κουζίνας:</strong> 10-15 επαναλήψεις (ασφαλές για ώμους &amp; μέση).</p>
+                            <p>• <strong>Σανίδα στα γόνατα (Knee Plank):</strong> 25-40 δευτερόλεπτα σταθερά.</p>
+                        </div>
+                    </div>
+
+                    <!-- Routine 2 -->
+                    <div class="border border-slate-200/80 rounded-2xl overflow-hidden">
+                        <button type="button" onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-slate-100/80 text-left font-bold text-sm text-slate-800 transition-colors">
+                            <span>2️⃣ Πόδια &amp; Γλουτοί (Φιλικό στα Γόνατα)</span>
+                            <span class="accordion-icon text-slate-400 transition-transform duration-200">▼</span>
+                        </button>
+                        <div class="hidden p-4 bg-white text-xs sm:text-sm text-slate-600 space-y-2 border-t border-slate-100">
+                            <p class="text-xs text-emerald-700 font-semibold">3 γύροι • Ιδανικό για προετοιμασία τρεξίματος:</p>
+                            <p>• <strong>Γέφυρα Γλουτών (Glute Bridges) στο πάτωμα:</strong> 15 επαναλήψεις (σφίξιμο ψηλά 2'').</p>
+                            <p>• <strong>Άρσεις Θανάτου με Kettlebell / Βαράκια (RDL):</strong> 12 επαναλήψεις με ίσια πλάτη.</p>
+                            <p>• <strong>Ακροστασίες Γαμπών (Calf Raises) κρατώντας τοίχο:</strong> 15-20 επαναλήψεις (προστατεύει αχίλλειο).</p>
+                            <p>• <strong>Κάθισμα στον τοίχο (Wall Sit):</strong> 30 δευτερόλεπτα.</p>
+                        </div>
+                    </div>
+
+                    <!-- Routine 3 -->
+                    <div class="border border-slate-200/80 rounded-2xl overflow-hidden">
+                        <button type="button" onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-slate-100/80 text-left font-bold text-sm text-slate-800 transition-colors">
+                            <span>3️⃣ Άνω Σώμα &amp; Στάση Σώματος</span>
+                            <span class="accordion-icon text-slate-400 transition-transform duration-200">▼</span>
+                        </button>
+                        <div class="hidden p-4 bg-white text-xs sm:text-sm text-slate-600 space-y-2 border-t border-slate-100">
+                            <p class="text-xs text-emerald-700 font-semibold">3 γύροι • Δυνατή πλάτη &amp; ώμοι:</p>
+                            <p>• <strong>Κωπηλατική σκυφτός με βαράκια:</strong> 12 επαναλήψεις.</p>
+                            <p>• <strong>Πιέσεις ώμων όρθιος με βαράκια:</strong> 10-12 επαναλήψεις.</p>
+                            <p>• <strong>Κάμψεις σε πάγκο ή καναπέ:</strong> 10-12 επαναλήψεις.</p>
+                            <p>• <strong>Bird-Dog (στα τέσσερα, έκταση αντίθετου χεριού-ποδιού):</strong> 8 ανά πλευρά.</p>
+                        </div>
+                    </div>
+
+                    <!-- Routine 4 -->
+                    <div class="border border-slate-200/80 rounded-2xl overflow-hidden">
+                        <button type="button" onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-slate-100/80 text-left font-bold text-sm text-slate-800 transition-colors">
+                            <span>4️⃣ Κυκλική Ενδυνάμωση &amp; Κορμός</span>
+                            <span class="accordion-icon text-slate-400 transition-transform duration-200">▼</span>
+                        </button>
+                        <div class="hidden p-4 bg-white text-xs sm:text-sm text-slate-600 space-y-2 border-t border-slate-100">
+                            <p class="text-xs text-emerald-700 font-semibold">3 γύροι • Σταθερός ρυθμός:</p>
+                            <p>• <strong>Καθίσματα σε καρέκλα κρατώντας βάρος στο στήθος:</strong> 12 επαναλήψεις.</p>
+                            <p>• <strong>Dead Bug (ανάσκελα, εναλλαγή ποδιών):</strong> 10 επαναλήψεις αργά.</p>
+                            <p>• <strong>Farmer's Walk (περπάτημα στο σπίτι κρατώντας βαράκια):</strong> 45 δευτερόλεπτα.</p>
+                            <p>• <strong>Σανίδα στα γόνατα ή σε πάγκο:</strong> 30-45 δευτερόλεπτα.</p>
+                        </div>
+                    </div>
+
+                    <!-- Routine 5 -->
+                    <div class="border border-slate-200/80 rounded-2xl overflow-hidden">
+                        <button type="button" onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-slate-100/80 text-left font-bold text-sm text-slate-800 transition-colors">
+                            <span>5️⃣ Αποκατάσταση &amp; Mobility (15')</span>
+                            <span class="accordion-icon text-slate-400 transition-transform duration-200">▼</span>
+                        </button>
+                        <div class="hidden p-4 bg-white text-xs sm:text-sm text-slate-600 space-y-2 border-t border-slate-100">
+                            <p class="text-xs text-emerald-700 font-semibold">Ιδανικό για ημέρες ξεκούρασης ή πιασίματος:</p>
+                            <p>• <strong>Cat-Cow (γάτα-αγελάδα για μέση):</strong> 10 αργές επαναλήψεις.</p>
+                            <p>• <strong>Διάταση καμπτήρων ισχίου (γονατιστός):</strong> 30'' ανά πόδι.</p>
+                            <p>• <strong>Διάταση γάμπας &amp; οπίσθιων μηριαίων:</strong> 30'' ανά πόδι.</p>
+                            <p>• <strong>Βαθιές διαφραγματικές αναπνοές:</strong> 2 λεπτά χαλάρωση.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WORKOUT LOGGING MODAL -->
+    <div id="workout-modal" class="fixed inset-0 bg-slate-900/40 hidden flex items-center justify-center z-50 px-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl p-6 shadow-2xl w-full max-w-md border border-slate-100">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800">🏃 Καταγραφή Ημέρας</h3>
+                    <p id="modal-date-title" class="text-xs font-bold text-emerald-700 mt-0.5">-</p>
+                </div>
+                <button id="modal-close-btn" type="button" class="text-slate-400 hover:text-slate-600 text-2xl leading-none p-1">&times;</button>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label for="modal-workout-type" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Είδος Δραστηριότητας</label>
+                    <select id="modal-workout-type" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-3 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <option value="Run/Walk">🏃‍♂️ Run/Walk</option>
+                        <option value="Power Walk">🚶‍♂️ Power Walk</option>
+                        <option value="Τρέξιμο">🏅 Τρέξιμο</option>
+                        <option value="Ποδήλατο">🚴‍♂️ Ποδήλατο</option>
+                        <option value="Κολύμπι">🏊‍♂️ Κολύμπι</option>
+                        <option value="Ελλειπτικό / Διάδρομος">👟 Ελλειπτικό / Διάδρομος</option>
+                        <option value="Μυϊκή Ενδυνάμωση">💪 Μυϊκή Ενδυνάμωση</option>
+                        <option value="TRX">🪢 TRX</option>
+                        <option value="Stretching / Mobility">🧘‍♂️ Stretching / Mobility</option>
+                        <option value="Ξεκούραση">🌱 Ξεκούραση</option>
+                    </select>
+                </div>
+
+                <div id="modal-duration-group">
+                    <label for="modal-duration" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Διάρκεια (λεπτά)</label>
+                    <input type="number" id="modal-duration" min="1" max="600" placeholder="Λεπτά" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-base font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+
+                <div id="modal-distance-group">
+                    <label for="modal-distance" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Απόσταση (χλμ)</label>
+                    <input type="number" id="modal-distance" step="0.1" min="0" max="300" placeholder="Χιλιόμετρα" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-base font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+            </div>
+
+            <div class="mt-6 flex gap-2">
+                <button id="modal-delete-btn" type="button" class="py-3 px-4 rounded-xl bg-red-50 text-red-600 font-medium hover:bg-red-100 transition-colors hidden" title="Διαγραφή καταχώρησης">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                </button>
+                <button id="modal-save-btn" type="button" class="flex-1 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition-colors shadow-sm">Αποθήκευση</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- CUSTOM NUTRITION LABEL PRODUCTS MODAL (Ultra-lightweight text storage) -->
+    <div id="products-modal" class="fixed inset-0 bg-slate-900/40 hidden flex items-center justify-center z-50 px-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl p-6 shadow-2xl w-full max-w-md border border-slate-100 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-2">
+                <h3 class="text-lg font-bold text-slate-800">🏷️ Τα Προϊόντα μου (Ετικέτες)</h3>
+                <button id="products-close-btn" type="button" class="text-slate-400 hover:text-slate-600 text-2xl leading-none p-1">&times;</button>
+            </div>
+            <p class="text-xs text-slate-500 mb-4 leading-relaxed">Αποθήκευσε ακριβείς τιμές από διατροφικούς πίνακες (μόνο κείμενο, μηδενικό βάρος στη μνήμη). Όταν τα γράφεις στα γεύματά σου, υπολογίζονται αυτόματα με ακρίβεια!</p>
+
+            <div class="space-y-2.5 bg-emerald-50/70 p-3.5 rounded-2xl border border-emerald-200/80 mb-4">
+                <div>
+                    <label for="prod-name-input" class="block text-[11px] font-bold text-slate-600 mb-0.5">Όνομα προϊόντος / μερίδας</label>
+                    <input type="text" id="prod-name-input" placeholder="π.χ. Γιαούρτι 2% 200γρ" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                    <div>
+                        <label for="prod-cal-input" class="block text-[11px] font-bold text-slate-600 mb-0.5">Θερμίδες</label>
+                        <input type="number" id="prod-cal-input" min="0" max="2000" placeholder="kcal" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs font-bold text-slate-800">
+                    </div>
+                    <div>
+                        <label for="prod-prot-input" class="block text-[11px] font-bold text-slate-600 mb-0.5">Πρωτεΐνη (g)</label>
+                        <input type="number" id="prod-prot-input" min="0" max="200" step="0.5" placeholder="g" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs font-bold text-slate-800">
+                    </div>
+                    <div>
+                        <label for="prod-fat-input" class="block text-[11px] font-bold text-slate-600 mb-0.5">Λιπαρά (g)</label>
+                        <input type="number" id="prod-fat-input" min="0" max="200" step="0.5" placeholder="g" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs font-bold text-slate-800">
+                    </div>
+                    <div>
+                        <label for="prod-fiber-input" class="block text-[11px] font-bold text-slate-600 mb-0.5">Φυτικές Ίνες (g)</label>
+                        <input type="number" id="prod-fiber-input" min="0" max="200" step="0.5" placeholder="g" class="w-full bg-white border border-slate-200 rounded-xl px-2.5 py-2 text-xs font-bold text-slate-800">
+                    </div>
+                </div>
+                <button id="add-custom-product-btn" type="button" class="w-full py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold transition-colors">
+                    + Αποθήκευση Προϊόντος
+                </button>
+            </div>
+
+            <h4 class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 mb-2">Αποθηκευμένα Προϊόντα</h4>
+            <ul id="custom-products-list" class="space-y-1.5 max-h-48 overflow-y-auto pr-1 custom-scrollbar">
+                <!-- Populated by JS -->
+            </ul>
+        </div>
+    </div>
+
+    <!-- SETTINGS & GOALS MODAL -->
+    <div id="settings-modal" class="fixed inset-0 bg-slate-900/40 hidden flex items-center justify-center z-50 px-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl p-6 shadow-2xl w-full max-w-md border border-slate-100 max-h-[90vh] overflow-y-auto">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-slate-800">⚙️ Προσωπικοί Στόχοι &amp; Ρυθμίσεις</h3>
+                <button id="settings-close-btn" type="button" class="text-slate-400 hover:text-slate-600 text-2xl leading-none p-1">&times;</button>
+            </div>
+            <div class="grid grid-cols-2 gap-3 text-sm">
+                <div>
+                    <label for="set-height" class="block text-xs font-semibold text-slate-500 mb-1">Ύψος (m)</label>
+                    <input type="number" id="set-height" step="0.01" min="1.20" max="2.30" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-bold text-slate-800">
+                </div>
+                <div>
+                    <label for="set-mid-goal" class="block text-xs font-semibold text-slate-500 mb-1">Ενδιάμεσος Στόχος (kg)</label>
+                    <input type="number" id="set-mid-goal" step="0.5" min="40" max="200" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-bold text-slate-800">
+                </div>
+                <div>
+                    <label for="set-run-unlock" class="block text-xs font-semibold text-slate-500 mb-1">Όριο Τρεξίματος (kg)</label>
+                    <input type="number" id="set-run-unlock" step="0.5" min="40" max="200" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-bold text-slate-800">
+                </div>
+                <div>
+                    <label for="set-final-goal" class="block text-xs font-semibold text-slate-500 mb-1">Τελικός Στόχος (kg)</label>
+                    <input type="number" id="set-final-goal" step="0.5" min="40" max="200" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-bold text-slate-800">
+                </div>
+                <div>
+                    <label for="set-weekly-km" class="block text-xs font-semibold text-slate-500 mb-1">Στόχος Χλμ/Εβδ (Τελικός)</label>
+                    <input type="number" id="set-weekly-km" step="1" min="5" max="150" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-bold text-slate-800">
+                </div>
+                <div>
+                    <label for="set-calorie-goal" class="block text-xs font-semibold text-slate-500 mb-1">Στόχος Θερμίδων (kcal/ημ)</label>
+                    <input type="number" id="set-calorie-goal" step="50" min="1000" max="5000" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-bold text-slate-800">
+                </div>
+                <div>
+                    <label for="set-protein-goal" class="block text-xs font-semibold text-slate-500 mb-1">Στόχος Πρωτεΐνης (g/ημ)</label>
+                    <input type="number" id="set-protein-goal" step="5" min="50" max="300" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-bold text-slate-800">
+                </div>
+                <div>
+                    <label for="set-water-goal" class="block text-xs font-semibold text-slate-500 mb-1">Στόχος Νερού (ποτήρια)</label>
+                    <input type="number" id="set-water-goal" step="1" min="4" max="16" class="w-full bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 font-bold text-slate-800">
+                </div>
+            </div>
+            <div class="mt-5 flex gap-2">
+                <button id="settings-reset-btn" type="button" class="px-4 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 text-xs font-semibold transition-colors">Επαναφορά Αρχικών</button>
+                <button id="settings-save-btn" type="button" class="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold transition-colors">Αποθήκευση Ρυθμίσεων</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- BACKUP RESTORE CONFIRMATION MODAL -->
+    <div id="restore-modal" class="fixed inset-0 bg-slate-900/40 hidden flex items-center justify-center z-50 px-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl p-6 shadow-2xl w-full max-w-sm border border-slate-100">
+            <h3 class="text-lg font-bold text-slate-800 mb-2">⬆️ Επαναφορά Ιστορικού</h3>
+            <p id="restore-summary-text" class="text-sm text-slate-600 mb-4 leading-relaxed"></p>
+            <div class="flex gap-2">
+                <button id="restore-cancel-btn" type="button" class="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold transition-colors">Ακύρωση</button>
+                <button id="restore-confirm-btn" type="button" class="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold transition-colors">Επαναφορά</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT WEIGHT ENTRY MODAL -->
+    <div id="edit-weight-modal" class="fixed inset-0 bg-slate-900/40 hidden flex items-center justify-center z-50 px-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl p-6 shadow-2xl w-full max-w-sm border border-slate-100">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-bold text-slate-800">✏️ Επεξεργασία Βάρους</h3>
+                <button id="edit-weight-close-btn" type="button" class="text-slate-400 hover:text-slate-600 text-2xl leading-none p-1">&times;</button>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label for="edit-weight-date" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Ημερομηνία</label>
+                    <input type="date" id="edit-weight-date" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-sm font-medium text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+                <div>
+                    <label for="edit-weight-input" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Βάρος (kg)</label>
+                    <input type="number" id="edit-weight-input" step="0.1" min="40" max="250" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-base font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                </div>
+            </div>
+            <div class="mt-5 flex gap-2">
+                <button id="edit-weight-cancel-btn" type="button" class="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold transition-colors">Ακύρωση</button>
+                <button id="edit-weight-save-btn" type="button" class="flex-1 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-bold transition-colors shadow-xs">Αποθήκευση</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDIT LOGGED MEAL MODAL -->
+    <div id="edit-meal-modal" class="fixed inset-0 bg-slate-900/40 hidden flex items-center justify-center z-50 px-4 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl p-6 shadow-2xl w-full max-w-sm border border-slate-100">
+            <div class="flex justify-between items-center mb-4">
+                <div>
+                    <h3 class="text-lg font-bold text-slate-800">✏️ Επεξεργασία Γεύματος</h3>
+                    <p id="edit-meal-label-subtitle" class="text-xs font-bold text-fuchsia-600 mt-0.5">-</p>
+                </div>
+                <button id="edit-meal-close-btn" type="button" class="text-slate-400 hover:text-slate-600 text-2xl leading-none p-1">&times;</button>
+            </div>
+            <div class="space-y-3">
+                <div>
+                    <label for="edit-meal-text" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Τι έφαγες;</label>
+                    <input type="text" id="edit-meal-text" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-sm font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
+                </div>
+                <div>
+                    <label for="edit-meal-calories" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1">Θερμίδες (kcal)</label>
+                    <input type="number" id="edit-meal-calories" min="0" max="4000" step="5" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-base font-extrabold text-fuchsia-700 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
+                </div>
+            </div>
+            <div class="mt-5 flex gap-2">
+                <button id="edit-meal-cancel-btn" type="button" class="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold transition-colors">Ακύρωση</button>
+                <button id="edit-meal-save-btn" type="button" class="flex-1 py-2.5 rounded-xl bg-fuchsia-600 hover:bg-fuchsia-700 text-white text-sm font-bold transition-colors shadow-xs">Αποθήκευση</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        // Global Accordion Helper
+        function toggleAccordion(btn) {
+            const content = btn.nextElementSibling;
+            const icon = btn.querySelector('.accordion-icon');
+            const isHidden = content.classList.contains('hidden');
+            if (isHidden) {
+                content.classList.remove('hidden');
+                if (icon) icon.style.transform = 'rotate(180deg)';
+            } else {
+                content.classList.add('hidden');
+                if (icon) icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- LOCAL DATE HELPERS (Timezone-safe YYYY-MM-DD) ---
+            function formatDateToStr(dateObj) {
+                const y = dateObj.getFullYear();
+                const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+                const d = String(dateObj.getDate()).padStart(2, '0');
+                return `${y}-${m}-${d}`;
+            }
+
+            function parseLocalDate(str) {
+                const [y, m, d] = str.split('-').map(Number);
+                return new Date(y, m - 1, d);
+            }
+
+            function formatDisplayDate(str) {
+                if (!str) return '-';
+                const [, m, d] = str.split('-');
+                return `${d}/${m}`;
+            }
+
+            function formatFullDisplayDate(str) {
+                if (!str) return '-';
+                const [y, m, d] = str.split('-');
+                return `${d}/${m}/${y}`;
+            }
+
+            function formatMonthOnly(str) {
+                const months = [
+                    'Ιανουάριος', 'Φεβρουάριος', 'Μάρτιος', 'Απρίλιος', 'Μάιος', 'Ιούνιος',
+                    'Ιούλιος', 'Αύγουστος', 'Σεπτέμβριος', 'Οκτώβριος', 'Νοέμβριος', 'Δεκέμβριος'
+                ];
+                const [y, m] = str.split('-').map(Number);
+                return `${months[m - 1]} ${y}`;
+            }
+
+            function getMonday(str) {
+                const d = parseLocalDate(str);
+                const day = d.getDay();
+                const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+                d.setDate(diff);
+                return formatDateToStr(d);
+            }
+
+            function addDaysStr(str, days) {
+                const d = parseLocalDate(str);
+                d.setDate(d.getDate() + days);
+                return formatDateToStr(d);
+            }
+
+            function addMonthsStr(str, months) {
+                const d = parseLocalDate(str);
+                d.setDate(1);
+                d.setMonth(d.getMonth() + months);
+                return formatDateToStr(d);
+            }
+
+            function showMessage(elId, text, isError) {
+                const el = document.getElementById(elId);
+                if (!el) return;
+                el.textContent = text;
+                el.className = `text-xs font-semibold min-h-[1.25rem] mb-2 px-1 transition-colors ${isError ? 'text-red-500' : 'text-emerald-600'}`;
+                setTimeout(() => {
+                    if (el.textContent === text) el.textContent = '';
+                }, 4000);
+            }
+
+            const todayStr = formatDateToStr(new Date());
+
+            // Initialize date inputs safely
+            const weightDateEl = document.getElementById('weight-date');
+            const foodDateEl = document.getElementById('food-date');
+            const waistDateEl = document.getElementById('waist-date');
+            const noteDateEl = document.getElementById('note-date');
+            if (weightDateEl) weightDateEl.value = todayStr;
+            if (foodDateEl) foodDateEl.value = todayStr;
+            if (waistDateEl) waistDateEl.value = todayStr;
+            if (noteDateEl) noteDateEl.value = todayStr;
+
+            // --- 0. SETTINGS & BACKUP / RESTORE SYSTEM ---
+            const STORAGE_KEY_SETTINGS = 'myCoach_settings';
+            const STORAGE_KEY_WEIGHT_HISTORY = 'myCoach_weightHistory';
+            const STORAGE_KEY_WORKOUT_HISTORY = 'myCoach_workoutHistory';
+            const STORAGE_KEY_CALORIES_HISTORY = 'myCoach_caloriesHistory';
+            const STORAGE_KEY_MEAL_DRAFTS = 'myCoach_mealDrafts';
+            const STORAGE_KEY_WAIST_HISTORY = 'myCoach_waistHistory';
+            const STORAGE_KEY_WATER_HISTORY = 'myCoach_waterHistory';
+            const STORAGE_KEY_NOTES_HISTORY = 'myCoach_notesHistory';
+            const STORAGE_KEY_CUSTOM_PRODUCTS = 'myCoach_customProducts';
+
+            const DEFAULT_SETTINGS = {
+                height: 1.80,
+                midGoal: 100,
+                runUnlock: 92,
+                finalGoal: 72,
+                weeklyKmGoal: 40,
+                calorieGoal: 1800,
+                proteinGoal: 130,
+                waterGoal: 8
+            };
+
+            let latestKnownWeight = 106.0;
+
+            function getSettings() {
+                try {
+                    const saved = localStorage.getItem(STORAGE_KEY_SETTINGS);
+                    if (!saved) return { ...DEFAULT_SETTINGS };
+                    const parsed = JSON.parse(saved);
+                    let changed = false;
+                    if (parsed.finalGoal === 76 && !parsed._migrated72) {
+                        parsed.finalGoal = 72;
+                        parsed._migrated72 = true;
+                        changed = true;
+                    }
+                    if (parsed.calorieGoal === 2000 && !parsed._migrated1800) {
+                        parsed.calorieGoal = 1800;
+                        parsed._migrated1800 = true;
+                        changed = true;
+                    }
+                    if (changed) {
+                        localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(parsed));
+                    }
+                    return { ...DEFAULT_SETTINGS, ...parsed };
+                } catch (e) {
+                    return { ...DEFAULT_SETTINGS };
+                }
+            }
+
+            function saveSettings(newSettings) {
+                localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify({
+                    ...newSettings,
+                    _migrated72: true,
+                    _migrated1800: true
+                }));
+            }
+
+            // Dynamic Intermediate Milestone Ladder (used inside Weight Card)
+            function getNextIntermediateMilestone(currentWeight, s) {
+                const baseSteps = [s.midGoal, 95, s.runUnlock, 85, 80, 76];
+                const uniqueSteps = [...new Set(baseSteps)]
+                    .filter(m => m > s.finalGoal)
+                    .sort((a, b) => b - a);
+
+                const achieved = uniqueSteps.filter(m => currentWeight <= m);
+                const lastAchieved = achieved.length > 0 ? achieved[achieved.length - 1] : null;
+                const nextTarget = uniqueSteps.find(m => currentWeight > m);
+
+                if (nextTarget !== undefined) {
+                    const note = nextTarget === s.runUnlock ? ' (Έναρξη Τρεξίματος)' : '';
+                    return {
+                        target: nextTarget,
+                        note: note,
+                        lastAchieved: lastAchieved,
+                        isFinalStage: false
+                    };
+                }
+
+                return {
+                    target: s.finalGoal,
+                    note: ' (Τελικός Στόχος)',
+                    lastAchieved: lastAchieved,
+                    isFinalStage: true
+                };
+            }
+
+            function applySettingsToUI() {
+                const s = getSettings();
+                document.getElementById('header-goals-summary').innerHTML =
+                    `Αρχικό: <strong>106 kg</strong> • Τελικός Στόχος: <strong>${s.finalGoal} kg</strong>`;
+            }
+
+            // --- DAILY AUTO-ROTATING MOTIVATIONAL QUOTE ---
+            const QUOTES = [
+                '«Η σταθερότητα κερδίζει την τελειότητα. Μία μέρα τη φορά.»',
+                '«Δεν χρειάζεται να είσαι τέλειος σήμερα, αρκεί να μην τα παρατήσεις.»',
+                '«Κάθε 5λεπτο υγιεινό γεύμα είναι μια ψήφος στον μελλοντικό σου εαυτό.»',
+                '«Τα 15 λεπτά ενδυνάμωσης προστατεύουν τους μυς και τις αρθρώσεις σου.»',
+                '«Μην κοιτάς μόνο τη ζυγαριά: η ενέργεια, η αντοχή και η μέση σου αλλάζουν.»',
+                '«Το περπάτημα σήμερα χτίζει τη βάση για τα 40 χλμ τρεξίματος αύριο.»',
+                '«Η πρόοδος δεν είναι ευθεία γραμμή· η συνέπεια είναι που φέρνει το αποτέλεσμα.»',
+                '«Φρόντισε την πρωτεΐνη και το νερό σου σήμερα — το σώμα σου θα σε ανταμείψει.»',
+                '«Μικρές, εύκολες συνήθειες που κρατάς χρόνια νικούν κάθε αυστηρή δίαιτα.»',
+                '«Κάθε προπόνηση που ολοκληρώνεις χτίζει αυτοπεποίθηση και αντοχή.»',
+                '«Ακόμα και μια ήπια βόλτα 30 λεπτών κρατά τη φλόγα αναμμένη.»',
+                '«Εστίασε στο επόμενο γεύμα και την επόμενη προπόνηση — όλα τα άλλα θα έρθουν.»',
+                '«Το σώμα σου προσαρμόζεται σε ό,τι κάνεις επαναλαμβανόμενα. Κάνε το απλό.»',
+                '«Κάθε κιλό που φεύγει κάνει το επόμενο βήμα και το τρέξιμο πιο ανάλαφρο.»'
+            ];
+
+            function renderDailyQuote() {
+                const now = new Date();
+                const dayNumber = Math.floor(new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime() / (1000 * 60 * 60 * 24));
+                const idx = Math.abs(dayNumber) % QUOTES.length;
+                const qEl = document.getElementById('quote-text');
+                if (qEl) {
+                    qEl.textContent = QUOTES[idx];
+                }
+            }
+            renderDailyQuote();
+
+            // --- SETTINGS MODAL HANDLERS ---
+            const settingsModal = document.getElementById('settings-modal');
+            document.getElementById('open-settings-btn').addEventListener('click', () => {
+                const s = getSettings();
+                document.getElementById('set-height').value = s.height;
+                document.getElementById('set-mid-goal').value = s.midGoal;
+                document.getElementById('set-run-unlock').value = s.runUnlock;
+                document.getElementById('set-final-goal').value = s.finalGoal;
+                document.getElementById('set-weekly-km').value = s.weeklyKmGoal;
+                document.getElementById('set-calorie-goal').value = s.calorieGoal;
+                document.getElementById('set-protein-goal').value = s.proteinGoal;
+                document.getElementById('set-water-goal').value = s.waterGoal;
+                settingsModal.classList.remove('hidden');
+            });
+
+            document.getElementById('settings-close-btn').addEventListener('click', () => settingsModal.classList.add('hidden'));
+            settingsModal.addEventListener('click', (e) => {
+                if (e.target === settingsModal) settingsModal.classList.add('hidden');
+            });
+
+            document.getElementById('settings-reset-btn').addEventListener('click', () => {
+                saveSettings({ ...DEFAULT_SETTINGS });
+                settingsModal.classList.add('hidden');
+                refreshAllDashboard();
+                showMessage('backup-status-msg', 'Επαναφέρθηκαν οι αρχικοί στόχοι.', false);
+            });
+
+            document.getElementById('settings-save-btn').addEventListener('click', () => {
+                const updated = {
+                    height: parseFloat(document.getElementById('set-height').value) || 1.80,
+                    midGoal: parseFloat(document.getElementById('set-mid-goal').value) || 100,
+                    runUnlock: parseFloat(document.getElementById('set-run-unlock').value) || 92,
+                    finalGoal: parseFloat(document.getElementById('set-final-goal').value) || 72,
+                    weeklyKmGoal: parseInt(document.getElementById('set-weekly-km').value, 10) || 40,
+                    calorieGoal: parseInt(document.getElementById('set-calorie-goal').value, 10) || 1800,
+                    proteinGoal: parseInt(document.getElementById('set-protein-goal').value, 10) || 130,
+                    waterGoal: parseInt(document.getElementById('set-water-goal').value, 10) || 8
+                };
+                saveSettings(updated);
+                settingsModal.classList.add('hidden');
+                refreshAllDashboard();
+                showMessage('backup-status-msg', 'Οι ρυθμίσεις αποθηκεύτηκαν!', false);
+            });
+
+            // --- CUSTOM NUTRITION LABEL PRODUCTS MODAL ---
+            function getCustomProducts() {
+                try {
+                    const saved = localStorage.getItem(STORAGE_KEY_CUSTOM_PRODUCTS);
+                    return saved ? JSON.parse(saved) : [];
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            function saveCustomProducts(list) {
+                localStorage.setItem(STORAGE_KEY_CUSTOM_PRODUCTS, JSON.stringify(list));
+            }
+
+            function renderCustomProductsList() {
+                const listEl = document.getElementById('custom-products-list');
+                if (!listEl) return;
+                const products = getCustomProducts();
+                listEl.innerHTML = '';
+
+                if (products.length === 0) {
+                    listEl.innerHTML = '<li class="text-xs text-slate-400 italic py-2">Δεν έχεις αποθηκεύσει ακόμα δικές σου ετικέτες προϊόντων.</li>';
+                    return;
+                }
+
+                products.forEach((p, idx) => {
+                    const li = document.createElement('li');
+                    li.className = 'flex items-center justify-between bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs';
+                    li.innerHTML = `
+                        <div class="min-w-0">
+                            <div class="font-bold text-slate-800 truncate">${p.name}</div>
+                            <div class="text-[11px] text-slate-500 font-semibold">${p.calories} kcal • ${p.protein}g πρωτ. • ${p.fat}g λιπ. • ${p.fiber || 0}g ίνες</div>
+                        </div>
+                        <button type="button" class="p-1 text-slate-400 hover:text-red-600 transition-colors" title="Διαγραφή">🗑️</button>
+                    `;
+                    li.querySelector('button').addEventListener('click', () => {
+                        const updated = getCustomProducts().filter((_, i) => i !== idx);
+                        saveCustomProducts(updated);
+                        renderCustomProductsList();
+                    });
+                    listEl.appendChild(li);
+                });
+            }
+
+            const productsModal = document.getElementById('products-modal');
+            document.getElementById('open-products-btn').addEventListener('click', () => {
+                renderCustomProductsList();
+                productsModal.classList.remove('hidden');
+            });
+            document.getElementById('products-close-btn').addEventListener('click', () => productsModal.classList.add('hidden'));
+            productsModal.addEventListener('click', (e) => {
+                if (e.target === productsModal) productsModal.classList.add('hidden');
+            });
+
+            document.getElementById('add-custom-product-btn').addEventListener('click', () => {
+                const name = document.getElementById('prod-name-input').value.trim();
+                const cal = parseInt(document.getElementById('prod-cal-input').value, 10);
+                const prot = parseFloat(document.getElementById('prod-prot-input').value) || 0;
+                const fat = parseFloat(document.getElementById('prod-fat-input').value) || 0;
+                const fiber = parseFloat(document.getElementById('prod-fiber-input').value) || 0;
+                if (!name || isNaN(cal) || cal < 0) return;
+
+                const list = getCustomProducts().filter(item => item.name.toLowerCase() !== name.toLowerCase());
+                list.unshift({ name, calories: cal, protein: prot, fat, fiber });
+                saveCustomProducts(list);
+
+                document.getElementById('prod-name-input').value = '';
+                document.getElementById('prod-cal-input').value = '';
+                document.getElementById('prod-prot-input').value = '';
+                document.getElementById('prod-fat-input').value = '';
+                document.getElementById('prod-fiber-input').value = '';
+                renderCustomProductsList();
+            });
+
+            // --- BACKUP & RESTORE HANDLERS ---
+            document.getElementById('export-backup-btn').addEventListener('click', () => {
+                const payload = {
+                    version: 3,
+                    exportedAt: new Date().toISOString(),
+                    data: {
+                        [STORAGE_KEY_SETTINGS]: localStorage.getItem(STORAGE_KEY_SETTINGS),
+                        [STORAGE_KEY_WEIGHT_HISTORY]: localStorage.getItem(STORAGE_KEY_WEIGHT_HISTORY),
+                        [STORAGE_KEY_WORKOUT_HISTORY]: localStorage.getItem(STORAGE_KEY_WORKOUT_HISTORY),
+                        [STORAGE_KEY_CALORIES_HISTORY]: localStorage.getItem(STORAGE_KEY_CALORIES_HISTORY),
+                        [STORAGE_KEY_MEAL_DRAFTS]: localStorage.getItem(STORAGE_KEY_MEAL_DRAFTS),
+                        [STORAGE_KEY_WAIST_HISTORY]: localStorage.getItem(STORAGE_KEY_WAIST_HISTORY),
+                        [STORAGE_KEY_WATER_HISTORY]: localStorage.getItem(STORAGE_KEY_WATER_HISTORY),
+                        [STORAGE_KEY_NOTES_HISTORY]: localStorage.getItem(STORAGE_KEY_NOTES_HISTORY),
+                        [STORAGE_KEY_CUSTOM_PRODUCTS]: localStorage.getItem(STORAGE_KEY_CUSTOM_PRODUCTS)
+                    }
+                };
+                const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `live_coach_backup_${todayStr}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showMessage('backup-status-msg', '✓ Το αρχείο Backup κατέβηκε!', false);
+            });
+
+            let pendingRestoreData = null;
+            const restoreModal = document.getElementById('restore-modal');
+            document.getElementById('import-backup-input').addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    try {
+                        const parsed = JSON.parse(ev.target.result);
+                        const dataObj = parsed.data || parsed;
+                        if (!dataObj || typeof dataObj !== 'object') throw new Error('Invalid format');
+                        pendingRestoreData = dataObj;
+
+                        let wCount = 0;
+                        let woCount = 0;
+                        let calCount = 0;
+                        try {
+                            if (dataObj[STORAGE_KEY_WEIGHT_HISTORY]) {
+                                wCount = JSON.parse(dataObj[STORAGE_KEY_WEIGHT_HISTORY]).length;
+                            }
+                            if (dataObj[STORAGE_KEY_WORKOUT_HISTORY]) {
+                                woCount = Object.keys(JSON.parse(dataObj[STORAGE_KEY_WORKOUT_HISTORY])).length;
+                            }
+                            if (dataObj[STORAGE_KEY_CALORIES_HISTORY]) {
+                                calCount = JSON.parse(dataObj[STORAGE_KEY_CALORIES_HISTORY]).length;
+                            }
+                        } catch (_) {}
+
+                        document.getElementById('restore-summary-text').textContent =
+                            `Βρέθηκαν ${wCount} καταγραφές βάρους, ${woCount} προπονήσεις και ${calCount} ημέρες διατροφής. Θέλεις να επαναφέρεις αυτά τα δεδομένα;`;
+                        restoreModal.classList.remove('hidden');
+                    } catch (err) {
+                        showMessage('backup-status-msg', 'Μη έγκυρο αρχείο Backup.', true);
+                    } finally {
+                        e.target.value = '';
+                    }
+                };
+                reader.readAsText(file);
+            });
+
+            document.getElementById('restore-cancel-btn').addEventListener('click', () => {
+                pendingRestoreData = null;
+                restoreModal.classList.add('hidden');
+            });
+
+            document.getElementById('restore-confirm-btn').addEventListener('click', () => {
+                if (!pendingRestoreData) return;
+                const keys = [
+                    STORAGE_KEY_SETTINGS,
+                    STORAGE_KEY_WEIGHT_HISTORY,
+                    STORAGE_KEY_WORKOUT_HISTORY,
+                    STORAGE_KEY_CALORIES_HISTORY,
+                    STORAGE_KEY_MEAL_DRAFTS,
+                    STORAGE_KEY_WAIST_HISTORY,
+                    STORAGE_KEY_WATER_HISTORY,
+                    STORAGE_KEY_NOTES_HISTORY,
+                    STORAGE_KEY_CUSTOM_PRODUCTS
+                ];
+                keys.forEach(k => {
+                    if (pendingRestoreData[k] !== undefined && pendingRestoreData[k] !== null) {
+                        const val = typeof pendingRestoreData[k] === 'string'
+                            ? pendingRestoreData[k]
+                            : JSON.stringify(pendingRestoreData[k]);
+                        localStorage.setItem(k, val);
+                    }
+                });
+                pendingRestoreData = null;
+                restoreModal.classList.add('hidden');
+                refreshAllDashboard();
+                showMessage('backup-status-msg', '✓ Το ιστορικό επαναφέρθηκε επιτυχώς!', false);
+            });
+
+            // --- 1. WEIGHT, BMI, TREND, FORECAST & WAIST ---
+            let weightChart = null;
+            let editingWeightOriginalDate = null;
+
+            function getWeightHistory() {
+                try {
+                    const saved = localStorage.getItem(STORAGE_KEY_WEIGHT_HISTORY);
+                    let list = saved ? JSON.parse(saved) : [];
+                    if (!Array.isArray(list) || list.length === 0) {
+                        list = [{ date: '2026-11-09', weight: 106.0 }];
+                        localStorage.setItem(STORAGE_KEY_WEIGHT_HISTORY, JSON.stringify(list));
+                    }
+                    list.sort((a, b) => parseLocalDate(a.date) - parseLocalDate(b.date));
+                    return list;
+                } catch (e) {
+                    return [{ date: '2026-11-09', weight: 106.0 }];
+                }
+            }
+
+            function saveWeightHistory(list) {
+                list.sort((a, b) => parseLocalDate(a.date) - parseLocalDate(b.date));
+                localStorage.setItem(STORAGE_KEY_WEIGHT_HISTORY, JSON.stringify(list));
+            }
+
+            function addOrUpdateWeightEntry() {
+                const dateVal = document.getElementById('weight-date').value || todayStr;
+                const rawWeight = parseFloat(document.getElementById('weight-input').value);
+                if (isNaN(rawWeight) || rawWeight < 40 || rawWeight > 250) {
+                    showMessage('weight-msg', 'Συμπλήρωσε ένα έγκυρο βάρος.', true);
+                    return;
+                }
+
+                const roundedWeight = Math.round(rawWeight * 10) / 10;
+                const history = getWeightHistory();
+                const existingIdx = history.findIndex(item => item.date === dateVal);
+                if (existingIdx !== -1) {
+                    history[existingIdx].weight = roundedWeight;
+                } else {
+                    history.push({ date: dateVal, weight: roundedWeight });
+                }
+
+                saveWeightHistory(history);
+                document.getElementById('weight-input').value = '';
+                loadWeight();
+                renderWorkoutWeek();
+                showMessage('weight-msg', `✓ Αποθηκεύτηκαν ${roundedWeight.toFixed(1)} kg (${formatFullDisplayDate(dateVal)})`, false);
+            }
+
+            document.getElementById('update-weight-btn').addEventListener('click', addOrUpdateWeightEntry);
+            document.getElementById('weight-input').addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') addOrUpdateWeightEntry();
+            });
+
+            function loadWeight() {
+                const history = getWeightHistory();
+                latestKnownWeight = history.length > 0 ? history[history.length - 1].weight : 106.0;
+                const wInput = document.getElementById('weight-input');
+                if (wInput) {
+                    wInput.placeholder = 'Κιλά';
+                }
+                applySettingsToUI();
+                renderWeightProgress(latestKnownWeight);
+                renderBmiGauge(latestKnownWeight);
+                renderWeightChart(history);
+                renderWeightHistoryList(history);
+            }
+
+            function renderWeightProgress(weight) {
+                const s = getSettings();
+                const container = document.getElementById('progress-container');
+                const milestone = getNextIntermediateMilestone(weight, s);
+                const diffMid = weight - milestone.target;
+                const diffFinal = weight - s.finalGoal;
+
+                let midBlock = '';
+                if (diffFinal <= 0) {
+                    midBlock = `<div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-center flex flex-col justify-center">
+                           <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-700 mb-1">Όλοι οι Στόχοι</span>
+                           <div class="text-2xl sm:text-3xl font-black text-emerald-700">🎉 Ολοκληρώθηκαν!</div>
+                           <span class="text-[11px] text-emerald-600 font-medium mt-1">Τρέχον: ${weight.toFixed(1)} kg</span>
+                       </div>`;
+                } else {
+                    const achievedTag = milestone.lastAchieved
+                        ? `<span class="inline-block mt-1 px-2 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[10px] font-bold">✓ ${milestone.lastAchieved} kg επετεύχθη!</span>`
+                        : `<span class="text-[11px] text-teal-600 font-medium mt-1">Τρέχον: ${weight.toFixed(1)} kg</span>`;
+
+                    const titleLabel = milestone.isFinalStage
+                        ? `Επόμενος Στόχος: ${milestone.target} kg`
+                        : `Μέχρι τα ${milestone.target} kg${milestone.note}`;
+
+                    midBlock = `<div class="bg-teal-50/80 border border-teal-200/70 rounded-2xl p-4 text-center flex flex-col justify-center">
+                           <span class="text-[11px] font-bold uppercase tracking-wider text-teal-700 mb-1">${titleLabel}</span>
+                           <div class="text-3xl sm:text-4xl font-black text-teal-800 tracking-tight">${diffMid.toFixed(1)} <span class="text-base font-bold">kg</span></div>
+                           ${achievedTag}
+                       </div>`;
+                }
+
+                const finalBlock = diffFinal > 0
+                    ? `<div class="bg-emerald-50/90 border border-emerald-200/80 rounded-2xl p-4 text-center flex flex-col justify-center">
+                           <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-700 mb-1">Μέχρι τα ${s.finalGoal} kg (Τελικός)</span>
+                           <div class="text-3xl sm:text-4xl font-black text-emerald-800 tracking-tight">${diffFinal.toFixed(1)} <span class="text-base font-bold">kg</span></div>
+                           <span class="text-[11px] text-emerald-600 font-semibold mt-1">Απώλεια: ${Math.max(0, 106 - weight).toFixed(1)} kg</span>
+                       </div>`
+                    : `<div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 text-center flex flex-col justify-center">
+                           <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-700 mb-1">Τελικός Στόχος ${s.finalGoal} kg</span>
+                           <div class="text-2xl sm:text-3xl font-black text-emerald-700">🏆 Επετεύχθη!</div>
+                           <span class="text-[11px] text-emerald-600 font-medium mt-1">Τρέχον: ${weight.toFixed(1)} kg</span>
+                       </div>`;
+
+                container.innerHTML = `<div class="grid grid-cols-2 gap-3">${midBlock}${finalBlock}</div>`;
+            }
+
+            function renderBmiGauge(weight) {
+                const s = getSettings();
+                const h = s.height || 1.80;
+                const bmi = weight / (h * h);
+
+                let catLabel = 'Φυσιολογικό';
+                let catColorClass = 'text-emerald-700';
+                let percentPos = 12.5;
+
+                // Map each BMI zone onto the 4 blocks: Green, Yellow, Red, Deep Burgundy
+                if (bmi < 25) {
+                    catLabel = 'Φυσιολογικό';
+                    catColorClass = 'text-emerald-700';
+                    const ratio = Math.max(0, Math.min(1, (bmi - 18.5) / 6.5));
+                    percentPos = 3 + ratio * 21;
+                } else if (bmi < 30) {
+                    catLabel = 'Υπέρβαρο';
+                    catColorClass = 'text-yellow-600';
+                    const ratio = (bmi - 25) / 5;
+                    percentPos = 25 + ratio * 25;
+                } else if (bmi < 35) {
+                    catLabel = 'Παχυσαρκία 1';
+                    catColorClass = 'text-red-600';
+                    const ratio = (bmi - 30) / 5;
+                    percentPos = 50 + ratio * 25;
+                } else {
+                    catLabel = 'Παχυσαρκία 2+';
+                    catColorClass = 'text-rose-950';
+                    const ratio = Math.min(1, (bmi - 35) / 7);
+                    percentPos = 75 + ratio * 22;
+                }
+
+                document.getElementById('bmi-value-display').textContent = bmi.toFixed(1);
+                document.getElementById('bmi-category-display').innerHTML =
+                    `Ύψος: <strong>${h.toFixed(2)}m</strong> &nbsp;|&nbsp; Κατηγορία: <strong class="${catColorClass}">${catLabel}</strong>`;
+
+                const circleEl = document.getElementById('bmi-circle-indicator');
+                if (circleEl) {
+                    circleEl.style.left = `${percentPos.toFixed(1)}%`;
+                }
+            }
+
+            function renderWeightChart(history) {
+                const s = getSettings();
+                const ctx = document.getElementById('weightChart').getContext('2d');
+                if (weightChart) {
+                    weightChart.destroy();
+                }
+
+                const sorted = [...history].sort((a, b) => parseLocalDate(a.date) - parseLocalDate(b.date));
+                const baseDateStr = sorted.length > 0 ? sorted[0].date : todayStr;
+                const baseDateObj = parseLocalDate(baseDateStr);
+                const msPerDay = 1000 * 60 * 60 * 24;
+
+                const actualPoints = sorted.map(item => {
+                    const dayOffset = Math.round((parseLocalDate(item.date) - baseDateObj) / msPerDay);
+                    return {
+                        x: dayOffset,
+                        y: item.weight,
+                        dateStr: item.date
+                    };
+                });
+
+                // 7-day rolling trend points
+                const trendPoints = actualPoints.map((pt, idx) => {
+                    const windowPts = actualPoints.filter((p, j) => j <= idx && (pt.x - p.x) <= 7);
+                    const avg = windowPts.reduce((sum, p) => sum + p.y, 0) / windowPts.length;
+                    return {
+                        x: pt.x,
+                        y: Math.round(avg * 10) / 10,
+                        dateStr: pt.dateStr
+                    };
+                });
+
+                // Forecast points (-700g/week = -0.1 kg/day) until finalGoal
+                const forecastPoints = [];
+                const forecastEl = document.getElementById('weight-forecast-summary');
+                if (actualPoints.length > 0) {
+                    const lastPt = actualPoints[actualPoints.length - 1];
+                    if (lastPt.y > s.finalGoal) {
+                        const kgToLose = lastPt.y - s.finalGoal;
+                        const totalDays = Math.ceil(kgToLose / 0.1);
+                        const stepDays = totalDays > 120 ? 14 : 7;
+
+                        forecastPoints.push({ x: lastPt.x, y: lastPt.y, dateStr: lastPt.dateStr });
+                        for (let d = stepDays; d < totalDays; d += stepDays) {
+                            const projWeight = Math.round((lastPt.y - d * 0.1) * 10) / 10;
+                            const projDateStr = addDaysStr(lastPt.dateStr, d);
+                            forecastPoints.push({
+                                x: lastPt.x + d,
+                                y: Math.max(s.finalGoal, projWeight),
+                                dateStr: projDateStr
+                            });
+                        }
+                        const goalDateStr = addDaysStr(lastPt.dateStr, totalDays);
+                        forecastPoints.push({
+                            x: lastPt.x + totalDays,
+                            y: s.finalGoal,
+                            dateStr: goalDateStr
+                        });
+                        if (forecastEl) {
+                            forecastEl.textContent = `Στόχος ${s.finalGoal}kg: ~${formatFullDisplayDate(goalDateStr)}`;
+                        }
+                    } else if (forecastEl) {
+                        forecastEl.textContent = `🏆 Στόχος ${s.finalGoal}kg επετεύχθη!`;
+                    }
+                }
+
+                weightChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        datasets: [
+                            {
+                                label: 'Βάρος (kg)',
+                                data: actualPoints,
+                                borderColor: '#10b981',
+                                backgroundColor: 'rgba(16, 185, 129, 0.14)',
+                                borderWidth: 2.5,
+                                pointRadius: 4.5,
+                                pointHoverRadius: 6,
+                                pointBackgroundColor: '#10b981',
+                                tension: 0.15,
+                                fill: true
+                            },
+                            {
+                                label: 'Τάση 7 ημ.',
+                                data: trendPoints,
+                                borderColor: '#0f766e',
+                                borderWidth: 2,
+                                borderDash: [3, 3],
+                                pointRadius: 0,
+                                tension: 0.3,
+                                fill: false
+                            },
+                            {
+                                label: 'Πρόβλεψη (-700g/εβδ)',
+                                data: forecastPoints,
+                                borderColor: '#c026d3',
+                                borderWidth: 2,
+                                borderDash: [6, 5],
+                                pointRadius: 3,
+                                pointBackgroundColor: '#c026d3',
+                                tension: 0,
+                                fill: false
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        interaction: {
+                            mode: 'nearest',
+                            intersect: false
+                        },
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'bottom',
+                                labels: {
+                                    boxWidth: 12,
+                                    font: { size: 10, weight: '600' },
+                                    color: '#64748b'
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    title(items) {
+                                        const raw = items[0] && items[0].raw;
+                                        return raw && raw.dateStr ? formatFullDisplayDate(raw.dateStr) : '';
+                                    },
+                                    label(context) {
+                                        return `${context.dataset.label}: ${context.parsed.y.toFixed(1)} kg`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                type: 'linear',
+                                grid: { display: false },
+                                ticks: {
+                                    maxTicksLimit: 6,
+                                    font: { size: 10 },
+                                    color: '#94a3b8',
+                                    callback(value) {
+                                        return formatDisplayDate(addDaysStr(baseDateStr, Math.round(value)));
+                                    }
+                                }
+                            },
+                            y: {
+                                grid: { color: '#f1f5f9' },
+                                ticks: {
+                                    font: { size: 10 },
+                                    color: '#94a3b8'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Edit Weight Modal Controls
+            const editWeightModal = document.getElementById('edit-weight-modal');
+            const editWeightDateInput = document.getElementById('edit-weight-date');
+            const editWeightValInput = document.getElementById('edit-weight-input');
+
+            function openEditWeightModal(entry) {
+                editingWeightOriginalDate = entry.date;
+                editWeightDateInput.value = entry.date;
+                editWeightValInput.value = entry.weight;
+                editWeightModal.classList.remove('hidden');
+            }
+
+            document.getElementById('edit-weight-close-btn').addEventListener('click', () => editWeightModal.classList.add('hidden'));
+            document.getElementById('edit-weight-cancel-btn').addEventListener('click', () => editWeightModal.classList.add('hidden'));
+            editWeightModal.addEventListener('click', (e) => {
+                if (e.target === editWeightModal) editWeightModal.classList.add('hidden');
+            });
+
+            document.getElementById('edit-weight-save-btn').addEventListener('click', () => {
+                if (!editingWeightOriginalDate) return;
+                const newDate = editWeightDateInput.value;
+                const newW = parseFloat(editWeightValInput.value);
+                if (!newDate || isNaN(newW) || newW < 40 || newW > 250) return;
+
+                let history = getWeightHistory();
+                history = history.filter(item => item.date !== editingWeightOriginalDate && item.date !== newDate);
+                history.push({ date: newDate, weight: Math.round(newW * 10) / 10 });
+                saveWeightHistory(history);
+
+                editingWeightOriginalDate = null;
+                editWeightModal.classList.add('hidden');
+                loadWeight();
+                renderWorkoutWeek();
+                showMessage('weight-msg', '✓ Η καταγραφή ενημερώθηκε!', false);
+            });
+
+            function renderWeightHistoryList(history) {
+                const listEl = document.getElementById('weight-history-list');
+                const countEl = document.getElementById('weight-entries-count');
+                if (!listEl) return;
+
+                const reversed = [...history].reverse();
+                if (countEl) countEl.textContent = `${reversed.length} καταγραφές`;
+                listEl.innerHTML = '';
+
+                reversed.forEach(entry => {
+                    const li = document.createElement('li');
+                    li.className = 'bg-slate-50 border border-slate-200/80 rounded-xl px-2.5 py-2 flex items-center justify-between gap-1 text-xs';
+                    li.innerHTML = `
+                        <div class="min-w-0">
+                            <div class="text-[10px] font-medium text-slate-400 truncate">${formatFullDisplayDate(entry.date)}</div>
+                            <div class="font-extrabold text-slate-800 text-xs sm:text-sm">${entry.weight.toFixed(1)} kg</div>
+                        </div>
+                        <div class="flex items-center gap-0.5 shrink-0">
+                            <button type="button" class="edit-w-btn p-1 rounded-lg hover:bg-emerald-100 text-slate-500 hover:text-emerald-700 transition-colors" title="Επεξεργασία">✏️</button>
+                            <button type="button" class="del-w-btn p-1 rounded-lg hover:bg-red-100 text-slate-400 hover:text-red-600 transition-colors" title="Διαγραφή">🗑️</button>
+                        </div>
+                    `;
+
+                    li.querySelector('.edit-w-btn').addEventListener('click', () => openEditWeightModal(entry));
+                    li.querySelector('.del-w-btn').addEventListener('click', () => {
+                        let current = getWeightHistory();
+                        if (current.length <= 1) {
+                            showMessage('weight-msg', 'Πρέπει να υπάρχει τουλάχιστον 1 καταγραφή βάρους.', true);
+                            return;
+                        }
+                        current = current.filter(item => item.date !== entry.date);
+                        saveWeightHistory(current);
+                        loadWeight();
+                        renderWorkoutWeek();
+                        showMessage('weight-msg', 'Η καταγραφή διαγράφηκε.', false);
+                    });
+
+                    listEl.appendChild(li);
+                });
+            }
+
+            // --- WAIST CIRCUMFERENCE TRACKER ---
+            function getWaistHistory() {
+                try {
+                    const saved = localStorage.getItem(STORAGE_KEY_WAIST_HISTORY);
+                    const list = saved ? JSON.parse(saved) : [];
+                    list.sort((a, b) => parseLocalDate(a.date) - parseLocalDate(b.date));
+                    return list;
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            function renderWaistHistory() {
+                const list = getWaistHistory();
+                const summaryEl = document.getElementById('waist-summary-text');
+                const diffBadge = document.getElementById('waist-diff-badge');
+                const pillsEl = document.getElementById('waist-history-pills');
+
+                pillsEl.innerHTML = '';
+                if (list.length === 0) {
+                    summaryEl.textContent = 'Καμία καταγραφή ακόμα';
+                    diffBadge.classList.add('hidden');
+                    return;
+                }
+
+                const first = list[0];
+                const last = list[list.length - 1];
+                summaryEl.textContent = `Τελευταία: ${last.cm} cm (${formatFullDisplayDate(last.date)})`;
+
+                const diff = last.cm - first.cm;
+                if (list.length > 1 && diff !== 0) {
+                    diffBadge.classList.remove('hidden');
+                    diffBadge.textContent = `${diff > 0 ? '+' : ''}${diff.toFixed(1)} cm`;
+                    diffBadge.className = diff < 0
+                        ? 'px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200'
+                        : 'px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 text-xs font-bold border border-amber-200';
+                } else {
+                    diffBadge.classList.add('hidden');
+                }
+
+                [...list].reverse().forEach(item => {
+                    const pill = document.createElement('span');
+                    pill.className = 'inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-slate-50 border border-slate-200 text-[11px] font-semibold text-slate-700';
+                    pill.innerHTML = `
+                        <span>${formatDisplayDate(item.date)}: <strong>${item.cm} cm</strong></span>
+                        <button type="button" class="text-slate-400 hover:text-red-500 font-bold leading-none">&times;</button>
+                    `;
+                    pill.querySelector('button').addEventListener('click', () => {
+                        const updated = getWaistHistory().filter(w => w.date !== item.date);
+                        localStorage.setItem(STORAGE_KEY_WAIST_HISTORY, JSON.stringify(updated));
+                        renderWaistHistory();
+                    });
+                    pillsEl.appendChild(pill);
+                });
+            }
+
+            document.getElementById('save-waist-btn').addEventListener('click', () => {
+                const dVal = document.getElementById('waist-date').value || todayStr;
+                const cmVal = parseFloat(document.getElementById('waist-input').value);
+                if (isNaN(cmVal) || cmVal < 50 || cmVal > 200) return;
+
+                const list = getWaistHistory().filter(w => w.date !== dVal);
+                list.push({ date: dVal, cm: Math.round(cmVal * 10) / 10 });
+                list.sort((a, b) => parseLocalDate(a.date) - parseLocalDate(b.date));
+                localStorage.setItem(STORAGE_KEY_WAIST_HISTORY, JSON.stringify(list));
+                document.getElementById('waist-input').value = '';
+                renderWaistHistory();
+            });
+
+            // --- DAILY NOTES & MOOD TRACKER ---
+            let selectedMood = '';
+
+            function getNotesHistory() {
+                try {
+                    const saved = localStorage.getItem(STORAGE_KEY_NOTES_HISTORY);
+                    const list = saved ? JSON.parse(saved) : [];
+                    list.sort((a, b) => parseLocalDate(b.date) - parseLocalDate(a.date));
+                    return list;
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            function saveNotesHistory(list) {
+                list.sort((a, b) => parseLocalDate(b.date) - parseLocalDate(a.date));
+                localStorage.setItem(STORAGE_KEY_NOTES_HISTORY, JSON.stringify(list));
+            }
+
+            document.getElementById('mood-selector-pills').addEventListener('click', (e) => {
+                const btn = e.target.closest('.mood-pill');
+                if (!btn) return;
+                const mood = btn.getAttribute('data-mood');
+                selectedMood = selectedMood === mood ? '' : mood;
+
+                document.querySelectorAll('.mood-pill').forEach(p => {
+                    if (p.getAttribute('data-mood') === selectedMood) {
+                        p.className = 'mood-pill px-2.5 py-1.5 rounded-xl bg-emerald-600 border border-emerald-700 text-xs font-bold text-white transition-colors shadow-2xs';
+                    } else {
+                        p.className = 'mood-pill px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200 text-xs font-semibold text-slate-700 transition-colors';
+                    }
+                });
+            });
+
+            function renderNotesHistory() {
+                const listEl = document.getElementById('notes-history-list');
+                if (!listEl) return;
+                const notes = getNotesHistory();
+                listEl.innerHTML = '';
+
+                if (notes.length === 0) {
+                    listEl.innerHTML = '<li class="text-xs text-slate-400 italic py-1">Δεν υπάρχουν σημειώσεις ακόμα.</li>';
+                    return;
+                }
+
+                notes.forEach(item => {
+                    const li = document.createElement('li');
+                    li.className = 'bg-slate-50 border border-slate-200/80 rounded-xl px-3 py-2 flex items-start justify-between gap-2 text-xs';
+                    const moodBadge = item.mood
+                        ? `<span class="inline-block px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800 font-bold text-[10px] mr-1.5">${item.mood}</span>`
+                        : '';
+                    li.innerHTML = `
+                        <div class="min-w-0 flex-1">
+                            <div class="flex items-center flex-wrap gap-1 mb-0.5">
+                                <span class="font-extrabold text-slate-600 text-[11px]">${formatFullDisplayDate(item.date)}</span>
+                                ${moodBadge}
+                            </div>
+                            <p class="text-slate-700 font-medium break-words">${item.text || ''}</p>
+                        </div>
+                        <button type="button" class="del-note-btn p-1 rounded-lg hover:bg-red-100 text-slate-400 hover:text-red-600 transition-colors shrink-0" title="Διαγραφή">🗑️</button>
+                    `;
+                    li.querySelector('.del-note-btn').addEventListener('click', () => {
+                        const updated = getNotesHistory().filter(n => n.id !== item.id);
+                        saveNotesHistory(updated);
+                        renderNotesHistory();
+                    });
+                    listEl.appendChild(li);
+                });
+            }
+
+            document.getElementById('save-note-btn').addEventListener('click', () => {
+                const dVal = document.getElementById('note-date').value || todayStr;
+                const txt = document.getElementById('note-text-input').value.trim();
+                if (!txt && !selectedMood) {
+                    showMessage('note-msg', 'Επίλεξε διάθεση ή γράψε μια σημείωση.', true);
+                    return;
+                }
+
+                const list = getNotesHistory();
+                list.unshift({
+                    id: Date.now(),
+                    date: dVal,
+                    mood: selectedMood,
+                    text: txt
+                });
+                saveNotesHistory(list);
+
+                document.getElementById('note-text-input').value = '';
+                selectedMood = '';
+                document.querySelectorAll('.mood-pill').forEach(p => {
+                    p.className = 'mood-pill px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200 text-xs font-semibold text-slate-700 transition-colors';
+                });
+                renderNotesHistory();
+                showMessage('note-msg', '✓ Η σημείωση αποθηκεύτηκε!', false);
+            });
+
+            // --- 2. CALORIES, PROTEIN, WATER & MEALS ---
+            let currentCalWeekMonday = getMonday(todayStr);
+            let currentCalMonthFirst = todayStr.slice(0, 7) + '-01';
+            let calViewMode = 'week';
+            let caloriesChart = null;
+            let editingMealKey = null;
+
+            const MEAL_META = [
+                { key: 'breakfast', label: 'Πρωινό', icon: '🍳' },
+                { key: 'snack1', label: 'Σνακ 1', icon: '🍎' },
+                { key: 'lunch', label: 'Μεσημεριανό', icon: '🥗' },
+                { key: 'snack2', label: 'Σνακ 2', icon: '🥜' },
+                { key: 'dinner', label: 'Βραδινό', icon: '🌙' }
+            ];
+
+            // Smart Greek Nutrition Estimator (Custom Labels + Built-in Foods)
+            function estimateGreekNutrition(rawText) {
+                const text = (rawText || '').toLowerCase().trim();
+                if (!text) return { calories: 0, protein: 0, fiber: 0 };
+
+                const customProducts = getCustomProducts();
+
+                const FOOD_DB = [
+                    { keys: ['γιαούρτι', 'γιαουρτι'], cal: 130, prot: 15, fiber: 0 },
+                    { keys: ['αυγό', 'αυγο', 'αυγά', 'αυγα', 'ομελέτα', 'στραπατσάδα'], cal: 75, prot: 6.5, fiber: 0 },
+                    { keys: ['τόνος', 'τονος', 'τόνου', 'τονου', 'τονοσαλάτα'], cal: 160, prot: 30, fiber: 0 },
+                    { keys: ['cottage', 'κότατζ'], cal: 100, prot: 12, fiber: 0 },
+                    { keys: ['παξιμάδι', 'παξιμαδι', 'παξιμαδάκι', 'ντάκος', 'ντακος', 'χαρουπιού', 'χαρουπιου'], cal: 110, prot: 3, fiber: 4 },
+                    { keys: ['τορτίγια', 'τορτιγια'], cal: 145, prot: 4.5, fiber: 3.5 },
+                    { keys: ['φακές', 'φακες', 'ρεβίθια', 'ρεβιθια', 'φασόλια', 'φασολια', 'όσπρια', 'οσπρια'], cal: 220, prot: 13, fiber: 8 },
+                    { keys: ['μήλο', 'μηλο'], cal: 80, prot: 0.4, fiber: 4 },
+                    { keys: ['μπανάνα', 'μπανανα'], cal: 105, prot: 1.3, fiber: 3 },
+                    { keys: ['πορτοκάλι', 'πορτοκαλι', 'αχλάδι', 'αχλαδι', 'φρούτο', 'φρουτο', 'φρούτα'], cal: 75, prot: 0.8, fiber: 3.5 },
+                    { keys: ['σαλάτα', 'σαλατα', 'ντομάτα', 'ντοματα', 'αγγούρι', 'αγγουρι', 'μαρούλι', 'καρότο'], cal: 45, prot: 1.5, fiber: 3 },
+                    { keys: ['ελαιόλαδο', 'ελαιολαδο', 'λάδι', 'λαδι'], cal: 110, prot: 0, fiber: 0 },
+                    { keys: ['αμύγδαλα', 'αμυγδαλα', 'καρύδια', 'καρυδια', 'ξηροί καρποί'], cal: 95, prot: 3, fiber: 2 },
+                    { keys: ['φιστικοβούτυρο', 'φιστικοβουτυρο'], cal: 95, prot: 4, fiber: 1.5 },
+                    { keys: ['μέλι', 'μελι'], cal: 45, prot: 0, fiber: 0 },
+                    { keys: ['γαλοπούλα', 'γαλοπουλα'], cal: 65, prot: 11, fiber: 0 },
+                    { keys: ['κοτόπουλο', 'κοτοπουλο'], cal: 210, prot: 32, fiber: 0 },
+                    { keys: ['ψάρι', 'ψαρι', 'σολομός', 'σολομος'], cal: 230, prot: 28, fiber: 0 },
+                    { keys: ['ρύζι', 'ρυζι', 'μακαρόνια', 'μακαρονια', 'πατάτα', 'πατατα'], cal: 210, prot: 4, fiber: 2 },
+                    { keys: ['ψωμί', 'ψωμι', 'φρυγανιά', 'φρυγανιές'], cal: 85, prot: 3, fiber: 1.5 },
+                    { keys: ['τυρί', 'τυρι', 'φέτα', 'φετα', 'κασέρι', 'γραβιέρα'], cal: 115, prot: 7, fiber: 0 },
+                    { keys: ['γάλα', 'γαλα', 'καφές', 'καφες', 'freddo', 'cappuccino'], cal: 55, prot: 3, fiber: 0 },
+                    { keys: ['σοκολάτα', 'σοκολατα', 'γλυκό', 'γλυκο', 'μπισκότο'], cal: 180, prot: 2, fiber: 1 }
+                ];
+
+                const segments = text.split(/[+,&/]|(?:\s+και\s+)|(?:\s+με\s+)|(?:\s+συν\s+)/g)
+                    .map(s => s.trim())
+                    .filter(Boolean);
+
+                let totalCal = 0;
+                let totalProt = 0;
+                let totalFiber = 0;
+                let matchedAny = false;
+
+                segments.forEach(seg => {
+                    let qty = 1;
+                    const gramMatch = seg.match(/(\d+(?:[.,]\d+)?)\s*(?:γρ|gr|g)\b/);
+                    if (gramMatch) {
+                        const grams = parseFloat(gramMatch[1].replace(',', '.'));
+                        if (!isNaN(grams) && grams > 0) {
+                            qty = Math.max(0.25, grams / 150);
+                        }
+                    } else {
+                        const numMatch = seg.match(/^(\d+(?:[.,]\d+)?)\b/);
+                        if (numMatch) {
+                            const n = parseFloat(numMatch[1].replace(',', '.'));
+                            if (!isNaN(n) && n > 0 && n <= 15) {
+                                qty = n;
+                            }
+                        } else if (/\bδύο\b|\bδυο\b/.test(seg)) {
+                            qty = 2;
+                        } else if (/\bτρία\b|\bτρια\b|\bτρεις\b/.test(seg)) {
+                            qty = 3;
+                        } else if (/\bμισό\b|\bμισο\b|\bμισή\b|\bμιση\b/.test(seg)) {
+                            qty = 0.5;
+                        }
+                    }
+
+                    let segMatched = false;
+
+                    // 1. Check user's saved exact product labels first
+                    customProducts.forEach(cp => {
+                        if (!segMatched && seg.includes(cp.name.toLowerCase())) {
+                            totalCal += cp.calories * qty;
+                            totalProt += (cp.protein || 0) * qty;
+                            totalFiber += (cp.fiber || 0) * qty;
+                            segMatched = true;
+                            matchedAny = true;
+                        }
+                    });
+
+                    // 2. Fallback to general Greek foods database
+                    if (!segMatched) {
+                        FOOD_DB.forEach(item => {
+                            if (item.keys.some(k => seg.includes(k))) {
+                                const effectiveQty = item.keys.includes('αμύγδαλα') && qty > 3 ? qty / 10 : qty;
+                                totalCal += item.cal * effectiveQty;
+                                totalProt += item.prot * effectiveQty;
+                                totalFiber += (item.fiber || 0) * effectiveQty;
+                                segMatched = true;
+                                matchedAny = true;
+                            }
+                        });
+                    }
+
+                    if (!segMatched) {
+                        totalCal += 160;
+                        totalProt += 8;
+                        totalFiber += 1;
+                        matchedAny = true;
+                    }
+                });
+
+                if (!matchedAny) {
+                    return { calories: 180, protein: 8, fiber: 1 };
+                }
+
+                return {
+                    calories: Math.round(totalCal / 5) * 5,
+                    protein: Math.round(totalProt),
+                    fiber: Math.round(totalFiber * 10) / 10
+                };
+            }
+
+            function getCaloriesHistory() {
+                try {
+                    const saved = localStorage.getItem(STORAGE_KEY_CALORIES_HISTORY);
+                    const list = saved ? JSON.parse(saved) : [];
+                    list.sort((a, b) => parseLocalDate(a.date) - parseLocalDate(b.date));
+                    return list;
+                } catch (e) {
+                    return [];
+                }
+            }
+
+            function getMealDrafts() {
+                try {
+                    const saved = localStorage.getItem(STORAGE_KEY_MEAL_DRAFTS);
+                    return saved ? JSON.parse(saved) : {};
+                } catch (e) {
+                    return {};
+                }
+            }
+
+            function normalizeDayMeals(rawDay) {
+                const result = {};
+                MEAL_META.forEach(m => {
+                    const val = rawDay ? rawDay[m.key] : null;
+                    if (!val) {
+                        result[m.key] = { text: '', calories: 0, protein: 0, fiber: 0 };
+                    } else if (typeof val === 'string') {
+                        const trimmed = val.trim();
+                        if (!trimmed) {
+                            result[m.key] = { text: '', calories: 0, protein: 0, fiber: 0 };
+                        } else {
+                            const est = estimateGreekNutrition(trimmed);
+                            result[m.key] = { text: trimmed, calories: est.calories, protein: est.protein, fiber: est.fiber };
+                        }
+                    } else {
+                        const t = (val.text || '').trim();
+                        const estFallback = t && val.fiber === undefined ? estimateGreekNutrition(t) : { fiber: 0 };
+                        result[m.key] = {
+                            text: t,
+                            calories: t ? (Number(val.calories) || 0) : 0,
+                            protein: t ? (Number(val.protein) || 0) : 0,
+                            fiber: t ? (val.fiber !== undefined ? (Number(val.fiber) || 0) : estFallback.fiber) : 0
+                        };
+                    }
+                });
+                return result;
+            }
+
+            function saveMealDraftsForDate(dateStr, preserveExistingCalories = true) {
+                const drafts = getMealDrafts();
+                const existingNorm = normalizeDayMeals(drafts[dateStr]);
+                const updated = {};
+
+                MEAL_META.forEach(m => {
+                    const inputEl = document.getElementById(`food-${m.key}`);
+                    const text = inputEl ? inputEl.value.trim() : '';
+                    if (!text) {
+                        updated[m.key] = { text: '', calories: 0, protein: 0, fiber: 0 };
+                    } else if (preserveExistingCalories && existingNorm[m.key].text === text && existingNorm[m.key].calories > 0) {
+                        updated[m.key] = existingNorm[m.key];
+                    } else {
+                        const est = estimateGreekNutrition(text);
+                        updated[m.key] = { text, calories: est.calories, protein: est.protein, fiber: est.fiber };
+                    }
+                });
+
+                drafts[dateStr] = updated;
+                localStorage.setItem(STORAGE_KEY_MEAL_DRAFTS, JSON.stringify(drafts));
+                return updated;
+            }
+
+            function syncDayTotalFromMeals(dateStr, normalizedMeals) {
+                let totalCal = 0;
+                let totalProt = 0;
+                let totalFiber = 0;
+                MEAL_META.forEach(m => {
+                    if (normalizedMeals[m.key] && normalizedMeals[m.key].text) {
+                        totalCal += Number(normalizedMeals[m.key].calories) || 0;
+                        totalProt += Number(normalizedMeals[m.key].protein) || 0;
+                        totalFiber += Number(normalizedMeals[m.key].fiber) || 0;
+                    }
+                });
+
+                let history = getCaloriesHistory().filter(item => item.date !== dateStr);
+                if (totalCal > 0) {
+                    history.push({
+                        date: dateStr,
+                        calories: Math.round(totalCal),
+                        protein: Math.round(totalProt),
+                        fiber: Math.round(totalFiber * 10) / 10
+                    });
+                    history.sort((a, b) => parseLocalDate(a.date) - parseLocalDate(b.date));
+                }
+                localStorage.setItem(STORAGE_KEY_CALORIES_HISTORY, JSON.stringify(history));
+                return {
+                    calories: Math.round(totalCal),
+                    protein: Math.round(totalProt),
+                    fiber: Math.round(totalFiber * 10) / 10
+                };
+            }
+
+            function getWaterHistory() {
+                try {
+                    const saved = localStorage.getItem(STORAGE_KEY_WATER_HISTORY);
+                    return saved ? JSON.parse(saved) : {};
+                } catch (e) {
+                    return {};
+                }
+            }
+
+            function renderWaterTracker(dateStr) {
+                const s = getSettings();
+                const goal = s.waterGoal || 8;
+                const waterHist = getWaterHistory();
+                const count = waterHist[dateStr] || 0;
+
+                document.getElementById('water-count-label').textContent = `${count} / ${goal} ποτήρια`;
+                const container = document.getElementById('water-glasses-container');
+                container.innerHTML = '';
+
+                for (let i = 1; i <= goal; i++) {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    const filled = i <= count;
+                    btn.className = `w-6 h-6 rounded-lg text-xs flex items-center justify-center transition-all ${
+                        filled
+                            ? 'bg-emerald-600 text-white shadow-xs scale-105'
+                            : 'bg-white border border-slate-200 text-slate-300 hover:border-emerald-400'
+                    }`;
+                    btn.textContent = '💧';
+                    btn.title = `${i} ποτήρια`;
+                    btn.addEventListener('click', () => {
+                        const wh = getWaterHistory();
+                        wh[dateStr] = (wh[dateStr] === i) ? i - 1 : i;
+                        localStorage.setItem(STORAGE_KEY_WATER_HISTORY, JSON.stringify(wh));
+                        renderWaterTracker(dateStr);
+                    });
+                    container.appendChild(btn);
+                }
+            }
+
+            // Dynamic Recent Meals Chips (No random items — only your latest logged meals)
+            function renderRecentMealChips() {
+                const container = document.getElementById('quick-meal-chips');
+                if (!container) return;
+                const drafts = getMealDrafts();
+                const datesDesc = Object.keys(drafts).sort((a, b) => parseLocalDate(b) - parseLocalDate(a));
+
+                const seen = new Set();
+                const recentItems = [];
+
+                datesDesc.forEach(dStr => {
+                    const dayObj = normalizeDayMeals(drafts[dStr]);
+                    MEAL_META.forEach(m => {
+                        const txt = dayObj[m.key] && dayObj[m.key].text ? dayObj[m.key].text.trim() : '';
+                        const normKey = txt.toLowerCase();
+                        if (txt && !seen.has(normKey) && recentItems.length < 8) {
+                            seen.add(normKey);
+                            recentItems.push({
+                                text: txt,
+                                mealKey: m.key
+                            });
+                        }
+                    });
+                });
+
+                container.innerHTML = '';
+                if (recentItems.length === 0) {
+                    container.innerHTML = '<span class="text-[11px] text-slate-400 italic">Τα γεύματα που καταχωρείς θα εμφανίζονται εδώ για άμεση επανάληψη.</span>';
+                    return;
+                }
+
+                recentItems.forEach(item => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.setAttribute('data-meal', item.mealKey);
+                    btn.setAttribute('data-text', item.text);
+                    btn.className = 'px-2.5 py-1 rounded-lg bg-emerald-100/90 hover:bg-fuchsia-100 text-emerald-900 hover:text-fuchsia-900 border border-emerald-300/70 hover:border-fuchsia-300 text-xs font-semibold transition-colors max-w-[230px] truncate';
+                    btn.title = item.text;
+                    btn.textContent = `+ ${item.text}`;
+                    container.appendChild(btn);
+                });
+            }
+
+            function loadMealsAndNutritionForDate(dateStr) {
+                const drafts = getMealDrafts();
+                const dayMeals = normalizeDayMeals(drafts[dateStr]);
+
+                MEAL_META.forEach(m => {
+                    const el = document.getElementById(`food-${m.key}`);
+                    if (el) el.value = dayMeals[m.key].text || '';
+                });
+
+                renderWaterTracker(dateStr);
+                renderRecentMealChips();
+
+                const history = getCaloriesHistory();
+                const entry = history.find(h => h.date === dateStr);
+                const hasMeals = MEAL_META.some(m => dayMeals[m.key].text.length > 0);
+
+                if (hasMeals) {
+                    const totals = syncDayTotalFromMeals(dateStr, dayMeals);
+                    renderDailyNutritionCard(totals.calories, totals.protein, dayMeals, totals.fiber);
+                } else if (entry && entry.calories > 0) {
+                    renderDailyNutritionCard(entry.calories, entry.protein || 0, dayMeals, entry.fiber || 0);
+                } else {
+                    document.getElementById('daily-nutrition-summary-card').classList.add('hidden');
+                }
+            }
+
+            // Auto-save meal drafts on typing
+            ['food-breakfast', 'food-snack1', 'food-lunch', 'food-snack2', 'food-dinner'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', () => {
+                        const dVal = document.getElementById('food-date').value || todayStr;
+                        saveMealDraftsForDate(dVal, true);
+                    });
+                }
+            });
+
+            // Quick Meal Chips Click (Adds from your recent meals)
+            document.getElementById('quick-meal-chips').addEventListener('click', (e) => {
+                const btn = e.target.closest('button[data-meal]');
+                if (!btn) return;
+                const mealKey = btn.getAttribute('data-meal');
+                const mealText = btn.getAttribute('data-text');
+                const inputEl = document.getElementById(`food-${mealKey}`);
+                if (!inputEl) return;
+
+                inputEl.value = inputEl.value.trim()
+                    ? `${inputEl.value.trim()} + ${mealText}`
+                    : mealText;
+                const dVal = document.getElementById('food-date').value || todayStr;
+                const updatedMeals = saveMealDraftsForDate(dVal, true);
+                const totals = syncDayTotalFromMeals(dVal, updatedMeals);
+                renderDailyNutritionCard(totals.calories, totals.protein, updatedMeals, totals.fiber);
+                renderCaloriesAnalytics();
+                renderRecentMealChips();
+                showMessage('calories-msg', `✓ Προστέθηκε: ${mealText}`, false);
+            });
+
+            // Copy Yesterday's Meals
+            document.getElementById('copy-yesterday-btn').addEventListener('click', () => {
+                const dVal = document.getElementById('food-date').value || todayStr;
+                const yesterdayStr = addDaysStr(dVal, -1);
+                const drafts = getMealDrafts();
+                const yMeals = normalizeDayMeals(drafts[yesterdayStr]);
+                const hasYesterday = MEAL_META.some(m => yMeals[m.key].text.length > 0);
+                if (!hasYesterday) {
+                    showMessage('calories-msg', 'Δεν βρέθηκαν γεύματα την προηγούμενη ημέρα.', true);
+                    return;
+                }
+                MEAL_META.forEach(m => {
+                    const el = document.getElementById(`food-${m.key}`);
+                    if (el) el.value = yMeals[m.key].text || '';
+                });
+                const updatedMeals = saveMealDraftsForDate(dVal, false);
+                const totals = syncDayTotalFromMeals(dVal, updatedMeals);
+                renderDailyNutritionCard(totals.calories, totals.protein, updatedMeals, totals.fiber);
+                renderCaloriesAnalytics();
+                renderRecentMealChips();
+                showMessage('calories-msg', '✓ Αντιγράφηκαν τα χθεσινά γεύματα!', false);
+            });
+
+            function renderDailyNutritionCard(calories, protein, normalizedMeals, fiber = 0) {
+                const s = getSettings();
+                const calGoal = s.calorieGoal || 1800;
+                const protGoal = s.proteinGoal || 130;
+
+                const card = document.getElementById('daily-nutrition-summary-card');
+                if (!card) return;
+
+                const dVal = document.getElementById('food-date').value || todayStr;
+                const mealsObj = normalizedMeals || normalizeDayMeals(getMealDrafts()[dVal]);
+                const loggedMeals = MEAL_META.filter(m => mealsObj[m.key] && mealsObj[m.key].text);
+
+                if (calories <= 0 && loggedMeals.length === 0) {
+                    card.classList.add('hidden');
+                    return;
+                }
+
+                card.classList.remove('hidden');
+
+                document.getElementById('cal-current-big').textContent = calories.toLocaleString('el-GR');
+                document.getElementById('cal-goal-display').textContent = calGoal.toLocaleString('el-GR');
+
+                const calPct = Math.round((calories / calGoal) * 100);
+                document.getElementById('cal-percent-badge').textContent = `${calPct}%`;
+
+                const calBar = document.getElementById('cal-bar-fill');
+                calBar.style.width = `${Math.min(100, calPct)}%`;
+                if (calPct > 105) {
+                    calBar.className = 'bg-amber-500 h-2.5 rounded-full transition-all duration-500';
+                } else {
+                    calBar.className = 'bg-fuchsia-600 h-2.5 rounded-full transition-all duration-500';
+                }
+
+                const remaining = calGoal - calories;
+                const remEl = document.getElementById('cal-remaining-text');
+                if (remaining >= 0) {
+                    remEl.textContent = `Απομένουν: ${remaining.toLocaleString('el-GR')} kcal`;
+                    remEl.className = 'text-xs font-bold text-slate-700 bg-white px-2.5 py-1 rounded-lg border border-slate-200';
+                } else {
+                    remEl.textContent = `Υπέρβαση: +${Math.abs(remaining).toLocaleString('el-GR')} kcal`;
+                    remEl.className = 'text-xs font-bold text-fuchsia-900 bg-fuchsia-100 px-2.5 py-1 rounded-lg border border-fuchsia-300';
+                }
+
+                const protPct = Math.round((protein / protGoal) * 100);
+                document.getElementById('protein-val-text').textContent = `${protein} / ${protGoal}g`;
+                document.getElementById('protein-percent-badge').textContent = `${protPct}%`;
+                document.getElementById('protein-bar-fill').style.width = `${Math.min(100, protPct)}%`;
+
+                const fiberEl = document.getElementById('fiber-val-text');
+                if (fiberEl) {
+                    const computedFiber = loggedMeals.length > 0
+                        ? Math.round(loggedMeals.reduce((sum, m) => sum + (Number(mealsObj[m.key].fiber) || 0), 0) * 10) / 10
+                        : fiber;
+                    fiberEl.textContent = `🌾 ${computedFiber}g ίνες`;
+                }
+
+                // Render Visible Per-Meal Breakdown List
+                const breakdownWrapper = document.getElementById('daily-meals-breakdown-wrapper');
+                const breakdownList = document.getElementById('daily-meals-breakdown-list');
+                breakdownList.innerHTML = '';
+
+                if (loggedMeals.length === 0) {
+                    breakdownWrapper.classList.add('hidden');
+                } else {
+                    breakdownWrapper.classList.remove('hidden');
+                    loggedMeals.forEach(m => {
+                        const item = mealsObj[m.key];
+                        const li = document.createElement('li');
+                        li.className = 'bg-white border border-fuchsia-200/80 rounded-xl px-3 py-2 flex items-center justify-between gap-2 text-xs shadow-2xs';
+                        li.innerHTML = `
+                            <div class="min-w-0 flex-1">
+                                <span class="font-extrabold text-slate-800">${m.icon} ${m.label}:</span>
+                                <span class="text-slate-700 font-medium"> ${item.text}</span>
+                            </div>
+                            <div class="flex items-center gap-1.5 shrink-0">
+                                <span class="px-2 py-0.5 rounded-md bg-fuchsia-100 text-fuchsia-800 font-extrabold">${item.calories} kcal</span>
+                                <button type="button" class="edit-meal-btn p-1 rounded-lg hover:bg-emerald-100 text-slate-500 hover:text-emerald-700 transition-colors" title="Επεξεργασία">✏️</button>
+                                <button type="button" class="del-meal-btn p-1 rounded-lg hover:bg-red-100 text-slate-400 hover:text-red-600 transition-colors" title="Διαγραφή">🗑️</button>
+                            </div>
+                        `;
+
+                        li.querySelector('.edit-meal-btn').addEventListener('click', () => {
+                            openEditMealModal(m, item);
+                        });
+
+                        li.querySelector('.del-meal-btn').addEventListener('click', () => {
+                            const currentDate = document.getElementById('food-date').value || todayStr;
+                            const drafts = getMealDrafts();
+                            const dayObj = normalizeDayMeals(drafts[currentDate]);
+                            dayObj[m.key] = { text: '', calories: 0, protein: 0, fiber: 0 };
+                            drafts[currentDate] = dayObj;
+                            localStorage.setItem(STORAGE_KEY_MEAL_DRAFTS, JSON.stringify(drafts));
+
+                            const inputEl = document.getElementById(`food-${m.key}`);
+                            if (inputEl) inputEl.value = '';
+
+                            const totals = syncDayTotalFromMeals(currentDate, dayObj);
+                            renderDailyNutritionCard(totals.calories, totals.protein, dayObj, totals.fiber);
+                            renderCaloriesAnalytics();
+                            renderRecentMealChips();
+                            showMessage('calories-msg', `Διαγράφηκε το γεύμα (${m.label}).`, false);
+                        });
+
+                        breakdownList.appendChild(li);
+                    });
+                }
+            }
+
+            // Edit Logged Meal Modal Controls
+            const editMealModal = document.getElementById('edit-meal-modal');
+            const editMealTextInput = document.getElementById('edit-meal-text');
+            const editMealCalInput = document.getElementById('edit-meal-calories');
+
+            function openEditMealModal(mealMeta, itemData) {
+                editingMealKey = mealMeta.key;
+                document.getElementById('edit-meal-label-subtitle').textContent = `${mealMeta.icon} ${mealMeta.label}`;
+                editMealTextInput.value = itemData.text;
+                editMealCalInput.value = itemData.calories;
+                editMealModal.classList.remove('hidden');
+            }
+
+            editMealTextInput.addEventListener('input', () => {
+                const txt = editMealTextInput.value.trim();
+                if (txt) {
+                    const est = estimateGreekNutrition(txt);
+                    editMealCalInput.value = est.calories;
+                } else {
+                    editMealCalInput.value = 0;
+                }
+            });
+
+            document.getElementById('edit-meal-close-btn').addEventListener('click', () => editMealModal.classList.add('hidden'));
+            document.getElementById('edit-meal-cancel-btn').addEventListener('click', () => editMealModal.classList.add('hidden'));
+            editMealModal.addEventListener('click', (e) => {
+                if (e.target === editMealModal) editMealModal.classList.add('hidden');
+            });
+
+            document.getElementById('edit-meal-save-btn').addEventListener('click', () => {
+                if (!editingMealKey) return;
+                const currentDate = document.getElementById('food-date').value || todayStr;
+                const newText = editMealTextInput.value.trim();
+                const newCal = Math.max(0, parseInt(editMealCalInput.value, 10) || 0);
+
+                const drafts = getMealDrafts();
+                const dayObj = normalizeDayMeals(drafts[currentDate]);
+
+                if (!newText) {
+                    dayObj[editingMealKey] = { text: '', calories: 0, protein: 0, fiber: 0 };
+                } else {
+                    const est = estimateGreekNutrition(newText);
+                    dayObj[editingMealKey] = {
+                        text: newText,
+                        calories: newCal,
+                        protein: est.protein,
+                        fiber: est.fiber
+                    };
+                }
+
+                drafts[currentDate] = dayObj;
+                localStorage.setItem(STORAGE_KEY_MEAL_DRAFTS, JSON.stringify(drafts));
+
+                const inputEl = document.getElementById(`food-${editingMealKey}`);
+                if (inputEl) inputEl.value = newText;
+
+                editingMealKey = null;
+                editMealModal.classList.add('hidden');
+
+                const totals = syncDayTotalFromMeals(currentDate, dayObj);
+                renderDailyNutritionCard(totals.calories, totals.protein, dayObj, totals.fiber);
+                renderCaloriesAnalytics();
+                renderRecentMealChips();
+                showMessage('calories-msg', '✓ Το γεύμα ενημερώθηκε!', false);
+            });
+
+            document.getElementById('calc-calories-btn').addEventListener('click', () => {
+                const dVal = document.getElementById('food-date').value || todayStr;
+                const hasAny = MEAL_META.some(m => {
+                    const el = document.getElementById(`food-${m.key}`);
+                    return el && el.value.trim().length > 0;
+                });
+
+                if (!hasAny) {
+                    showMessage('calories-msg', 'Συμπλήρωσε τουλάχιστον ένα γεύμα πρώτα.', true);
+                    return;
+                }
+
+                const loadingIcon = document.getElementById('ai-loading');
+                if (loadingIcon) loadingIcon.classList.remove('hidden');
+
+                setTimeout(() => {
+                    const updatedMeals = saveMealDraftsForDate(dVal, true);
+                    const totals = syncDayTotalFromMeals(dVal, updatedMeals);
+
+                    if (loadingIcon) loadingIcon.classList.add('hidden');
+                    renderDailyNutritionCard(totals.calories, totals.protein, updatedMeals, totals.fiber);
+                    renderCaloriesAnalytics();
+                    renderRecentMealChips();
+                    showMessage('calories-msg', `✓ Αποθηκεύτηκαν ${totals.calories} kcal, ${totals.protein}g πρωτεΐνη & ${totals.fiber}g ίνες (${formatFullDisplayDate(dVal)})`, false);
+                }, 150);
+            });
+
+            function renderCaloriesAnalytics() {
+                const history = getCaloriesHistory();
+                const historyMap = {};
+                history.forEach(item => {
+                    historyMap[item.date] = item;
+                });
+
+                const weekTabBtn = document.getElementById('cal-tab-week');
+                const monthTabBtn = document.getElementById('cal-tab-month');
+                const weekAvgBox = document.getElementById('week-avg-container');
+                const monthAvgBox = document.getElementById('month-avg-container');
+                const monthLogWrapper = document.getElementById('month-calories-log-wrapper');
+
+                let labels = [];
+                let calData = [];
+
+                if (calViewMode === 'week') {
+                    weekTabBtn.className = 'px-3 py-1 rounded-lg text-xs font-bold bg-white text-emerald-700 shadow-xs transition-all';
+                    monthTabBtn.className = 'px-3 py-1 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-700 transition-all';
+                    weekAvgBox.classList.remove('hidden');
+                    monthAvgBox.classList.add('hidden');
+                    monthLogWrapper.classList.add('hidden');
+
+                    const endSunday = addDaysStr(currentCalWeekMonday, 6);
+                    document.getElementById('cal-period-display').textContent =
+                        `${formatDisplayDate(currentCalWeekMonday)} - ${formatDisplayDate(endSunday)}`;
+
+                    const dayNames = ['Δευ', 'Τρι', 'Τετ', 'Πεμ', 'Παρ', 'Σαβ', 'Κυρ'];
+                    let sumCal = 0;
+                    let sumProt = 0;
+                    let loggedDays = 0;
+
+                    for (let i = 0; i < 7; i++) {
+                        const dStr = addDaysStr(currentCalWeekMonday, i);
+                        labels.push(`${dayNames[i]} ${formatDisplayDate(dStr)}`);
+                        const entry = historyMap[dStr];
+                        const c = entry ? entry.calories : 0;
+                        const p = entry ? (entry.protein || 0) : 0;
+                        calData.push(c);
+                        if (c > 0) {
+                            sumCal += c;
+                            sumProt += p;
+                            loggedDays++;
+                        }
+                    }
+
+                    document.getElementById('week-avg-val').textContent = loggedDays > 0 ? Math.round(sumCal / loggedDays) : 0;
+                    document.getElementById('week-protein-avg-val').textContent = loggedDays > 0 ? Math.round(sumProt / loggedDays) : 0;
+                } else {
+                    monthTabBtn.className = 'px-3 py-1 rounded-lg text-xs font-bold bg-white text-emerald-700 shadow-xs transition-all';
+                    weekTabBtn.className = 'px-3 py-1 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-700 transition-all';
+                    weekAvgBox.classList.add('hidden');
+                    monthAvgBox.classList.remove('hidden');
+                    monthLogWrapper.classList.remove('hidden');
+
+                    document.getElementById('cal-period-display').textContent = formatMonthOnly(currentCalMonthFirst);
+                    const [y, m] = currentCalMonthFirst.split('-').map(Number);
+                    const daysInMonth = new Date(y, m, 0).getDate();
+                    const monthPrefix = currentCalMonthFirst.slice(0, 7);
+
+                    let sumCal = 0;
+                    let sumProt = 0;
+                    let loggedEntries = [];
+
+                    for (let d = 1; d <= daysInMonth; d++) {
+                        const dStr = `${monthPrefix}-${String(d).padStart(2, '0')}`;
+                        labels.push(String(d));
+                        const entry = historyMap[dStr];
+                        const c = entry ? entry.calories : 0;
+                        calData.push(c);
+                        if (entry && entry.calories > 0) {
+                            sumCal += entry.calories;
+                            sumProt += entry.protein || 0;
+                            loggedEntries.push(entry);
+                        }
+                    }
+
+                    const count = loggedEntries.length;
+                    document.getElementById('month-avg-val').textContent = count > 0 ? Math.round(sumCal / count) : 0;
+                    document.getElementById('month-protein-avg-val').textContent = count > 0 ? Math.round(sumProt / count) : 0;
+                    document.getElementById('month-cal-days-count').textContent = count;
+
+                    const logUl = document.getElementById('month-calories-log');
+                    logUl.innerHTML = '';
+                    if (count === 0) {
+                        logUl.innerHTML = '<li class="text-xs text-slate-400 italic py-2">Δεν υπάρχουν καταγραφές για αυτόν τον μήνα.</li>';
+                    } else {
+                        [...loggedEntries].reverse().forEach(entry => {
+                            const li = document.createElement('li');
+                            li.className = 'flex items-center justify-between bg-slate-50 hover:bg-fuchsia-50/70 border border-slate-200/70 rounded-xl px-3 py-2 text-xs cursor-pointer transition-colors';
+                            li.innerHTML = `
+                                <span class="font-bold text-slate-700">${formatFullDisplayDate(entry.date)}</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-extrabold text-fuchsia-700">${entry.calories} kcal</span>
+                                    <span class="px-2 py-0.5 rounded-md bg-emerald-50 text-emerald-700 font-bold border border-emerald-200/80">${entry.protein || 0}g πρωτ.</span>
+                                </div>
+                            `;
+                            li.addEventListener('click', () => {
+                                foodDateEl.value = entry.date;
+                                loadMealsAndNutritionForDate(entry.date);
+                            });
+                            logUl.appendChild(li);
+                        });
+                    }
+                }
+
+                const ctx = document.getElementById('caloriesChart').getContext('2d');
+                if (caloriesChart) {
+                    caloriesChart.destroy();
+                }
+
+                caloriesChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Θερμίδες (kcal)',
+                            data: calData,
+                            backgroundColor: 'rgba(192, 38, 211, 0.82)',
+                            borderColor: '#c026d3',
+                            borderWidth: 1,
+                            borderRadius: 6
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                callbacks: {
+                                    label(context) {
+                                        return `${context.parsed.y} kcal`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: { display: false },
+                                ticks: { font: { size: 10 }, color: '#94a3b8' }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: { color: '#f1f5f9' },
+                                ticks: { font: { size: 10 }, color: '#94a3b8' }
+                            }
+                        }
+                    }
+                });
+            }
+
+            foodDateEl.addEventListener('change', (e) => {
+                const chosen = e.target.value || todayStr;
+                currentCalWeekMonday = getMonday(chosen);
+                currentCalMonthFirst = chosen.slice(0, 7) + '-01';
+                loadMealsAndNutritionForDate(chosen);
+                renderCaloriesAnalytics();
+            });
+
+            document.getElementById('cal-tab-week').addEventListener('click', () => {
+                calViewMode = 'week';
+                renderCaloriesAnalytics();
+            });
+
+            document.getElementById('cal-tab-month').addEventListener('click', () => {
+                calViewMode = 'month';
+                renderCaloriesAnalytics();
+            });
+
+            document.getElementById('cal-prev-btn').addEventListener('click', () => {
+                if (calViewMode === 'week') {
+                    currentCalWeekMonday = addDaysStr(currentCalWeekMonday, -7);
+                } else {
+                    currentCalMonthFirst = addMonthsStr(currentCalMonthFirst, -1);
+                }
+                renderCaloriesAnalytics();
+            });
+
+            document.getElementById('cal-next-btn').addEventListener('click', () => {
+                if (calViewMode === 'week') {
+                    currentCalWeekMonday = addDaysStr(currentCalWeekMonday, 7);
+                } else {
+                    currentCalMonthFirst = addMonthsStr(currentCalMonthFirst, 1);
+                }
+                renderCaloriesAnalytics();
+            });
+
+            // --- 3. DYNAMIC WORKOUT TRACKER (WEEK & MONTH) ---
+            let currentWWeekMonday = getMonday(todayStr);
+            let currentWMonthFirst = todayStr.slice(0, 7) + '-01';
+            let activeModalDate = null;
+
+            const AEROBIC_TYPES = new Set([
+                'Run/Walk',
+                'Power Walk',
+                'Τρέξιμο',
+                'Ποδήλατο',
+                'Κολύμπι',
+                'Ελλειπτικό / Διάδρομος'
+            ]);
+
+            const STRENGTH_TYPES = new Set([
+                'Μυϊκή Ενδυνάμωση',
+                'TRX'
+            ]);
+
+            const DISTANCE_TYPES = new Set([
+                'Run/Walk',
+                'Power Walk',
+                'Τρέξιμο',
+                'Ποδήλατο',
+                'Κολύμπι',
+                'Ελλειπτικό / Διάδρομος'
+            ]);
+
+            const WORKOUT_ICONS = {
+                'Run/Walk': '🏃‍♂️',
+                'Power Walk': '🚶‍♂️',
+                'Τρέξιμο': '🏅',
+                'Ποδήλατο': '🚴‍♂️',
+                'Κολύμπι': '🏊‍♂️',
+                'Ελλειπτικό / Διάδρομος': '👟',
+                'Μυϊκή Ενδυνάμωση': '💪',
+                'TRX': '🪢',
+                'Stretching / Mobility': '🧘‍♂️',
+                'Ξεκούραση': '🌱'
+            };
+
+            const BASELINE_HINTS = [
+                'Πρόταση: Run/Walk 30\'',
+                'Πρόταση: Ανάρρωση / Stretching',
+                'Πρόταση: Run/Walk 30\'',
+                'Πρόταση: Power Walk 35-40\' + 15\' Ενδυνάμωση',
+                'Πρόταση: Ανάρρωση',
+                'Πρόταση: Run/Walk 30\'',
+                'Πρόταση: Power Walk 35-40\' + 15\' Ενδυνάμωση'
+            ];
+
+            function getWorkoutHistory() {
+                try {
+                    const saved = localStorage.getItem(STORAGE_KEY_WORKOUT_HISTORY);
+                    return saved ? JSON.parse(saved) : {};
+                } catch (e) {
+                    return {};
+                }
+            }
+
+            function saveWorkoutHistory(mapObj) {
+                localStorage.setItem(STORAGE_KEY_WORKOUT_HISTORY, JSON.stringify(mapObj));
+            }
+
+            function renderAutoPhaseBanner(weekDates, workoutsMap) {
+                const s = getSettings();
+                const bannerEl = document.getElementById('auto-phase-banner');
+                if (!bannerEl) return;
+
+                let aerobicCount = 0;
+                let strengthCount = 0;
+                let weekKm = 0;
+
+                weekDates.forEach(dStr => {
+                    const w = workoutsMap[dStr];
+                    if (!w) return;
+                    if (AEROBIC_TYPES.has(w.type)) aerobicCount++;
+                    if (STRENGTH_TYPES.has(w.type)) strengthCount++;
+                    if (w.distance) weekKm += parseFloat(w.distance) || 0;
+                });
+
+                if (latestKnownWeight > s.runUnlock) {
+                    bannerEl.innerHTML = `
+                        <div class="bg-emerald-50/90 border border-emerald-200 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
+                            <div>
+                                <span class="font-extrabold text-emerald-900">Φάση 1: Βάση Αντοχής (&gt;${s.runUnlock} kg)</span>
+                                <p class="text-[11px] text-emerald-700 font-medium mt-0.5">Στόχος εβδομάδας: 3-4 αερόβιες + 2 ενδυναμώσεις</p>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span class="px-2.5 py-1 rounded-lg bg-white border border-emerald-200 font-extrabold text-emerald-800">🏃 Αερόβιες: ${aerobicCount}/4</span>
+                                <span class="px-2.5 py-1 rounded-lg bg-white border border-fuchsia-200 font-extrabold text-fuchsia-800">💪 Ενδυν.: ${strengthCount}/2</span>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    const spanKg = Math.max(1, s.runUnlock - s.finalGoal);
+                    const progressRatio = Math.min(1, Math.max(0, (s.runUnlock - latestKnownWeight) / spanKg));
+                    const dynamicKmGoal = Math.round(15 + progressRatio * (s.weeklyKmGoal - 15));
+                    const kmPct = Math.min(100, Math.round((weekKm / dynamicKmGoal) * 100));
+
+                    bannerEl.innerHTML = `
+                        <div class="bg-emerald-50/90 border border-emerald-200 rounded-2xl p-3 text-xs">
+                            <div class="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+                                <span class="font-bold text-emerald-900">🏅 Φάση 2: Τρέξιμο Ενεργό (&le;${s.runUnlock} kg)</span>
+                                <div class="flex items-center gap-2">
+                                    <span class="font-extrabold text-emerald-800">${weekKm.toFixed(1)} / ${dynamicKmGoal} χλμ</span>
+                                    <span class="px-2 py-0.5 rounded-md bg-white border border-emerald-200 font-bold text-emerald-700">💪 ${strengthCount}/2</span>
+                                </div>
+                            </div>
+                            <div class="w-full bg-emerald-200/70 rounded-full h-2 overflow-hidden">
+                                <div class="bg-emerald-600 h-2 rounded-full transition-all duration-500" style="width: ${kmPct}%"></div>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            function renderWorkoutWeek() {
+                const workoutsMap = getWorkoutHistory();
+                const endSunday = addDaysStr(currentWWeekMonday, 6);
+                document.getElementById('current-w-week-display').textContent =
+                    `${formatDisplayDate(currentWWeekMonday)} - ${formatDisplayDate(endSunday)}`;
+
+                const dayNamesFull = ['Δευτέρα', 'Τρίτη', 'Τετάρτη', 'Πέμπτη', 'Παρασκευή', 'Σάββατο', 'Κυριακή'];
+                const weekDates = [];
+                const listEl = document.getElementById('dynamic-week-list');
+                listEl.innerHTML = '';
+
+                for (let i = 0; i < 7; i++) {
+                    const dStr = addDaysStr(currentWWeekMonday, i);
+                    weekDates.push(dStr);
+                    const entry = workoutsMap[dStr];
+                    const isToday = dStr === todayStr;
+
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+
+                    if (entry) {
+                        const isRest = entry.type === 'Ξεκούραση';
+                        const icon = WORKOUT_ICONS[entry.type] || '✅';
+                        let details = '';
+                        if (!isRest) {
+                            const parts = [];
+                            if (entry.duration) parts.push(`${entry.duration}'`);
+                            if (entry.distance) parts.push(`${entry.distance} χλμ`);
+                            details = parts.length > 0 ? ` (${parts.join(' • ')})` : '';
+                        }
+
+                        btn.className = isRest
+                            ? 'w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-slate-100/90 border border-slate-200 text-left transition-all hover:border-slate-300'
+                            : 'w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-emerald-50/80 border border-emerald-200/90 text-left transition-all hover:bg-emerald-100/70';
+
+                        btn.innerHTML = `
+                            <div class="flex items-center gap-3 min-w-0">
+                                <span class="text-lg shrink-0">${icon}</span>
+                                <div class="min-w-0">
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold text-sm text-slate-800">${dayNamesFull[i]}</span>
+                                        <span class="text-xs font-medium text-slate-400">${formatDisplayDate(dStr)}</span>
+                                        ${isToday ? '<span class="px-1.5 py-0.5 rounded-md bg-emerald-600 text-white text-[10px] font-bold">Σήμερα</span>' : ''}
+                                    </div>
+                                    <div class="text-xs font-semibold ${isRest ? 'text-slate-500' : 'text-emerald-800'} truncate mt-0.5">
+                                        ${entry.type}${details}
+                                    </div>
+                                </div>
+                            </div>
+                            <span class="text-xs font-bold ${isRest ? 'text-slate-500' : 'text-emerald-700'} shrink-0 ml-2">Επεξ.</span>
+                        `;
+                    } else {
+                        btn.className = `w-full flex items-center justify-between px-4 py-3 rounded-2xl bg-white hover:bg-slate-50 border ${isToday ? 'border-emerald-400 ring-1 ring-emerald-200' : 'border-slate-200/80'} text-left transition-all`;
+                        btn.innerHTML = `
+                            <div class="flex items-center gap-3 min-w-0">
+                                <span class="w-5 h-5 rounded-md border-2 border-slate-300 inline-block shrink-0"></span>
+                                <div class="min-w-0">
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold text-sm text-slate-700">${dayNamesFull[i]}</span>
+                                        <span class="text-xs font-medium text-slate-400">${formatDisplayDate(dStr)}</span>
+                                        ${isToday ? '<span class="px-1.5 py-0.5 rounded-md bg-emerald-600 text-white text-[10px] font-bold">Σήμερα</span>' : ''}
+                                    </div>
+                                    <div class="text-[11px] text-slate-400 truncate mt-0.5">${BASELINE_HINTS[i]}</div>
+                                </div>
+                            </div>
+                            <span class="text-xs font-semibold text-slate-400 shrink-0 ml-2">+ Καταγραφή</span>
+                        `;
+                    }
+
+                    btn.addEventListener('click', () => openWorkoutModal(dStr, dayNamesFull[i]));
+                    listEl.appendChild(btn);
+                }
+
+                renderAutoPhaseBanner(weekDates, workoutsMap);
+            }
+
+            function renderWorkoutMonth() {
+                const workoutsMap = getWorkoutHistory();
+                document.getElementById('current-w-month-display').textContent = formatMonthOnly(currentWMonthFirst);
+                const monthPrefix = currentWMonthFirst.slice(0, 7);
+
+                const entries = Object.entries(workoutsMap)
+                    .filter(([dateStr]) => dateStr.startsWith(monthPrefix))
+                    .sort((a, b) => parseLocalDate(a[0]) - parseLocalDate(b[0]));
+
+                let totalWorkouts = 0;
+                let totalMins = 0;
+                let totalKm = 0;
+                let aerobicSessions = 0;
+                let strengthSessions = 0;
+                const byType = {};
+
+                entries.forEach(([, w]) => {
+                    if (w.type === 'Ξεκούραση') return;
+                    totalWorkouts++;
+                    totalMins += parseInt(w.duration, 10) || 0;
+                    totalKm += parseFloat(w.distance) || 0;
+
+                    if (AEROBIC_TYPES.has(w.type)) aerobicSessions++;
+                    if (STRENGTH_TYPES.has(w.type)) strengthSessions++;
+
+                    if (!byType[w.type]) {
+                        byType[w.type] = { count: 0, mins: 0, km: 0 };
+                    }
+                    byType[w.type].count++;
+                    byType[w.type].mins += parseInt(w.duration, 10) || 0;
+                    byType[w.type].km += parseFloat(w.distance) || 0;
+                });
+
+                document.getElementById('month-total-workouts').textContent = totalWorkouts;
+                document.getElementById('month-total-mins').textContent = `${totalMins}'`;
+                document.getElementById('month-total-km').innerHTML = `${totalKm.toFixed(1)} <span class="text-xs font-bold">χλμ</span>`;
+
+                const breakdownEl = document.getElementById('month-breakdown-list');
+                breakdownEl.innerHTML = '';
+
+                if (totalWorkouts === 0) {
+                    breakdownEl.innerHTML = '<p class="text-xs text-slate-400 italic">Δεν έχουν καταγραφεί προπονήσεις αυτόν τον μήνα.</p>';
+                } else {
+                    const summaryPill = document.createElement('div');
+                    summaryPill.className = 'flex flex-wrap gap-2 mb-2 text-xs font-bold';
+                    summaryPill.innerHTML = `
+                        <span class="px-2.5 py-1 rounded-lg bg-emerald-50 text-emerald-800 border border-emerald-200/70">🏃 Αερόβιες: ${aerobicSessions}</span>
+                        <span class="px-2.5 py-1 rounded-lg bg-fuchsia-50 text-fuchsia-800 border border-fuchsia-200/70">💪 Ενδυνάμωση: ${strengthSessions}</span>
+                    `;
+                    breakdownEl.appendChild(summaryPill);
+
+                    Object.entries(byType).forEach(([typeName, stats]) => {
+                        const icon = WORKOUT_ICONS[typeName] || '✅';
+                        const row = document.createElement('div');
+                        row.className = 'flex items-center justify-between bg-slate-50 border border-slate-200/70 rounded-xl px-3 py-2 text-xs';
+                        const kmPart = stats.km > 0 ? ` • ${stats.km.toFixed(1)} χλμ` : '';
+                        row.innerHTML = `
+                            <span class="font-bold text-slate-700">${icon} ${typeName}</span>
+                            <span class="font-semibold text-slate-600">${stats.count}x (${stats.mins}'${kmPart})</span>
+                        `;
+                        breakdownEl.appendChild(row);
+                    });
+                }
+
+                const logUl = document.getElementById('month-workouts-log');
+                logUl.innerHTML = '';
+                if (entries.length === 0) {
+                    logUl.innerHTML = '<li class="text-xs text-slate-400 italic py-1">Καμία καταχώρηση στον μήνα.</li>';
+                } else {
+                    [...entries].reverse().forEach(([dateStr, w]) => {
+                        const icon = WORKOUT_ICONS[w.type] || '✅';
+                        const parts = [];
+                        if (w.type !== 'Ξεκούραση') {
+                            if (w.duration) parts.push(`${w.duration}'`);
+                            if (w.distance) parts.push(`${w.distance} χλμ`);
+                        }
+                        const detailStr = parts.length > 0 ? ` (${parts.join(' • ')})` : '';
+                        const li = document.createElement('li');
+                        li.className = 'flex items-center justify-between bg-slate-50 hover:bg-emerald-50/70 border border-slate-200/70 rounded-xl px-3 py-2 text-xs cursor-pointer transition-colors';
+                        li.innerHTML = `
+                            <span class="font-bold text-slate-700">${formatFullDisplayDate(dateStr)}</span>
+                            <span class="font-semibold text-slate-700">${icon} ${w.type}${detailStr}</span>
+                        `;
+                        li.addEventListener('click', () => openWorkoutModal(dateStr, formatFullDisplayDate(dateStr)));
+                        logUl.appendChild(li);
+                    });
+                }
+            }
+
+            // Workout Modal Logic
+            const workoutModal = document.getElementById('workout-modal');
+            const modalTypeSelect = document.getElementById('modal-workout-type');
+            const modalDurationGroup = document.getElementById('modal-duration-group');
+            const modalDistanceGroup = document.getElementById('modal-distance-group');
+            const modalDurationInput = document.getElementById('modal-duration');
+            const modalDistanceInput = document.getElementById('modal-distance');
+            const modalDeleteBtn = document.getElementById('modal-delete-btn');
+
+            function updateWorkoutModalFields() {
+                const selected = modalTypeSelect.value;
+                if (selected === 'Ξεκούραση') {
+                    modalDurationGroup.classList.add('hidden');
+                    modalDistanceGroup.classList.add('hidden');
+                } else {
+                    modalDurationGroup.classList.remove('hidden');
+                    if (DISTANCE_TYPES.has(selected)) {
+                        modalDistanceGroup.classList.remove('hidden');
+                    } else {
+                        modalDistanceGroup.classList.add('hidden');
+                    }
+                }
+            }
+
+            modalTypeSelect.addEventListener('change', updateWorkoutModalFields);
+
+            function openWorkoutModal(dateStr, dayLabel) {
+                activeModalDate = dateStr;
+                document.getElementById('modal-date-title').textContent = `${dayLabel} • ${formatFullDisplayDate(dateStr)}`;
+                const existing = getWorkoutHistory()[dateStr];
+                if (existing) {
+                    modalTypeSelect.value = existing.type || 'Run/Walk';
+                    modalDurationInput.value = existing.duration || '';
+                    modalDistanceInput.value = existing.distance || '';
+                    modalDeleteBtn.classList.remove('hidden');
+                } else {
+                    modalTypeSelect.value = 'Run/Walk';
+                    modalDurationInput.value = '';
+                    modalDistanceInput.value = '';
+                    modalDeleteBtn.classList.add('hidden');
+                }
+                updateWorkoutModalFields();
+                workoutModal.classList.remove('hidden');
+            }
+
+            document.getElementById('modal-close-btn').addEventListener('click', () => workoutModal.classList.add('hidden'));
+            workoutModal.addEventListener('click', (e) => {
+                if (e.target === workoutModal) workoutModal.classList.add('hidden');
+            });
+
+            document.getElementById('modal-save-btn').addEventListener('click', () => {
+                if (!activeModalDate) return;
+                const typeVal = modalTypeSelect.value;
+                const mapObj = getWorkoutHistory();
+
+                if (typeVal === 'Ξεκούραση') {
+                    mapObj[activeModalDate] = { type: 'Ξεκούραση', duration: 0, distance: 0 };
+                } else {
+                    const durVal = parseInt(modalDurationInput.value, 10) || 30;
+                    const distVal = DISTANCE_TYPES.has(typeVal) ? (parseFloat(modalDistanceInput.value) || 0) : 0;
+                    mapObj[activeModalDate] = {
+                        type: typeVal,
+                        duration: durVal,
+                        distance: Math.round(distVal * 10) / 10
+                    };
+                }
+
+                saveWorkoutHistory(mapObj);
+                workoutModal.classList.add('hidden');
+                renderWorkoutWeek();
+                renderWorkoutMonth();
+            });
+
+            modalDeleteBtn.addEventListener('click', () => {
+                if (!activeModalDate) return;
+                const mapObj = getWorkoutHistory();
+                delete mapObj[activeModalDate];
+                saveWorkoutHistory(mapObj);
+                workoutModal.classList.add('hidden');
+                renderWorkoutWeek();
+                renderWorkoutMonth();
+            });
+
+            // Workout Week/Month Tabs & Navigation
+            const wTabWeekBtn = document.getElementById('w-tab-week');
+            const wTabMonthBtn = document.getElementById('w-tab-month');
+            const wWeekView = document.getElementById('workout-week-view');
+            const wMonthView = document.getElementById('workout-month-view');
+
+            wTabWeekBtn.addEventListener('click', () => {
+                wTabWeekBtn.className = 'px-3 py-1 rounded-lg text-xs font-bold bg-white text-emerald-700 shadow-xs transition-all';
+                wTabMonthBtn.className = 'px-3 py-1 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-700 transition-all';
+                wWeekView.classList.remove('hidden');
+                wMonthView.classList.add('hidden');
+                renderWorkoutWeek();
+            });
+
+            wTabMonthBtn.addEventListener('click', () => {
+                wTabMonthBtn.className = 'px-3 py-1 rounded-lg text-xs font-bold bg-white text-emerald-700 shadow-xs transition-all';
+                wTabWeekBtn.className = 'px-3 py-1 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-700 transition-all';
+                wMonthView.classList.remove('hidden');
+                wWeekView.classList.add('hidden');
+                renderWorkoutMonth();
+            });
+
+            document.getElementById('w-prev-week-btn').addEventListener('click', () => {
+                currentWWeekMonday = addDaysStr(currentWWeekMonday, -7);
+                renderWorkoutWeek();
+            });
+
+            document.getElementById('w-next-week-btn').addEventListener('click', () => {
+                currentWWeekMonday = addDaysStr(currentWWeekMonday, 7);
+                renderWorkoutWeek();
+            });
+
+            document.getElementById('w-prev-month-btn').addEventListener('click', () => {
+                currentWMonthFirst = addMonthsStr(currentWMonthFirst, -1);
+                renderWorkoutMonth();
+            });
+
+            document.getElementById('w-next-month-btn').addEventListener('click', () => {
+                currentWMonthFirst = addMonthsStr(currentWMonthFirst, 1);
+                renderWorkoutMonth();
+            });
+
+            // --- INITIALIZE ENTIRE DASHBOARD ---
+            function refreshAllDashboard() {
+                loadWeight();
+                renderWaistHistory();
+                renderNotesHistory();
+                loadMealsAndNutritionForDate(foodDateEl.value || todayStr);
+                renderCaloriesAnalytics();
+                renderWorkoutWeek();
+                renderWorkoutMonth();
+            }
+
+            refreshAllDashboard();
+        });
+    </script>
+</body>
+</html>

@@ -7,6 +7,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Live Coach">
+    <link id="app-favicon" rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 120'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0%25' y1='0%25' x2='100%25' y2='100%25'%3E%3Cstop offset='0%25' stop-color='%2310b981'/%3E%3Cstop offset='100%25' stop-color='%23047857'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='2' y='2' width='116' height='116' rx='28' fill='url(%23g)'/%3E%3Cpath d='M60 92 C60 92 26 70 26 46 C26 34 35 26 46 26 C53 26 58 30 60 35 C62 30 67 26 74 26 C85 26 94 34 94 46 C94 70 60 92 60 92 Z' fill='%23ffffff'/%3E%3Cpath d='M31 54 H44 L50 41 L58 67 L65 48 L70 54 H89' fill='none' stroke='%23c026d3' stroke-width='6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ccircle cx='88' cy='28' r='6.5' fill='%23e879f9' stroke='%23ffffff' stroke-width='2'/%3E%3C/svg%3E">
+    <link id="app-apple-icon" rel="apple-touch-icon" sizes="180x180" href="">
     <!-- Google Font: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -45,10 +47,27 @@
             <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
                     <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-fuchsia-600 text-white text-xs font-extrabold mb-2 shadow-xs">
-                        <span>🏃‍♂️</span> Personal Fitness &amp; Nutrition
+                        <span>✨</span> Personal Fitness &amp; Nutrition
                     </div>
-                    <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Live Coach</h1>
-                    <p id="header-goals-summary" class="text-sm text-slate-600 mt-1">Αρχικό Βάρος: <strong>90 kg</strong> • Τελικός Στόχος: <strong>65 kg</strong></p>
+                    <div class="flex items-center gap-3">
+                        <svg class="w-11 h-11 shrink-0 rounded-2xl shadow-sm" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <defs>
+                                <linearGradient id="liveCoachLogoGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" stop-color="#10b981"/>
+                                    <stop offset="100%" stop-color="#047857"/>
+                                </linearGradient>
+                            </defs>
+                            <rect x="2" y="2" width="116" height="116" rx="28" fill="url(#liveCoachLogoGrad)"/>
+                            <rect x="8" y="8" width="104" height="104" rx="22" fill="none" stroke="#ffffff" stroke-opacity="0.2" stroke-width="2"/>
+                            <path d="M60 92 C60 92 26 70 26 46 C26 34 35 26 46 26 C53 26 58 30 60 35 C62 30 67 26 74 26 C85 26 94 34 94 46 C94 70 60 92 60 92 Z" fill="#ffffff"/>
+                            <path d="M31 54 H44 L50 41 L58 67 L65 48 L70 54 H89" fill="none" stroke="#c026d3" stroke-width="5.5" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="88" cy="28" r="6.5" fill="#e879f9" stroke="#ffffff" stroke-width="2"/>
+                        </svg>
+                        <div>
+                            <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Live Coach</h1>
+                            <p id="header-goals-summary" class="text-sm text-slate-600 mt-0.5">Αρχικό Βάρος: <strong>90 kg</strong> • Τελικός Στόχος: <strong>65 kg</strong></p>
+                        </div>
+                    </div>
 
                     <!-- Backup, Product Labels & Settings Toolbar -->
                     <div class="flex flex-wrap items-center gap-2 mt-3">
@@ -62,7 +81,7 @@
                             <span>💾</span> Εξαγωγή Backup
                         </button>
                         <label for="import-backup-input" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 border border-emerald-200 text-xs font-bold transition-colors cursor-pointer">
-                            <span>📂</span> Εισαγωγή Backup
+                            <span>📂</span> Επαναφορά Backup
                         </label>
                         <input type="file" id="import-backup-input" accept=".json" class="hidden">
                         <span id="backup-status-msg" class="text-xs font-bold text-emerald-600"></span>
@@ -72,10 +91,10 @@
                 <!-- Daily Auto-Refreshing Quote Box -->
                 <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-4 md:max-w-md shadow-xs">
                     <div class="flex items-center gap-1.5 text-[11px] font-extrabold uppercase tracking-wider text-emerald-800 mb-1">
-                        <span>✨</span> Ημερήσιο Κίνητρο
+                        <span>💡</span> Σκέψη της Ημέρας
                     </div>
                     <p id="quote-text" class="text-sm font-semibold text-slate-800 italic leading-relaxed">
-                        «Η συνέπεια κερδίζει την ένταση. Κάθε μέρα μετράει.»
+                        «Η συνέπεια νικάει την τελειότητα. Κάθε μέρα μετράει.»
                     </p>
                 </div>
             </div>
@@ -93,7 +112,7 @@
                         </div>
                         <div>
                             <h2 class="text-lg font-extrabold text-slate-900">Παρακολούθηση Βάρους</h2>
-                            <p class="text-xs text-slate-500">Πρόοδος &amp; Εκτίμηση Πορείας</p>
+                            <p class="text-xs text-slate-500">Πρόοδος &amp; πρόβλεψη επίτευξης στόχου</p>
                         </div>
                     </div>
 
@@ -112,7 +131,7 @@
                     <!-- Big Goal Boxes (Side by Side) -->
                     <div id="progress-container" class="mb-6"></div>
 
-                    <!-- Clean Visual BMI Gauge Section (Green -> Yellow -> Red -> Burgundy) -->
+                    <!-- Clean Visual BMI Gauge Section -->
                     <div class="bg-slate-50/90 border border-slate-200/80 rounded-2xl p-4 mb-6">
                         <div class="flex items-center justify-between mb-1">
                             <span class="text-xs font-extrabold uppercase tracking-wider text-slate-600">Δείκτης Μάζας Σώματος (BMI)</span>
@@ -124,7 +143,7 @@
                         <div class="relative pt-2 pb-1">
                             <div class="h-4 w-full rounded-full shadow-inner" style="background: linear-gradient(90deg, #10b981 0%, #10b981 12.5%, #facc15 37.5%, #dc2626 62.5%, #4c0519 87.5%, #4c0519 100%);"></div>
                             <!-- Moving Circle Indicator -->
-                            <div id="bmi-circle-indicator" class="w-6 h-6 rounded-full bg-white border-4 border-slate-900 shadow-md absolute top-1 -translate-x-1/2 transition-all duration-500 flex items-center justify-center" style="left: 39%;" title="Δείκτης Μάζας Σώματος">
+                            <div id="bmi-circle-indicator" class="w-6 h-6 rounded-full bg-white border-4 border-slate-900 shadow-md absolute top-1 -translate-x-1/2 transition-all duration-500 flex items-center justify-center" style="left: 39%;" title="Τρέχουσα θέση ΔΜΣ">
                                 <span class="w-2 h-2 rounded-full bg-slate-900"></span>
                             </div>
                         </div>
@@ -152,7 +171,7 @@
                     <!-- Weight History Grid with Edit & Delete Buttons -->
                     <div class="border-t border-slate-100 pt-4 mb-5">
                         <div class="flex items-center justify-between mb-2.5">
-                            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Ιστορικό Μετρήσεων</h3>
+                            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Ιστορικό Ζυγίσεων</h3>
                             <span id="weight-entries-count" class="text-[11px] font-bold text-slate-400"></span>
                         </div>
                         <ul id="weight-history-list" class="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-44 overflow-y-auto pr-1 custom-scrollbar">
@@ -165,7 +184,7 @@
                         <div class="flex items-center justify-between mb-2.5">
                             <div>
                                 <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-600">Περίμετρος Μέσης (1 φορά/μήνα)</h3>
-                                <p id="waist-summary-text" class="text-xs text-slate-400 mt-0.5">Δεν υπάρχουν μετρήσεις</p>
+                                <p id="waist-summary-text" class="text-xs text-slate-400 mt-0.5">Καμία καταγραφή ακόμα</p>
                             </div>
                             <span id="waist-diff-badge" class="hidden px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200"></span>
                         </div>
@@ -193,15 +212,15 @@
                     <div class="flex flex-wrap items-center gap-2 mb-3">
                         <input type="date" id="note-date" class="bg-slate-50 border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                         <div id="mood-selector-pills" class="flex flex-wrap gap-1.5">
-                            <button type="button" data-mood="⚡ Υψηλή Ενέργεια" class="mood-pill px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200 text-xs font-semibold text-slate-700 transition-colors">⚡ Υψηλή Ενέργεια</button>
-                            <button type="button" data-mood="😌 Καλή / Ήρεμη" class="mood-pill px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200 text-xs font-semibold text-slate-700 transition-colors">😌 Καλή / Ήρεμη</button>
+                            <button type="button" data-mood="😊 Πολύ Καλή" class="mood-pill px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200 text-xs font-semibold text-slate-700 transition-colors">😊 Πολύ Καλή</button>
+                            <button type="button" data-mood="⚡ Καλή / Ενέργεια" class="mood-pill px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200 text-xs font-semibold text-slate-700 transition-colors">⚡ Καλή / Ενέργεια</button>
                             <button type="button" data-mood="😴 Κούραση" class="mood-pill px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-fuchsia-50 border border-slate-200 text-xs font-semibold text-slate-700 transition-colors">😴 Κούραση</button>
                             <button type="button" data-mood="🍽️ Έντονη Πείνα" class="mood-pill px-2.5 py-1.5 rounded-xl bg-slate-50 hover:bg-fuchsia-50 border border-slate-200 text-xs font-semibold text-slate-700 transition-colors">🍽️ Έντονη Πείνα</button>
                         </div>
                     </div>
 
                     <div class="flex gap-2 mb-2">
-                        <input type="text" id="note-text-input" placeholder="Γράψε μια σύντομη σημείωση..." class="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-xs sm:text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        <input type="text" id="note-text-input" placeholder="Γράψε μια σημείωση για σήμερα..." class="flex-1 bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-xs sm:text-sm font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                         <button id="save-note-btn" type="button" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2.5 rounded-2xl text-xs sm:text-sm transition-colors shrink-0">Αποθήκευση</button>
                     </div>
                     <div id="note-msg" class="text-xs font-semibold min-h-[1rem] mb-2 px-1"></div>
@@ -224,7 +243,7 @@
                             </div>
                             <div>
                                 <h2 class="text-lg font-extrabold text-slate-900">Θερμίδες &amp; Ημερήσια Διατροφή</h2>
-                                <p class="text-xs text-slate-500">Καταγραφή γευμάτων &amp; αυτόματος υπολογισμός</p>
+                                <p class="text-xs text-slate-500">Υπολογισμός θερμίδων, πρωτεΐνης &amp; ενυδάτωσης</p>
                             </div>
                         </div>
                     </div>
@@ -248,60 +267,60 @@
                     <!-- Recent Meals Quick Add & Copy Yesterday -->
                     <div class="mb-3 bg-slate-50/90 border border-slate-200/80 rounded-2xl p-2.5">
                         <div class="flex items-center justify-between gap-2 mb-1.5">
-                            <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">Γρήγορη Προσθήκη Πρόσφατων</span>
+                            <span class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500">Πρόσφατα &amp; Γρήγορη Προσθήκη</span>
                             <button id="copy-yesterday-btn" type="button" class="text-[11px] font-bold text-emerald-700 hover:text-emerald-900 bg-emerald-100/80 hover:bg-emerald-200/70 px-2.5 py-1 rounded-lg transition-colors">
-                                📋 Αντιγραφή Χθεσινών
+                                📋 Αντιγραφή από Χθες
                             </button>
                         </div>
                         <div id="quick-meal-chips" class="flex flex-wrap gap-1.5"></div>
                     </div>
 
-                    <!-- Clean 5-Meal Inputs with Smart Product Autocomplete -->
+                    <!-- Clean 5-Meal Inputs with Smart Product Autocomplete & Enter/Done Submit -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 mb-3">
                         <div class="relative">
                             <label for="food-breakfast" class="block text-[11px] font-bold text-slate-600 mb-0.5">Πρωινό</label>
                             <div class="relative">
-                                <input type="text" id="food-breakfast" autocomplete="off" placeholder="π.χ. Γιαούρτι 2%, 1 μπανάνα, καφές" class="meal-autocomplete-input w-full bg-slate-50 border border-slate-200 rounded-xl pl-3 pr-8 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                                <button type="button" data-picker-for="food-breakfast" class="meal-picker-btn absolute right-2 top-1/2 -translate-y-1/2 text-xs opacity-60 hover:opacity-100 p-0.5" title="Επιλογή από αποθηκευμένα προϊόντα">🏷️</button>
+                                <input type="text" id="food-breakfast" autocomplete="off" enterkeyhint="done" placeholder="π.χ. 200g γιαούρτι 2% και 1 μπανάνα" class="meal-autocomplete-input w-full bg-slate-50 border border-slate-200 rounded-xl pl-3 pr-8 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                <button type="button" data-picker-for="food-breakfast" class="meal-picker-btn absolute right-2 top-1/2 -translate-y-1/2 text-xs opacity-60 hover:opacity-100 p-0.5" title="Επιλογή από αποθηκευμένες ετικέτες">🏷️</button>
                             </div>
                             <div id="dropdown-food-breakfast" class="meal-autocomplete-dropdown hidden absolute left-0 right-0 top-full mt-1 bg-white border border-emerald-200 rounded-2xl shadow-xl z-40 max-h-52 overflow-y-auto custom-scrollbar"></div>
                         </div>
                         <div class="relative">
-                            <label for="food-snack1" class="block text-[11px] font-bold text-slate-600 mb-0.5">Δεκατιανό 1</label>
+                            <label for="food-snack1" class="block text-[11px] font-bold text-slate-600 mb-0.5">Δεκατιανό</label>
                             <div class="relative">
-                                <input type="text" id="food-snack1" autocomplete="off" placeholder="π.χ. 1 μήλο, 10 αμύγδαλα" class="meal-autocomplete-input w-full bg-slate-50 border border-slate-200 rounded-xl pl-3 pr-8 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                                <button type="button" data-picker-for="food-snack1" class="meal-picker-btn absolute right-2 top-1/2 -translate-y-1/2 text-xs opacity-60 hover:opacity-100 p-0.5" title="Επιλογή από αποθηκευμένα προϊόντα">🏷️</button>
+                                <input type="text" id="food-snack1" autocomplete="off" enterkeyhint="done" placeholder="π.χ. 1 μήλο συν 10 αμύγδαλα" class="meal-autocomplete-input w-full bg-slate-50 border border-slate-200 rounded-xl pl-3 pr-8 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                <button type="button" data-picker-for="food-snack1" class="meal-picker-btn absolute right-2 top-1/2 -translate-y-1/2 text-xs opacity-60 hover:opacity-100 p-0.5" title="Επιλογή από αποθηκευμένες ετικέτες">🏷️</button>
                             </div>
                             <div id="dropdown-food-snack1" class="meal-autocomplete-dropdown hidden absolute left-0 right-0 top-full mt-1 bg-white border border-emerald-200 rounded-2xl shadow-xl z-40 max-h-52 overflow-y-auto custom-scrollbar"></div>
                         </div>
                         <div class="relative">
                             <label for="food-lunch" class="block text-[11px] font-bold text-slate-600 mb-0.5">Μεσημεριανό</label>
                             <div class="relative">
-                                <input type="text" id="food-lunch" autocomplete="off" placeholder="π.χ. Κοτόπουλο, σαλάτα, 1 φέτα ψωμί" class="meal-autocomplete-input w-full bg-slate-50 border border-slate-200 rounded-xl pl-3 pr-8 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                                <button type="button" data-picker-for="food-lunch" class="meal-picker-btn absolute right-2 top-1/2 -translate-y-1/2 text-xs opacity-60 hover:opacity-100 p-0.5" title="Επιλογή από αποθηκευμένα προϊόντα">🏷️</button>
+                                <input type="text" id="food-lunch" autocomplete="off" enterkeyhint="done" placeholder="π.χ. 200g κοτόπουλο και σαλάτα" class="meal-autocomplete-input w-full bg-slate-50 border border-slate-200 rounded-xl pl-3 pr-8 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                <button type="button" data-picker-for="food-lunch" class="meal-picker-btn absolute right-2 top-1/2 -translate-y-1/2 text-xs opacity-60 hover:opacity-100 p-0.5" title="Επιλογή από αποθηκευμένες ετικέτες">🏷️</button>
                             </div>
                             <div id="dropdown-food-lunch" class="meal-autocomplete-dropdown hidden absolute left-0 right-0 top-full mt-1 bg-white border border-emerald-200 rounded-2xl shadow-xl z-40 max-h-52 overflow-y-auto custom-scrollbar"></div>
                         </div>
                         <div class="relative">
-                            <label for="food-snack2" class="block text-[11px] font-bold text-slate-600 mb-0.5">Απογευματινό 2</label>
+                            <label for="food-snack2" class="block text-[11px] font-bold text-slate-600 mb-0.5">Απογευματινό</label>
                             <div class="relative">
-                                <input type="text" id="food-snack2" autocomplete="off" placeholder="π.χ. Cottage cheese, 2 ρυζογκοφρέτες" class="meal-autocomplete-input w-full bg-slate-50 border border-slate-200 rounded-xl pl-3 pr-8 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                                <button type="button" data-picker-for="food-snack2" class="meal-picker-btn absolute right-2 top-1/2 -translate-y-1/2 text-xs opacity-60 hover:opacity-100 p-0.5" title="Επιλογή από αποθηκευμένα προϊόντα">🏷️</button>
+                                <input type="text" id="food-snack2" autocomplete="off" enterkeyhint="done" placeholder="π.χ. 100g cottage και 2 ρυζογκοφρέτες" class="meal-autocomplete-input w-full bg-slate-50 border border-slate-200 rounded-xl pl-3 pr-8 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                <button type="button" data-picker-for="food-snack2" class="meal-picker-btn absolute right-2 top-1/2 -translate-y-1/2 text-xs opacity-60 hover:opacity-100 p-0.5" title="Επιλογή από αποθηκευμένες ετικέτες">🏷️</button>
                             </div>
                             <div id="dropdown-food-snack2" class="meal-autocomplete-dropdown hidden absolute left-0 right-0 top-full mt-1 bg-white border border-emerald-200 rounded-2xl shadow-xl z-40 max-h-52 overflow-y-auto custom-scrollbar"></div>
                         </div>
                         <div class="sm:col-span-2 relative">
                             <label for="food-dinner" class="block text-[11px] font-bold text-slate-600 mb-0.5">Βραδινό</label>
                             <div class="relative">
-                                <input type="text" id="food-dinner" autocomplete="off" placeholder="π.χ. 2 αυγά, σαλάτα, φέτα" class="meal-autocomplete-input w-full bg-slate-50 border border-slate-200 rounded-xl pl-3 pr-8 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                                <button type="button" data-picker-for="food-dinner" class="meal-picker-btn absolute right-2 top-1/2 -translate-y-1/2 text-xs opacity-60 hover:opacity-100 p-0.5" title="Επιλογή από αποθηκευμένα προϊόντα">🏷️</button>
+                                <input type="text" id="food-dinner" autocomplete="off" enterkeyhint="done" placeholder="π.χ. 2 αυγά, σαλάτα και 1 φέτα ψωμί ολικής" class="meal-autocomplete-input w-full bg-slate-50 border border-slate-200 rounded-xl pl-3 pr-8 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                <button type="button" data-picker-for="food-dinner" class="meal-picker-btn absolute right-2 top-1/2 -translate-y-1/2 text-xs opacity-60 hover:opacity-100 p-0.5" title="Επιλογή από αποθηκευμένες ετικέτες">🏷️</button>
                             </div>
                             <div id="dropdown-food-dinner" class="meal-autocomplete-dropdown hidden absolute left-0 right-0 top-full mt-1 bg-white border border-emerald-200 rounded-2xl shadow-xl z-40 max-h-52 overflow-y-auto custom-scrollbar"></div>
                         </div>
                     </div>
 
                     <button id="calc-calories-btn" type="button" class="w-full bg-fuchsia-600 hover:bg-fuchsia-700 text-white font-extrabold py-2.5 px-4 rounded-2xl text-sm transition-colors shadow-sm flex items-center justify-center gap-2 mb-2">
-                        <span>🔥 Υπολογισμός &amp; Αποθήκευση</span>
+                        <span>Υπολογισμός &amp; Αποθήκευση</span>
                     </button>
 
                     <div id="calories-msg" class="text-sm font-medium min-h-[1.25rem] mb-2 px-1 transition-colors"></div>
@@ -311,7 +330,7 @@
                         <!-- Calories Big Display -->
                         <div class="mb-3.5">
                             <div class="flex items-center justify-between mb-1">
-                                <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-900">ΗΜΕΡΗΣΙΟΣ ΑΠΟΛΟΓΙΣΜΟΣ ΘΕΡΜΙΔΩΝ</span>
+                                <span class="text-xs font-extrabold uppercase tracking-wider text-emerald-900">Σύνολο Θερμίδων Ημέρας</span>
                                 <span id="cal-percent-badge" class="px-2.5 py-0.5 rounded-full bg-fuchsia-600 text-white text-xs font-extrabold">0%</span>
                             </div>
                             <p id="cal-dynamic-note" class="text-[11px] font-semibold text-emerald-800/80 mb-1"></p>
@@ -330,7 +349,7 @@
                         <!-- Protein & Fiber Display -->
                         <div class="pt-3 border-t border-emerald-200/70">
                             <div class="flex flex-wrap justify-between items-center gap-2 text-xs font-semibold mb-1.5">
-                                <span class="text-slate-800 font-bold">Πρωτεΐνη &amp; Φυτικές Ίνες</span>
+                                <span class="text-slate-800 font-bold">Στόχος Πρωτεΐνης &amp; Φυτικών Ινών</span>
                                 <div class="flex items-center gap-2">
                                     <span id="fiber-val-text" class="px-2 py-0.5 rounded-md bg-teal-100 text-teal-900 text-[11px] font-extrabold">🌿 0g ίνες</span>
                                     <span id="protein-val-text" class="text-emerald-700 font-black text-sm">0 / 135g</span>
@@ -344,7 +363,7 @@
 
                         <!-- Visible Per-Meal Breakdown List with Edit & Delete -->
                         <div id="daily-meals-breakdown-wrapper" class="mt-3.5 pt-3 border-t border-emerald-200/70">
-                            <div class="text-[11px] font-extrabold uppercase tracking-wider text-slate-600 mb-2">ΑΝΑΛΥΣΗ ΓΕΥΜΑΤΩΝ ΗΜΕΡΑΣ (ΕΠΕΞΕΡΓΑΣΙΑ / ΔΙΑΓΡΑΦΗ):</div>
+                            <div class="text-[11px] font-extrabold uppercase tracking-wider text-slate-600 mb-2">Ανάλυση ανά Γεύμα (Επεξεργασία / Διαγραφή):</div>
                             <ul id="daily-meals-breakdown-list" class="space-y-1.5">
                                 <!-- Populated dynamically by JS -->
                             </ul>
@@ -354,7 +373,7 @@
                     <!-- Calories Analytics Tabs & Chart (Week & Month Navigation) -->
                     <div class="border-t border-slate-100 pt-4">
                         <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
-                            <span class="text-xs font-extrabold uppercase tracking-wider text-slate-500">ΙΣΤΟΡΙΚΟ &amp; ΜΕΣΟΙ ΟΡΟΙ</span>
+                            <span class="text-xs font-extrabold uppercase tracking-wider text-slate-500">Ιστορικό Θερμίδων &amp; Πρωτεΐνης</span>
                             <div class="inline-flex bg-slate-100 p-1 rounded-xl">
                                 <button id="cal-tab-week" type="button" class="px-3 py-1 rounded-lg text-xs font-bold bg-white text-emerald-700 shadow-xs transition-all">Εβδομάδα</button>
                                 <button id="cal-tab-month" type="button" class="px-3 py-1 rounded-lg text-xs font-bold text-slate-500 hover:text-slate-700 transition-all">Μήνας</button>
@@ -370,7 +389,7 @@
 
                         <!-- Weekly Average Banner -->
                         <div id="week-avg-container" class="text-center text-xs text-slate-700 mb-3 bg-slate-50 py-2 px-3 rounded-xl border border-slate-200/80 font-semibold">
-                            Μέσος όρος εβδομάδας: <strong id="week-avg-val" class="text-fuchsia-700">0</strong> kcal • <strong id="week-protein-avg-val" class="text-emerald-700">0</strong>g πρωτεΐνη / ημέρα
+                            Μέσος Όρος Εβδομάδας: <strong id="week-avg-val" class="text-fuchsia-700">0</strong> kcal • <strong id="week-protein-avg-val" class="text-emerald-700">0</strong>g πρωτεΐνη / ημέρα
                         </div>
 
                         <!-- Monthly Summary Cards (Shown on Month Tab) -->
@@ -397,7 +416,7 @@
 
                         <!-- Monthly Day-by-Day Nutrition Log (Shown on Month Tab) -->
                         <div id="month-calories-log-wrapper" class="hidden mt-4 pt-3 border-t border-slate-100">
-                            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2">ΗΜΕΡΟΛΟΓΙΟ ΜΗΝΑ (ΠΑΤΗΣΕ ΓΙΑ ΠΡΟΒΟΛΗ)</h3>
+                            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2">Ημερολόγιο Μήνα (Πάτησε για προβολή)</h3>
                             <ul id="month-calories-log" class="space-y-1.5 max-h-44 overflow-y-auto pr-1 custom-scrollbar"></ul>
                         </div>
                     </div>
@@ -408,11 +427,11 @@
                     <div class="flex flex-wrap items-center justify-between gap-2 mb-4">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 rounded-2xl bg-emerald-600 text-white flex items-center justify-center text-xl shadow-xs">
-                                🏋️
+                                🏃‍♂️
                             </div>
                             <div>
-                                <h2 class="text-lg font-extrabold text-slate-900">Προπόνηση &amp; Φυσική Δραστηριότητα</h2>
-                                <p class="text-xs text-slate-500">Εβδομαδιαίο πλάνο &amp; μηνιαία στατιστικά</p>
+                                <h2 class="text-lg font-extrabold text-slate-900">Προπονήσεις &amp; Φυσική Δραστηριότητα</h2>
+                                <p class="text-xs text-slate-500">Καταγραφή αερόβιας &amp; ενδυνάμωσης ανά ημέρα</p>
                             </div>
                         </div>
 
@@ -454,24 +473,24 @@
                                 <div id="month-total-workouts" class="text-2xl font-black text-emerald-800 mt-0.5">0</div>
                             </div>
                             <div class="bg-teal-50 border border-teal-200/80 rounded-2xl p-3 text-center">
-                                <div class="text-[11px] font-bold text-teal-800">Συνολικός Χρόνος</div>
+                                <div class="text-[11px] font-bold text-teal-800">Συνολικά Λεπτά</div>
                                 <div id="month-total-mins" class="text-2xl font-black text-teal-800 mt-0.5">0'</div>
                             </div>
                             <div class="bg-fuchsia-50 border border-fuchsia-200/80 rounded-2xl p-3 text-center">
                                 <div class="text-[11px] font-bold text-fuchsia-800">Απόσταση</div>
-                                <div id="month-total-km" class="text-2xl font-black text-fuchsia-900 mt-0.5">0 <span class="text-xs font-bold">χλμ</span></div>
+                                <div id="month-total-km" class="text-2xl font-black text-fuchsia-900 mt-0.5">0 <span class="text-xs font-bold">km</span></div>
                             </div>
                         </div>
 
                         <!-- Aerobic vs Strength Breakdown -->
                         <div class="mb-4">
-                            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2">ΚΑΤΑΝΟΜΗ ΑΝΑ ΕΙΔΟΣ</h3>
+                            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2">Κατανομή ανά Είδος Άσκησης</h3>
                             <div id="month-breakdown-list" class="space-y-2"></div>
                         </div>
 
                         <!-- Detailed Month Log -->
                         <div>
-                            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2">ΑΝΑΛΥΤΙΚΟ ΙΣΤΟΡΙΚΟ</h3>
+                            <h3 class="text-xs font-extrabold uppercase tracking-wider text-slate-500 mb-2">Αναλυτικό Ημερολόγιο</h3>
                             <ul id="month-workouts-log" class="space-y-1.5 max-h-48 overflow-y-auto pr-1 custom-scrollbar"></ul>
                         </div>
                     </div>
@@ -486,11 +505,11 @@
             <div class="bg-white rounded-3xl p-6 shadow-md shadow-emerald-950/5 border border-emerald-100 border-t-4 border-t-fuchsia-600">
                 <div class="flex items-center gap-3 mb-4">
                     <div class="w-10 h-10 rounded-2xl bg-fuchsia-100 text-fuchsia-700 flex items-center justify-center text-xl">
-                        ⚡
+                        ⏱️
                     </div>
                     <div>
                         <h2 class="text-lg font-extrabold text-slate-900">Γρήγορα Γεύματα (5')</h2>
-                        <p class="text-xs text-slate-500">Χωρίς μαγείρεμα, υψηλή πρωτεΐνη &amp; κορεσμός</p>
+                        <p class="text-xs text-slate-500">Ιδέες υψηλής πρωτεΐνης, κορεσμού &amp; ενέργειας</p>
                     </div>
                 </div>
 
@@ -498,27 +517,27 @@
                     <!-- Breakfast Accordion -->
                     <div class="border border-slate-200/80 rounded-2xl overflow-hidden">
                         <button type="button" onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-slate-100/80 text-left font-bold text-sm text-slate-800 transition-colors">
-                            <span>🍳 Πρωινό (Ενέργεια &amp; Πρωτεΐνη)</span>
+                            <span>Πρωινό (Ενέργεια &amp; Πρωτεΐνη)</span>
                             <span class="accordion-icon text-slate-400 transition-transform duration-200">▼</span>
                         </button>
                         <div class="hidden p-4 bg-white text-xs sm:text-sm text-slate-600 space-y-2 border-t border-slate-100">
-                            <p>• <strong>Γιαούρτι 2% (200g)</strong> + 1 κουταλιά βρώμη + κανέλα και 5-6 αμύγδαλα.</p>
-                            <p>• <strong>2 βραστά αυγά</strong> (έτοιμα από το ψυγείο) + 1 φέτα ολικής + ντοματίνια.</p>
-                            <p>• <strong>Φρυγανιές σίκαλης</strong> με cottage cheese, γαλοπούλα βραστή και αγγούρι.</p>
-                            <p>• <strong>Ομελέτα μικροκυμάτων</strong> σε κούπα + cottage cheese + 1 φρούτο.</p>
+                            <p>• <strong>Γιαούρτι 2% (200g)</strong> + 1 κουταλιά μέλι + κανέλα και 5-6 αμύγδαλα.</p>
+                            <p>• <strong>2 αυγά βραστά</strong> (ή ομελέτα σε αντικολλητικό) + 1 φέτα ολικής + ντοματίνια.</p>
+                            <p>• <strong>Τοστ ολικής</strong> με cottage cheese, φέτες γαλοπούλας και αγγούρι.</p>
+                            <p>• <strong>Φρυγανιές σίκαλης</strong> με ταχίνι + cottage cheese + 1 μπανάνα.</p>
                         </div>
                     </div>
 
                     <!-- Snacks Accordion -->
                     <div class="border border-slate-200/80 rounded-2xl overflow-hidden">
                         <button type="button" onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-slate-100/80 text-left font-bold text-sm text-slate-800 transition-colors">
-                            <span>🍎 Ενδιάμεσα Σνακ (Χωρίς Λιγούρες)</span>
+                            <span>Ενδιάμεσα Σνακ (Χωρίς Πείνα)</span>
                             <span class="accordion-icon text-slate-400 transition-transform duration-200">▼</span>
                         </button>
                         <div class="hidden p-4 bg-white text-xs sm:text-sm text-slate-600 space-y-2 border-t border-slate-100">
-                            <p>• <strong>1-2 φρούτα εποχής</strong> (μήλο, αχλάδι, πορτοκάλι, μπανάνα).</p>
-                            <p>• <strong>1 κεσεδάκι γιαούρτι 2%</strong> με λίγη κανέλα ή κακάο.</p>
-                            <p>• <strong>1 μπάρα πρωτεΐνης</strong> + 1 ελληνικός καφές σκέτος.</p>
+                            <p>• <strong>1-2 φρούτα εποχής</strong> (μήλο, πορτοκάλι, ακτινίδιο, μούρα).</p>
+                            <p>• <strong>1 κεσεδάκι γιαούρτι 2%</strong> με κανέλα και λίγους ξηρούς καρπούς.</p>
+                            <p>• <strong>1 βραστό αυγό</strong> + 1 μικρό κριτσίνι ολικής.</p>
                             <p>• <strong>3-4 κουταλιές cottage</strong> πάνω σε 2 ρυζογκοφρέτες.</p>
                         </div>
                     </div>
@@ -526,28 +545,28 @@
                     <!-- Lunch Accordion -->
                     <div class="border border-slate-200/80 rounded-2xl overflow-hidden">
                         <button type="button" onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-slate-100/80 text-left font-bold text-sm text-slate-800 transition-colors">
-                            <span>🥗 Μεσημεριανό (Έτοιμο σε 5 λεπτά)</span>
+                            <span>Μεσημεριανό (Έτοιμο σε 5 λεπτά)</span>
                             <span class="accordion-icon text-slate-400 transition-transform duration-200">▼</span>
                         </button>
                         <div class="hidden p-4 bg-white text-xs sm:text-sm text-slate-600 space-y-2 border-t border-slate-100">
-                            <p>• <strong>Τονοσαλάτα Express:</strong> 1 κονσέρβα τόνου σε νερό + έτοιμη σαλάτα/μαρούλι + 1 κ.σ. ελαιόλαδο + 1 φέτα ψωμί.</p>
-                            <p>• <strong>Μπολ με έτοιμο κοτόπουλο (φαγητό/σούπερ):</strong> Φιλέτο κοτόπουλο, ντοματίνια, αγγούρι &amp; 2 κ.σ. cottage αντί για σως.</p>
-                            <p>• <strong>Σαλάτα Οσπρίων:</strong> 3 κουταλιές έτοιμα ρεβίθια ή φακές + ντομάτα + 1 βραστό αυγό.</p>
-                            <p>• <strong>Τορτίγια Wrap:</strong> Ολικής αλέσεως με κοτόπουλο ή γαλοπούλα, cottage και άφθονα λαχανικά.</p>
+                            <p>• <strong>Τονοσαλάτα Express:</strong> 1 κονσέρβα τόνου σε νερό + έτοιμη πράσινη σαλάτα + 1 κ.σ. ελαιόλαδο + 1 παξιμάδι κρίθινο.</p>
+                            <p>• <strong>Πρωτεϊνικό Μπολ Οσπρίων (φακές/ρεβίθια):</strong> Έτοιμα βρασμένα όσπρια, ντοματίνια, λεμόνι &amp; 2 κ.σ. cottage για έξτρα πρωτεΐνη.</p>
+                            <p>• <strong>Ομελέτα Φούρνου/Τηγανιού:</strong> 3 αυγά με λαχανικά και τυρί χαμηλών λιπαρών + σαλάτα + 1 φέτα ολικής.</p>
+                            <p>• <strong>Κοτόπουλο Wrap:</strong> Αραβική πίτα ολικής με έτοιμο φιλέτο κοτόπουλο, cottage και μαρούλι.</p>
                         </div>
                     </div>
 
                     <!-- Dinner Accordion -->
                     <div class="border border-slate-200/80 rounded-2xl overflow-hidden">
                         <button type="button" onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-slate-100/80 text-left font-bold text-sm text-slate-800 transition-colors">
-                            <span>🌙 Βραδινό (Ελαφρύ &amp; Χορταστικό)</span>
+                            <span>Βραδινό (Ελαφρύ &amp; Χορταστικό)</span>
                             <span class="accordion-icon text-slate-400 transition-transform duration-200">▼</span>
                         </button>
                         <div class="hidden p-4 bg-white text-xs sm:text-sm text-slate-600 space-y-2 border-t border-slate-100">
-                            <p>• <strong>Ντάκος Πρωτεΐνης:</strong> Παξιμάδι κρίθινο + τριμμένη ντομάτα + cottage cheese + ρίγανη &amp; 1 κ.γ. λάδι.</p>
-                            <p>• <strong>Γιαούρτι 2% Bowl:</strong> 200g γιαούρτι 2% + 1 μικρό φρούτο + 1 κ.γ. λιναρόσπορο ή καρύδια.</p>
-                            <p>• <strong>Σαλάτα με Αυγά:</strong> Πράσινη σαλάτα με 2 βραστά αυγά και 1 φέτα τυρί χαμηλών λιπαρών.</p>
-                            <p>• <strong>Τοστ Ολικής:</strong> Διπλή γαλοπούλα και τυρί χαμηλών λιπαρών, συνοδεία αγγουριού.</p>
+                            <p>• <strong>Ντάκος Πρωτεΐνης:</strong> Κρίθινο παξιμάδι + τριμμένη ντομάτα + cottage cheese + ρίγανη &amp; 1 κ.γ. ελαιόλαδο.</p>
+                            <p>• <strong>Γιαούρτι 2% Bowl:</strong> 200g γιαούρτι 2% + 1 φρούτο εποχής + 1 κ.σ. βρώμη ή λιναρόσπορο.</p>
+                            <p>• <strong>Σαλάτα του Καίσαρα Light:</strong> Πράσινη σαλάτα με 2 βραστά αυγά και 1 κουταλιά ελαιόλαδο-μουστάρδα.</p>
+                            <p>• <strong>Τοστ Βραδινό:</strong> Ψωμί ολικής με τυρί χαμηλών λιπαρών, γαλοπούλα και αγγούρι.</p>
                         </div>
                     </div>
                 </div>
@@ -560,8 +579,8 @@
                         💪
                     </div>
                     <div>
-                        <h2 class="text-lg font-extrabold text-slate-900">Ενδυνάμωση στο Σπίτι (15')</h2>
-                        <p class="text-xs text-slate-500">2 φορές/εβδομάδα για προστασία αρθρώσεων &amp; μεταβολισμού</p>
+                        <h2 class="text-lg font-extrabold text-slate-900">Ρουτίνες Ενδυνάμωσης (15')</h2>
+                        <p class="text-xs text-slate-500">2 φορές/εβδομάδα για προστασία αρθρώσεων &amp; μεταβολισμό</p>
                     </div>
                 </div>
 
@@ -569,29 +588,29 @@
                     <!-- Routine 1 -->
                     <div class="border border-slate-200/80 rounded-2xl overflow-hidden">
                         <button type="button" onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-slate-100/80 text-left font-bold text-sm text-slate-800 transition-colors">
-                            <span>Ρουτίνα 1: Ολόκληρο Σώμα (Βασικές 4 Κινήσεις)</span>
+                            <span>1️⃣ Ολόσωμη Ενδυνάμωση (Βασικές 4 Ασκήσεις)</span>
                             <span class="accordion-icon text-slate-400 transition-transform duration-200">▼</span>
                         </button>
                         <div class="hidden p-4 bg-white text-xs sm:text-sm text-slate-600 space-y-2 border-t border-slate-100">
-                            <p class="text-xs text-emerald-700 font-semibold">3 γύροι • 45'' ξεκούραση ανάμεσα στους γύρους:</p>
-                            <p>• <strong>Καθίσματα σε καρέκλα (Box Squats):</strong> 12-15 επαναλήψεις (ασφαλές για τα γόνατα).</p>
-                            <p>• <strong>Κωπηλατική / Έλξεις με λάστιχο ή Kettlebell:</strong> 12 επαναλήψεις ανά χέρι.</p>
-                            <p>• <strong>Κάμψεις στον τοίχο ή σε πάγκο:</strong> 10-15 επαναλήψεις (ενεργοποίηση στήθους &amp; χεριών).</p>
-                            <p>• <strong>Σανίδα στα γόνατα (Knee Plank):</strong> 25-40 δευτερόλεπτα κράτημα.</p>
+                            <p class="text-xs text-emerald-700 font-semibold">3 κύκλοι • 45'' ξεκούραση ανάμεσα στους κύκλους:</p>
+                            <p>• <strong>Καθίσματα σε καρέκλα (Box Squats):</strong> 12-15 επαναλήψεις (ελεγχόμενη κάθοδος χωρίς κραδασμούς).</p>
+                            <p>• <strong>Κωπηλατική με λάστιχο / αλτήρα ή Kettlebell:</strong> 12 επαναλήψεις ανά χέρι.</p>
+                            <p>• <strong>Κάμψεις σε τοίχο ή πάγκο κουζίνας:</strong> 10-15 επαναλήψεις (προστατεύει ώμους &amp; μέση).</p>
+                            <p>• <strong>Σανίδα στα γόνατα (Knee Plank):</strong> 25-40 δευτερόλεπτα σταθερά.</p>
                         </div>
                     </div>
 
                     <!-- Routine 2 -->
                     <div class="border border-slate-200/80 rounded-2xl overflow-hidden">
                         <button type="button" onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-slate-100/80 text-left font-bold text-sm text-slate-800 transition-colors">
-                            <span>Ρουτίνα 2: Πόδια &amp; Γλουτοί (Ασπίδα για Γόνατα)</span>
+                            <span>2️⃣ Πόδια &amp; Γλουτοί (Ασφάλεια για Γόνατα)</span>
                             <span class="accordion-icon text-slate-400 transition-transform duration-200">▼</span>
                         </button>
                         <div class="hidden p-4 bg-white text-xs sm:text-sm text-slate-600 space-y-2 border-t border-slate-100">
-                            <p class="text-xs text-emerald-700 font-semibold">3 γύροι • Ιδανική για δρομείς:</p>
-                            <p>• <strong>Γέφυρες Γλουτών (Glute Bridges) στο έδαφος:</strong> 15 επαναλήψεις (παύση 2'' ψηλά).</p>
-                            <p>• <strong>Άρσεις θανάτου με Kettlebell / βαράκια (RDL):</strong> 12 επαναλήψεις με ίσια πλάτη.</p>
-                            <p>• <strong>Ακροστασίες (Calf Raises) σε σκαλοπάτι:</strong> 15-20 επαναλήψεις (ενδυνάμωση αχίλλειου).</p>
+                            <p class="text-xs text-emerald-700 font-semibold">3 κύκλοι • Χωρίς άλματα ή κραδασμούς:</p>
+                            <p>• <strong>Γέφυρες γλουτών (Glute Bridges) στο στρώμα:</strong> 15 επαναλήψεις (κράτημα πάνω 2'').</p>
+                            <p>• <strong>Άρσεις θανάτου με Kettlebell / αλτήρες (RDL):</strong> 12 επαναλήψεις με ίσια πλάτη.</p>
+                            <p>• <strong>Ακροστασίες γαμπών (Calf Raises) σε τοίχο:</strong> 15-20 επαναλήψεις (δυναμώνει αστραγάλους).</p>
                             <p>• <strong>Κάθισμα στον τοίχο (Wall Sit):</strong> 30 δευτερόλεπτα.</p>
                         </div>
                     </div>
@@ -599,14 +618,14 @@
                     <!-- Routine 3 -->
                     <div class="border border-slate-200/80 rounded-2xl overflow-hidden">
                         <button type="button" onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-slate-100/80 text-left font-bold text-sm text-slate-800 transition-colors">
-                            <span>Ρουτίνα 3: Άνω Σώμα &amp; Στάση Πλάτης</span>
+                            <span>3️⃣ Άνω Σώμα &amp; Στάση Σώματος</span>
                             <span class="accordion-icon text-slate-400 transition-transform duration-200">▼</span>
                         </button>
                         <div class="hidden p-4 bg-white text-xs sm:text-sm text-slate-600 space-y-2 border-t border-slate-100">
-                            <p class="text-xs text-emerald-700 font-semibold">3 γύροι • Για ωραία στάση &amp; τόνωση:</p>
-                            <p>• <strong>Ανοίγματα πλάτης με λάστιχο:</strong> 12 επαναλήψεις.</p>
-                            <p>• <strong>Πιέσεις ώμων καθιστή με βαράκια:</strong> 10-12 επαναλήψεις.</p>
-                            <p>• <strong>Κάμψεις δικεφάλων &amp; εκτάσεις τρικεφάλων:</strong> 10-12 επαναλήψεις.</p>
+                            <p class="text-xs text-emerald-700 font-semibold">3 κύκλοι • Για πλάτη &amp; ώμους:</p>
+                            <p>• <strong>Έλξεις λάστιχου στο στήθος:</strong> 12 επαναλήψεις.</p>
+                            <p>• <strong>Πιέσεις ώμων καθιστοί με αλτήρες:</strong> 10-12 επαναλήψεις.</p>
+                            <p>• <strong>Κάμψεις δικεφάλων με λάστιχο ή αλτήρες:</strong> 10-12 επαναλήψεις.</p>
                             <p>• <strong>Bird-Dog (στα τέσσερα, έκταση αντίθετου χεριού-ποδιού):</strong> 8 ανά πλευρά.</p>
                         </div>
                     </div>
@@ -614,30 +633,30 @@
                     <!-- Routine 4 -->
                     <div class="border border-slate-200/80 rounded-2xl overflow-hidden">
                         <button type="button" onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-slate-100/80 text-left font-bold text-sm text-slate-800 transition-colors">
-                            <span>Ρουτίνα 4: Κορμός &amp; Σταθερότητα</span>
+                            <span>4️⃣ Κορμός &amp; Σταθερότητα</span>
                             <span class="accordion-icon text-slate-400 transition-transform duration-200">▼</span>
                         </button>
                         <div class="hidden p-4 bg-white text-xs sm:text-sm text-slate-600 space-y-2 border-t border-slate-100">
-                            <p class="text-xs text-emerald-700 font-semibold">3 γύροι • Προστασία μέσης:</p>
-                            <p>• <strong>Ανυψώσεις γονάτων καθιστή στην άκρη καρέκλας:</strong> 12 επαναλήψεις.</p>
-                            <p>• <strong>Dead Bug (ανάσκελα, εναλλάξ πόδια):</strong> 10 ανά πλευρά.</p>
-                            <p>• <strong>Farmer's Walk (περπάτημα με βάρος στα χέρια):</strong> 45 δευτερόλεπτα.</p>
-                            <p>• <strong>Πλάγια σανίδα με γόνατα λυγισμένα:</strong> 30-45 δευτερόλεπτα.</p>
+                            <p class="text-xs text-emerald-700 font-semibold">3 κύκλοι • Προστασία μέσης:</p>
+                            <p>• <strong>Περιστροφές κορμού καθιστοί με λάστιχο ή βάρος:</strong> 12 επαναλήψεις.</p>
+                            <p>• <strong>Dead Bug (ανάσκελα, εναλλάξ έκταση ποδιών):</strong> 10 ανά πλευρά.</p>
+                            <p>• <strong>Farmer's Walk (βάδισμα κρατώντας βάρη στα πλάγια):</strong> 45 δευτερόλεπτα.</p>
+                            <p>• <strong>Πλάγια σανίδα με λυγισμένα γόνατα:</strong> 30-45 δευτερόλεπτα.</p>
                         </div>
                     </div>
 
                     <!-- Routine 5 -->
                     <div class="border border-slate-200/80 rounded-2xl overflow-hidden">
                         <button type="button" onclick="toggleAccordion(this)" class="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-slate-100/80 text-left font-bold text-sm text-slate-800 transition-colors">
-                            <span>Ρουτίνα 5: Αποκατάσταση &amp; Mobility (15')</span>
+                            <span>5️⃣ Αποκατάσταση &amp; Mobility (15')</span>
                             <span class="accordion-icon text-slate-400 transition-transform duration-200">▼</span>
                         </button>
                         <div class="hidden p-4 bg-white text-xs sm:text-sm text-slate-600 space-y-2 border-t border-slate-100">
-                            <p class="text-xs text-emerald-700 font-semibold">Ιδανική τις ημέρες ξεκούρασης ή πιασίματος:</p>
-                            <p>• <strong>Cat-Cow (γάτα-αγελάδα για τη σπονδυλική στήλη):</strong> 10 αργές επαναλήψεις.</p>
-                            <p>• <strong>Διάταση καμπτήρων ισχίου (προβολή):</strong> 30'' ανά πόδι.</p>
-                            <p>• <strong>Διάταση γάμπας &amp; οπίσθιων μηριαίων:</strong> 30'' ανά πόδι.</p>
-                            <p>• <strong>Διαφραγματικές βαθιές αναπνοές:</strong> 2 λεπτά χαλάρωσης.</p>
+                            <p class="text-xs text-emerald-700 font-semibold">Ιδανικό για ημέρες ξεκούρασης ή πιασίματος:</p>
+                            <p>• <strong>Cat-Cow (γάτα-αγελάδα στα τέσσερα):</strong> 10 αργές επαναλήψεις.</p>
+                            <p>• <strong>Διάταση καμπτήρων ισχίου (προβολή):</strong> 30'' ανά πλευρά.</p>
+                            <p>• <strong>Διάταση γαμπών &amp; οπίσθιων μηριαίων:</strong> 30'' ανά πόδι.</p>
+                            <p>• <strong>Διαφραγματικές αναπνοές χαλάρωσης:</strong> 2 λεπτά ήρεμα.</p>
                         </div>
                     </div>
                 </div>
@@ -650,7 +669,7 @@
         <div class="bg-white rounded-3xl p-6 shadow-2xl w-full max-w-md border border-slate-100 max-h-[90vh] overflow-y-auto custom-scrollbar">
             <div class="flex justify-between items-center mb-4">
                 <div>
-                    <h3 class="text-lg font-bold text-slate-800">Καταγραφή Προπόνησης Ημέρας</h3>
+                    <h3 class="text-lg font-bold text-slate-800">Καταγραφή Προπόνησης</h3>
                     <p id="modal-date-title" class="text-xs font-bold text-emerald-700 mt-0.5">-</p>
                 </div>
                 <button id="modal-close-btn" type="button" class="text-slate-400 hover:text-slate-600 text-2xl leading-none p-1">&times;</button>
@@ -660,24 +679,24 @@
                 <!-- Workout 1 -->
                 <div class="bg-emerald-50/50 border border-emerald-200/80 rounded-2xl p-3.5 space-y-3">
                     <div class="flex items-center justify-between">
-                        <span class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-800">1η Προπόνηση</span>
+                        <span class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-800">1η Δραστηριότητα</span>
                         <span id="modal-cat-badge-1" class="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800">Αερόβια</span>
                     </div>
                     <div>
-                        <label for="modal-workout-type" class="block text-xs font-bold text-slate-600 mb-1">Είδος Δραστηριότητας</label>
+                        <label for="modal-workout-type" class="block text-xs font-bold text-slate-600 mb-1">Είδος Άσκησης</label>
                         <select id="modal-workout-type" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                            <option value="Run/Walk">🏃‍♂️ Run/Walk (Αερόβια)</option>
-                            <option value="Power Walk">🚶‍♂️ Power Walk (Αερόβια)</option>
-                            <option value="Τρέξιμο">🏃 Τρέξιμο (Αερόβια)</option>
+                            <option value="Run/Walk">🏃 Run/Walk (Αερόβια)</option>
+                            <option value="Power Walk">🚶 Power Walk (Αερόβια)</option>
+                            <option value="Τρέξιμο">⚡ Τρέξιμο (Αερόβια)</option>
                             <option value="Ποδήλατο">🚴 Ποδήλατο (Αερόβια)</option>
                             <option value="Κολύμβηση">🏊 Κολύμβηση (Αερόβια)</option>
-                            <option value="Ελλειπτικό / Διάδρομος">👟 Ελλειπτικό / Διάδρομος (Αερόβια)</option>
+                            <option value="Ελλειπτικό / Κωπηλατική">🏋️ Ελλειπτικό / Κωπηλατική (Αερόβια)</option>
                             <option value="Ενδυνάμωση Σπίτι">💪 Ενδυνάμωση Σπίτι (Αναερόβια)</option>
                             <option value="TRX">🪢 TRX (Αναερόβια)</option>
-                            <option value="Βάρη / Kettlebell">🏋️ Βάρη / Kettlebell (Αναερόβια)</option>
+                            <option value="Βάρη / Kettlebell">🏋️‍♂️ Βάρη / Kettlebell (Αναερόβια)</option>
                             <option value="HIIT / Κυκλική">🔥 HIIT / Κυκλική (Αναερόβια)</option>
                             <option value="Stretching / Mobility">🧘 Stretching / Mobility</option>
-                            <option value="Ξεκούραση">😴 Ξεκούραση</option>
+                            <option value="Ξεκούραση">🛌 Ξεκούραση</option>
                         </select>
                     </div>
 
@@ -688,39 +707,39 @@
                         </div>
 
                         <div id="modal-distance-group">
-                            <label for="modal-distance" class="block text-xs font-bold text-slate-600 mb-1">Απόσταση (χλμ)</label>
-                            <input type="number" id="modal-distance" step="0.1" min="0" max="300" placeholder="χλμ" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <label for="modal-distance" class="block text-xs font-bold text-slate-600 mb-1">Απόσταση (km)</label>
+                            <input type="number" id="modal-distance" step="0.1" min="0" max="300" placeholder="km" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                         </div>
                     </div>
                 </div>
 
                 <!-- Add 2nd Workout Button -->
                 <button id="add-second-workout-btn" type="button" class="w-full py-2.5 px-3 rounded-2xl border border-dashed border-fuchsia-300 bg-fuchsia-50/60 hover:bg-fuchsia-100/70 text-fuchsia-800 text-xs font-extrabold flex items-center justify-center gap-1.5 transition-colors">
-                    <span>+ Προσθήκη 2ης Προπόνησης (π.χ. Ενδυνάμωση)</span>
+                    <span>+ Προσθήκη 2ης Προπόνησης (π.χ. Αερόβια / Ενδυνάμωση)</span>
                 </button>
 
                 <!-- Workout 2 (Hidden by default unless added or already logged) -->
                 <div id="second-workout-section" class="hidden bg-fuchsia-50/50 border border-fuchsia-200/80 rounded-2xl p-3.5 space-y-3">
                     <div class="flex items-center justify-between">
                         <div class="flex items-center gap-2">
-                            <span class="text-[11px] font-extrabold uppercase tracking-wider text-fuchsia-900">2η Προπόνηση</span>
+                            <span class="text-[11px] font-extrabold uppercase tracking-wider text-fuchsia-900">2η Δραστηριότητα</span>
                             <span id="modal-cat-badge-2" class="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-fuchsia-100 text-fuchsia-800">Αναερόβια</span>
                         </div>
-                        <button id="remove-second-workout-btn" type="button" class="text-[11px] font-bold text-slate-400 hover:text-red-600 px-1.5 py-0.5 rounded-lg hover:bg-red-50 transition-colors">Αφαίρεση 2ης</button>
+                        <button id="remove-second-workout-btn" type="button" class="text-[11px] font-bold text-slate-400 hover:text-red-600 px-1.5 py-0.5 rounded-lg hover:bg-red-50 transition-colors">Αφαίρεση ✕</button>
                     </div>
                     <div>
-                        <label for="modal-workout-type-2" class="block text-xs font-bold text-slate-600 mb-1">Είδος Δραστηριότητας</label>
+                        <label for="modal-workout-type-2" class="block text-xs font-bold text-slate-600 mb-1">Είδος Άσκησης</label>
                         <select id="modal-workout-type-2" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
                             <option value="Ενδυνάμωση Σπίτι">💪 Ενδυνάμωση Σπίτι (Αναερόβια)</option>
                             <option value="TRX">🪢 TRX (Αναερόβια)</option>
-                            <option value="Βάρη / Kettlebell">🏋️ Βάρη / Kettlebell (Αναερόβια)</option>
+                            <option value="Βάρη / Kettlebell">🏋️‍♂️ Βάρη / Kettlebell (Αναερόβια)</option>
                             <option value="HIIT / Κυκλική">🔥 HIIT / Κυκλική (Αναερόβια)</option>
-                            <option value="Run/Walk">🏃‍♂️ Run/Walk (Αερόβια)</option>
-                            <option value="Power Walk">🚶‍♂️ Power Walk (Αερόβια)</option>
-                            <option value="Τρέξιμο">🏃 Τρέξιμο (Αερόβια)</option>
+                            <option value="Run/Walk">🏃 Run/Walk (Αερόβια)</option>
+                            <option value="Power Walk">🚶 Power Walk (Αερόβια)</option>
+                            <option value="Τρέξιμο">⚡ Τρέξιμο (Αερόβια)</option>
                             <option value="Ποδήλατο">🚴 Ποδήλατο (Αερόβια)</option>
                             <option value="Κολύμβηση">🏊 Κολύμβηση (Αερόβια)</option>
-                            <option value="Ελλειπτικό / Διάδρομος">👟 Ελλειπτικό / Διάδρομος (Αερόβια)</option>
+                            <option value="Ελλειπτικό / Κωπηλατική">🏋️ Ελλειπτικό / Κωπηλατική (Αερόβια)</option>
                             <option value="Stretching / Mobility">🧘 Stretching / Mobility</option>
                         </select>
                     </div>
@@ -732,15 +751,15 @@
                         </div>
 
                         <div id="modal-distance-group-2" class="hidden">
-                            <label for="modal-distance-2" class="block text-xs font-bold text-slate-600 mb-1">Απόσταση (χλμ)</label>
-                            <input type="number" id="modal-distance-2" step="0.1" min="0" max="300" placeholder="χλμ" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
+                            <label for="modal-distance-2" class="block text-xs font-bold text-slate-600 mb-1">Απόσταση (km)</label>
+                            <input type="number" id="modal-distance-2" step="0.1" min="0" max="300" placeholder="km" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
                         </div>
                     </div>
                 </div>
             </div>
 
             <div class="mt-6 flex gap-2">
-                <button id="modal-delete-btn" type="button" class="py-3 px-4 rounded-xl bg-red-50 text-red-600 font-medium hover:bg-red-100 transition-colors hidden" title="Διαγραφή καταχώρησης">
+                <button id="modal-delete-btn" type="button" class="py-3 px-4 rounded-xl bg-red-50 text-red-600 font-medium hover:bg-red-100 transition-colors hidden" title="Διαγραφή καταγραφής">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
                 </button>
                 <button id="modal-save-btn" type="button" class="flex-1 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold transition-colors shadow-sm">Αποθήκευση</button>
@@ -752,15 +771,15 @@
     <div id="products-modal" class="fixed inset-0 bg-slate-900/40 hidden flex items-center justify-center z-50 px-4 backdrop-blur-sm">
         <div class="bg-white rounded-3xl p-6 shadow-2xl w-full max-w-md border border-slate-100 max-h-[90vh] overflow-y-auto">
             <div class="flex justify-between items-center mb-2">
-                <h3 class="text-lg font-bold text-slate-800">🏷️ Ετικέτες Αγαπημένων Προϊόντων (Αποθήκη)</h3>
+                <h3 class="text-lg font-bold text-slate-800">Ετικέτες Αγαπημένων Προϊόντων (Ανά Μερίδα ή 100g)</h3>
                 <button id="products-close-btn" type="button" class="text-slate-400 hover:text-slate-600 text-2xl leading-none p-1">&times;</button>
             </div>
-            <p class="text-xs text-slate-500 mb-4 leading-relaxed">Αποθήκευσε τα στοιχεία από τις ετικέτες των προϊόντων σου (ανά μερίδα, φέτα ή συσκευασία). Όταν τα γράφεις στα γεύματά σου, θα υπολογίζονται με απόλυτη ακρίβεια!</p>
+            <p class="text-xs text-slate-500 mb-4 leading-relaxed">Αποθήκευσε τα στοιχεία από συσκευασίες που τρως συχνά (π.χ. ανά μερίδα ή ανά 100g). Όταν γράφεις «200g» το υπολογίζει αυτόματα ανά 100g!</p>
 
             <div class="space-y-2.5 bg-emerald-50/70 p-3.5 rounded-2xl border border-emerald-200/80 mb-4">
                 <div>
-                    <label for="prod-name-input" class="block text-[11px] font-bold text-slate-600 mb-0.5">Όνομα Προϊόντος / Μερίδας</label>
-                    <input type="text" id="prod-name-input" placeholder="π.χ. WASA protein+" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <label for="prod-name-input" class="block text-[11px] font-bold text-slate-600 mb-0.5">Όνομα Προϊόντος / Τροφίμου</label>
+                    <input type="text" id="prod-name-input" placeholder="π.χ. WASA protein+ ή Γιαούρτι 2%" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-xs font-semibold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 </div>
                 <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     <div>
@@ -781,11 +800,11 @@
                     </div>
                 </div>
                 <button id="add-custom-product-btn" type="button" class="w-full py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-extrabold transition-colors">
-                    + Προσθήκη Προϊόντος
+                    + Αποθήκευση Ετικέτας
                 </button>
             </div>
 
-            <h4 class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 mb-2">ΑΠΟΘΗΚΕΥΜΕΝΑ ΠΡΟΪΟΝΤΑ</h4>
+            <h4 class="text-[11px] font-extrabold uppercase tracking-wider text-slate-500 mb-2">Αποθηκευμένα Προϊόντα</h4>
             <ul id="custom-products-list" class="space-y-1.5 max-h-48 overflow-y-auto pr-1 custom-scrollbar">
                 <!-- Populated by JS -->
             </ul>
@@ -796,7 +815,7 @@
     <div id="settings-modal" class="fixed inset-0 bg-slate-900/40 hidden flex items-center justify-center z-50 px-4 backdrop-blur-sm">
         <div class="bg-white rounded-3xl p-5 sm:p-6 shadow-2xl w-full max-w-xl border border-slate-100 max-h-[90vh] overflow-y-auto custom-scrollbar">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-extrabold text-slate-900">⚙️ Προσωπικό Προφίλ &amp; Στόχοι</h3>
+                <h3 class="text-lg font-extrabold text-slate-900">Ρυθμίσεις Προφίλ &amp; Στόχων</h3>
                 <button id="settings-close-btn" type="button" class="text-slate-400 hover:text-slate-600 text-2xl leading-none p-1">&times;</button>
             </div>
 
@@ -806,7 +825,7 @@
                     <!-- Left Box: Personal Info (Teal) -->
                     <div class="bg-teal-50/75 border border-teal-200/90 rounded-2xl p-3.5 space-y-2.5">
                         <div class="text-[11px] font-extrabold uppercase tracking-wider text-teal-900 flex items-center gap-1.5">
-                            <span>📏</span> Σωματικά Στοιχεία
+                            <span>👤</span> Προσωπικά Στοιχεία
                         </div>
                         <div>
                             <label for="set-height" class="block text-xs font-semibold text-slate-600 mb-1">Ύψος (m)</label>
@@ -830,7 +849,7 @@
                     <!-- Right Box: Primary Weight Goals (Fuchsia) -->
                     <div class="bg-fuchsia-50/65 border border-fuchsia-200/90 rounded-2xl p-3.5 space-y-2.5">
                         <div class="text-[11px] font-extrabold uppercase tracking-wider text-fuchsia-900 flex items-center gap-1.5">
-                            <span>🎯</span> Κύριοι Στόχοι Βάρους
+                            <span>🎯</span> Στόχοι Βάρους
                         </div>
                         <div>
                             <label for="set-start-weight" class="block text-xs font-semibold text-slate-600 mb-1">Αρχικό Βάρος (kg)</label>
@@ -846,7 +865,7 @@
                 <!-- Middle Box: Activity & Daily Habits (Emerald) -->
                 <div class="bg-emerald-50/75 border border-emerald-200/90 rounded-2xl p-3.5">
                     <div class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-900 flex items-center gap-1.5 mb-2.5">
-                        <span>🏃‍♂️</span> Δραστηριότητα &amp; Καθημερινές Συνήθειες
+                        <span>⚡</span> Δραστηριότητα &amp; Καθημερινές Συνήθειες
                     </div>
                     <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
                         <div>
@@ -860,7 +879,7 @@
                             </select>
                         </div>
                         <div>
-                            <label for="set-weekly-km" class="block text-xs font-semibold text-slate-600 mb-1">Στόχος Χλμ/Εβδ. (km)</label>
+                            <label for="set-weekly-km" class="block text-xs font-semibold text-slate-600 mb-1">Στόχος Εβδ. (km)</label>
                             <input type="number" id="set-weekly-km" step="1" min="5" max="150" class="w-full bg-white border border-emerald-200 rounded-xl px-3 py-2 font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                         </div>
                         <div>
@@ -872,7 +891,7 @@
 
                 <!-- Lower Box: Secondary Weight Milestones (Soft Fuchsia) -->
                 <div class="bg-fuchsia-50/35 border border-fuchsia-200/70 rounded-2xl p-3">
-                    <div class="text-[10px] font-extrabold uppercase tracking-wider text-fuchsia-800/80 mb-2">Ενδιάμεσα Ορόσημα Προόδου</div>
+                    <div class="text-[10px] font-extrabold uppercase tracking-wider text-fuchsia-800/80 mb-2">Ενδιάμεσα Ορόσημα Βάρους</div>
                     <div class="grid grid-cols-2 gap-2.5">
                         <div>
                             <label for="set-mid-goal" class="block text-xs font-semibold text-slate-500 mb-1">Ενδιάμεσος Στόχος (kg)</label>
@@ -887,7 +906,7 @@
 
                 <!-- Live Auto-Calculated Targets Preview -->
                 <div class="bg-emerald-100/70 border border-emerald-300/80 rounded-2xl p-3 text-xs text-emerald-950">
-                    <div class="font-extrabold mb-0.5">Αυτόματος Υπολογισμός Ημερήσιων Στόχων (Mifflin-St Jeor):</div>
+                    <div class="font-extrabold mb-0.5">Αυτόματος Υπολογισμός Στόχων (με βάση το προφίλ):</div>
                     <div id="settings-auto-targets-preview" class="font-semibold text-emerald-800">-</div>
                 </div>
             </div>
@@ -902,7 +921,7 @@
     <!-- BACKUP RESTORE CONFIRMATION MODAL -->
     <div id="restore-modal" class="fixed inset-0 bg-slate-900/40 hidden flex items-center justify-center z-50 px-4 backdrop-blur-sm">
         <div class="bg-white rounded-3xl p-6 shadow-2xl w-full max-w-sm border border-slate-100">
-            <h3 class="text-lg font-bold text-slate-800 mb-2">📂 Επαναφορά Δεδομένων</h3>
+            <h3 class="text-lg font-bold text-slate-800 mb-2">Επαναφορά Αντιγράφου Ασφαλείας</h3>
             <p id="restore-summary-text" class="text-sm text-slate-600 mb-4 leading-relaxed"></p>
             <div class="flex gap-2">
                 <button id="restore-cancel-btn" type="button" class="flex-1 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-sm font-semibold transition-colors">Ακύρωση</button>
@@ -915,7 +934,7 @@
     <div id="edit-weight-modal" class="fixed inset-0 bg-slate-900/40 hidden flex items-center justify-center z-50 px-4 backdrop-blur-sm">
         <div class="bg-white rounded-3xl p-6 shadow-2xl w-full max-w-sm border border-slate-100">
             <div class="flex justify-between items-center mb-4">
-                <h3 class="text-lg font-bold text-slate-800">✏️ Επεξεργασία Μέτρησης Βάρους</h3>
+                <h3 class="text-lg font-bold text-slate-800">Επεξεργασία Ζύγισης</h3>
                 <button id="edit-weight-close-btn" type="button" class="text-slate-400 hover:text-slate-600 text-2xl leading-none p-1">&times;</button>
             </div>
             <div class="space-y-3">
@@ -940,7 +959,7 @@
         <div class="bg-white rounded-3xl p-6 shadow-2xl w-full max-w-sm border border-slate-100">
             <div class="flex justify-between items-center mb-4">
                 <div>
-                    <h3 class="text-lg font-bold text-slate-800">✏️ Επεξεργασία Καταχωρημένου Γεύματος</h3>
+                    <h3 class="text-lg font-bold text-slate-800">Επεξεργασία Γεύματος</h3>
                     <p id="edit-meal-label-subtitle" class="text-xs font-bold text-fuchsia-600 mt-0.5">-</p>
                 </div>
                 <button id="edit-meal-close-btn" type="button" class="text-slate-400 hover:text-slate-600 text-2xl leading-none p-1">&times;</button>
@@ -1083,7 +1102,7 @@
             function normalizeHeightMeters(val) {
                 let h = parseFloat(val);
                 if (isNaN(h) || h <= 0) return 1.68;
-                if (h > 3) h = h / 100; // Αν ο χρήστης γράψει π.χ. 175 αντί για 1.75, μετατρέπεται αυτόματα σε 1.75m
+                if (h > 3) h = h / 100; // Αν δοθεί π.χ. 175 αντί για 1.75, μετατρέπεται αυτόματα σε 1.75m
                 return Number(h.toFixed(2));
             }
 
@@ -1151,24 +1170,18 @@
                 }
             }
 
-            // Helper function to split meals by natural language delimiters
-            function splitMealString(text, keepDelimiters = false) {
-                const regex = keepDelimiters ? /(\s*,\s*|\s+και\s+|\s+συν\s+)/i : /\s*,\s*|\s+και\s+|\s+συν\s+/i;
-                return text.split(regex);
-            }
-
             // --- DAILY AUTO-ROTATING QUOTE ---
             const QUOTES = [
-                '«Η συνέπεια κερδίζει την ένταση. Κάθε μέρα μετράει.»',
-                '«Δεν χρειάζεται να είσαι τέλειος · αρκεί να μην τα παρατάς.»',
-                '«Κάθε υγιεινό γεύμα και κάθε βήμα σε φέρνει πιο κοντά στον στόχο σου.»',
-                '«Το σώμα πετυχαίνει ό,τι πιστεύει το μυαλό.»',
-                '«Η πρόοδος δεν είναι ευθεία γραμμή — σημασία έχει η κατεύθυνση.»',
-                '«Φρόντισε το σώμα σου σήμερα, για να σε ευγνωμονεί αύριο.»',
-                '«Μικρές καθημερινές συνήθειες δημιουργούν τεράστιες αλλαγές στον χρόνο.»',
-                '«Η πειθαρχία είναι να επιλέγεις αυτό που θέλεις περισσότερο, αντί για αυτό που θέλεις τώρα.»',
-                '«Κάθε προπόνηση, όσο σύντομη κι αν είναι, είναι νίκη απέναντι στην αδράνεια.»',
-                '«Σε 3 μήνες από σήμερα θα χαίρεσαι που ξεκίνησες.»'
+                '«Η συνέπεια νικάει την τελειότητα. Κάθε μέρα μετράει.»',
+                '«Δεν χρειάζεται να είσαι τέλειος σήμερα· αρκεί να είσαι λίγο καλύτερος από χθες.»',
+                '«Η αληθινή αλλαγή χτίζεται στις μικρές καθημερινές επιλογές.»',
+                '«Φρόντισε το σώμα σου σήμερα, για να σε ευχαριστεί αύριο.»',
+                '«Κάθε βήμα και κάθε σωστό γεύμα σε φέρνουν πιο κοντά στον στόχο σου.»',
+                '«Η πειθαρχία είναι να επιλέγεις αυτό που θέλεις περισσότερο αντί γι’ αυτό που θέλεις τώρα.»',
+                '«Μην συγκρίνεις την αρχή σου με τη μέση κάποιου άλλου.»',
+                '«Το αποτέλεσμα που ψάχνεις βρίσκεται στη συνέπεια που αποφεύγεις.»',
+                '«Ενυδάτωση, πρωτεΐνη, κίνηση και καλός ύπνος: η απλή συνταγή της επιτυχίας.»',
+                '«Σε 3 μήνες από σήμερα θα χαίρεσαι που δεν τα παράτησες.»'
             ];
 
             function renderDailyQuote() {
@@ -1196,7 +1209,7 @@
                 };
                 const dyn = getDynamicNutritionTargets(latestKnownWeight, tempSettings);
                 previewEl.innerHTML = `Βάρος <strong>${latestKnownWeight.toFixed(1)} kg</strong> • BMR: <strong>${dyn.bmr.toLocaleString('el-GR')}</strong> • Συντήρηση (TDEE): <strong>${dyn.tdee.toLocaleString('el-GR')} kcal</strong><br>` +
-                    `${dyn.isMaintenance ? 'Στόχος Συντήρησης' : 'Στόχος Απώλειας (-750g/εβδ.)'}: <strong>${dyn.calorieGoal.toLocaleString('el-GR')} kcal/ημ.</strong> • Πρωτεΐνη: <strong>${dyn.proteinGoal}g/ημ.</strong> (${latestKnownWeight.toFixed(1)} × 1,5)`;
+                    `${dyn.isMaintenance ? 'Συντήρηση' : 'Στόχος Απώλειας (-750g/εβδ.)'}: <strong>${dyn.calorieGoal.toLocaleString('el-GR')} kcal/ημ.</strong> • Πρωτεΐνη: <strong>${dyn.proteinGoal}g/ημ.</strong> (${latestKnownWeight.toFixed(1)} × 1,5)`;
             }
 
             ['set-height', 'set-age', 'set-gender', 'set-activity', 'set-final-goal', 'set-start-weight'].forEach(id => {
@@ -1241,29 +1254,29 @@
                 };
                 saveSettings(updated);
 
-                // Update the first entry of weightHistory to match startWeight if it exists
+                // Sync initial weight if user only had the default initial entry
                 const wHistory = getWeightHistory();
-                if (wHistory.length > 0) {
+                if (wHistory.length === 1 && Math.abs(Number(wHistory[0].weight) - Number(prevSettings.startWeight)) < 0.05) {
                     wHistory[0].weight = updated.startWeight;
                     saveWeightHistory(wHistory);
                 }
 
+                // Refresh all UI sections globally so new settings propagate everywhere
                 initAll();
                 settingsModal.classList.add('hidden');
-                showMessage('backup-status-msg', 'Οι ρυθμίσεις αποθηκεύτηκαν!', false);
+                showMessage('backup-status-msg', 'Οι ρυθμίσεις αποθηκεύτηκαν & ενημερώθηκαν παντού!', false);
             });
 
             document.getElementById('settings-reset-btn').addEventListener('click', () => {
                 saveSettings(DEFAULT_SETTINGS);
-                saveWeightHistory([{ date: todayStr, weight: Number(DEFAULT_SETTINGS.startWeight) }]);
-                applySettingsToUI();
-                renderWeightSection();
-                renderWaterTracker();
-                renderDailyNutritionCard();
-                renderCaloriesSection();
-                renderDynamicWorkoutSection();
+                const wHistory = getWeightHistory();
+                if (wHistory.length === 1) {
+                    wHistory[0].weight = Number(DEFAULT_SETTINGS.startWeight);
+                    saveWeightHistory(wHistory);
+                }
+                initAll();
                 settingsModal.classList.add('hidden');
-                showMessage('backup-status-msg', 'Επαναφορά προεπιλεγμένων ρυθμίσεων!', false);
+                showMessage('backup-status-msg', 'Επαναφέρθηκαν οι προεπιλογές!', false);
             });
 
             // --- 1. WEIGHT, BMI & PROPORTIONAL FORECAST SECTION ---
@@ -1328,8 +1341,8 @@
                     const pct = Math.min(100, Math.max(0, Math.round((lostSoFar / totalSpan) * 100)));
 
                     const milestoneLabel = nextTarget === Number(s.runUnlock)
-                        ? `ΞΕΚΛΕΙΔΩΜΑ ΤΡΕΞΙΜΑΤΟΣ (${nextTarget} KG • ΤΡΕΞΙΜΟ)`
-                        : `ΕΝΔΙΑΜΕΣΟΣ ΣΤΟΧΟΣ (${nextTarget} KG)`;
+                        ? `ΕΠΟΜΕΝΟ ΟΡΟΣΗΜΟ (${nextTarget} KG • ΤΡΕΞΙΜΟ)`
+                        : `ΕΠΟΜΕΝΟ ΟΡΟΣΗΜΟ (${nextTarget} KG)`;
 
                     progressEl.innerHTML = `
                         <div class="grid grid-cols-2 gap-3">
@@ -1341,8 +1354,8 @@
                                 </div>
                                 <div>
                                     ${lastAchieved
-                                        ? `<span class="inline-block px-2 py-0.5 rounded-full bg-emerald-200/80 text-emerald-900 text-[10px] font-extrabold">🎉 Επιτεύχθηκε ${lastAchieved} kg!</span>`
-                                        : `<span class="text-[11px] font-semibold text-slate-500">Απομένουν έως ${nextTarget} kg</span>`}
+                                        ? `<span class="inline-block px-2 py-0.5 rounded-full bg-emerald-200/80 text-emerald-900 text-[10px] font-extrabold">🎉 Τα ${lastAchieved} kg κατακτήθηκαν!</span>`
+                                        : `<span class="text-[11px] font-semibold text-slate-500">Απομένουν έως τα ${nextTarget} kg</span>`}
                                 </div>
                             </div>
                             <div class="bg-fuchsia-50/75 border border-fuchsia-200 rounded-2xl p-3.5 text-center flex flex-col justify-between">
@@ -1375,11 +1388,6 @@
                 let catColor = 'text-emerald-700';
                 let pctPos = 12.5;
 
-                // Map BMI 18.5..40 across 4 equal 25% visual zones:
-                // Zone 1 (0-25%): Normal (<25)
-                // Zone 2 (25-50%): Overweight (25-30)
-                // Zone 3 (50-75%): Obesity 1 (30-35)
-                // Zone 4 (75-100%): Obesity 2+ (>35)
                 if (bmi < 25) {
                     catLabel = 'Κανονικό';
                     catColor = 'text-emerald-700';
@@ -1405,10 +1413,10 @@
                     bmiCircleEl.style.left = `${pctPos.toFixed(1)}%`;
                 }
 
-                // Weight History Compact Grid (2 cols mobile, 3 cols desktop)
+                // Weight History Compact Grid
                 const listEl = document.getElementById('weight-history-list');
                 const countEl = document.getElementById('weight-entries-count');
-                if (countEl) countEl.textContent = `${history.length} εγγραφές`;
+                if (countEl) countEl.textContent = `${history.length} καταγραφές`;
                 if (listEl) {
                     const reversed = [...history].reverse();
                     listEl.innerHTML = reversed.map(entry => `
@@ -1440,7 +1448,7 @@
 
                     const lastPoint = actualPoints[actualPoints.length - 1];
                     const forecastPoints = [];
-                    const ratePerDay = 0.7 / 7; // 700g per week average (600-800g/week)
+                    const ratePerDay = 0.7 / 7;
 
                     if (lastPoint && lastPoint.y > s.finalGoal) {
                         forecastPoints.push({ ...lastPoint });
@@ -1464,10 +1472,10 @@
                         });
 
                         if (forecastBadge) {
-                            forecastBadge.textContent = `Εκτίμηση ${s.finalGoal}kg: ~${formatFullDisplayDate(targetDateStr)}`;
+                            forecastBadge.textContent = `Στόχος ${s.finalGoal}kg: ~${formatFullDisplayDate(targetDateStr)}`;
                         }
                     } else if (forecastBadge) {
-                        forecastBadge.textContent = `🎉 Στόχος ${s.finalGoal}kg επετεύχθη!`;
+                        forecastBadge.textContent = `Ο στόχος ${s.finalGoal}kg επιτεύχθηκε!`;
                     }
 
                     if (weightChartInstance) {
@@ -1574,7 +1582,7 @@
                 renderDailyNutritionCard();
                 renderCaloriesSection();
                 renderDynamicWorkoutSection();
-                showMessage('weight-msg', `Καταχωρήθηκε ${wVal.toFixed(1)} kg (${formatFullDisplayDate(dateVal)})!`, false);
+                showMessage('weight-msg', `Καταχωρήθηκε βάρος ${wVal.toFixed(1)} kg (${formatFullDisplayDate(dateVal)})!`, false);
             });
 
             // Edit & Delete Weight Entry Handlers
@@ -1607,7 +1615,7 @@
                     renderDailyNutritionCard();
                     renderCaloriesSection();
                     renderDynamicWorkoutSection();
-                    showMessage('weight-msg', 'Η μέτρηση βάρους διαγράφηκε.', false);
+                    showMessage('weight-msg', 'Η καταγραφή βάρους διαγράφηκε.', false);
                 }
             });
 
@@ -1626,7 +1634,7 @@
                 renderDailyNutritionCard();
                 renderCaloriesSection();
                 renderDynamicWorkoutSection();
-                showMessage('weight-msg', 'Η μέτρηση ενημερώθηκε επιτυχώς!', false);
+                showMessage('weight-msg', 'Η ζύγιση ενημερώθηκε επιτυχώς!', false);
             });
 
             // --- WAIST CIRCUMFERENCE TRACKER ---
@@ -1645,7 +1653,7 @@
                 const pillsEl = document.getElementById('waist-history-pills');
 
                 if (list.length === 0) {
-                    if (summaryEl) summaryEl.textContent = 'Δεν υπάρχουν μετρήσεις';
+                    if (summaryEl) summaryEl.textContent = 'Καμία καταγραφή ακόμα';
                     if (diffBadge) diffBadge.classList.add('hidden');
                     if (pillsEl) pillsEl.innerHTML = '';
                     return;
@@ -1713,7 +1721,7 @@
                 if (!listEl) return;
 
                 if (list.length === 0) {
-                    listEl.innerHTML = `<li class="text-xs text-slate-400 italic py-2 text-center">Δεν υπάρχουν αποθηκευμένες σημειώσεις.</li>`;
+                    listEl.innerHTML = `<li class="text-xs text-slate-400 italic py-2 text-center">Δεν υπάρχουν σημειώσεις ακόμα.</li>`;
                     return;
                 }
 
@@ -1726,7 +1734,7 @@
                             </div>
                             <p class="text-xs text-slate-700 font-medium leading-relaxed">${note.text}</p>
                         </div>
-                        <button type="button" data-del-note="${idx}" class="text-slate-400 hover:text-red-600 text-xs p-1 shrink-0" title="Διαγραφή">🗑️</button>
+                        <button type="button" data-del-note="${idx}" class="text-slate-400 hover:text-red-600 text-xs p-1 shrink-0" title="Διαγραφή">✕</button>
                     </li>
                 `).join('');
             }
@@ -1782,16 +1790,34 @@
                 renderNotesSection();
             });
 
-            // --- 2. CUSTOM PRODUCTS, AUTOCOMPLETE & NUTRITION TRACKER ---
+            // --- 2. CUSTOM PRODUCTS, AUTOCOMPLETE, GRAMS NORMALIZER & NUTRITION TRACKER ---
             const MEAL_FIELDS = [
                 { id: 'food-breakfast', key: 'breakfast', label: 'Πρωινό' },
-                { id: 'food-snack1', key: 'snack1', label: 'Δεκατιανό 1' },
+                { id: 'food-snack1', key: 'snack1', label: 'Δεκατιανό' },
                 { id: 'food-lunch', key: 'lunch', label: 'Μεσημεριανό' },
-                { id: 'food-snack2', key: 'snack2', label: 'Απογευματινό 2' },
+                { id: 'food-snack2', key: 'snack2', label: 'Απογευματινό' },
                 { id: 'food-dinner', key: 'dinner', label: 'Βραδινό' }
             ];
 
             let activeMealInputId = 'food-breakfast';
+
+            // Splits meal text on comma ',', 'και', or 'συν' (Unicode-safe for Greek)
+            function splitMealString(text) {
+                if (!text || !text.trim()) return [];
+                return text
+                    .split(/,|(?<![\p{L}\p{N}])(?:και|συν)(?![\p{L}\p{N}])/iu)
+                    .map(s => s.trim())
+                    .filter(Boolean);
+            }
+
+            // Normalizes any gram notation (e.g. "200 γρ. Χ", "200γρ Χ", "200 γρ.Χ", "200 γ Χ", "200γ Χ", "200 γ. Χ", "200 γ.Χ", "200 γραμμάρια Χ", "200 gr. Χ") -> "200g X"
+            function normalizeGramsFormat(text) {
+                if (!text) return '';
+                return text.replace(
+                    /(^|[\s,;(])(\d+(?:[.,]\d+)?)\s*(?:γραμμάρια|γραμ\.?|γρ\.?|γ\.?|gr\.?|g\.?)(?=(?:\s+|(?<=[\p{L}\p{N}]\.)(?=[\p{L}\p{N}])))(?!\p{L})/giu,
+                    (_, prefix, num) => `${prefix}${num.replace(',', '.')}g `
+                ).replace(/\s{2,}/g, ' ').trim();
+            }
 
             function highlightActiveMealInput(inputId) {
                 activeMealInputId = inputId;
@@ -1813,6 +1839,20 @@
                 if (el) {
                     el.addEventListener('focus', () => highlightActiveMealInput(m.id));
                     el.addEventListener('click', () => highlightActiveMealInput(m.id));
+                    el.addEventListener('blur', () => {
+                        el.value = normalizeGramsFormat(el.value);
+                    });
+                    // Pressing Enter on desktop or ✓/Done on mobile triggers Calculate & Save
+                    el.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.keyCode === 13) {
+                            e.preventDefault();
+                            el.value = normalizeGramsFormat(el.value);
+                            closeAllAutocompleteDropdowns();
+                            el.blur();
+                            const calcBtn = document.getElementById('calc-calories-btn');
+                            if (calcBtn) calcBtn.click();
+                        }
+                    });
                 }
             });
 
@@ -1842,7 +1882,7 @@
                 if (!ul) return;
 
                 if (list.length === 0) {
-                    ul.innerHTML = `<li class="text-xs text-slate-400 italic py-3 text-center">Δεν έχεις προσθέσει ακόμα δικά σου προϊόντα.</li>`;
+                    ul.innerHTML = `<li class="text-xs text-slate-400 italic py-3 text-center">Δεν έχεις προσθέσει ακόμα δικές σου ετικέτες προϊόντων.</li>`;
                     return;
                 }
 
@@ -1856,7 +1896,7 @@
                                 ${p.fat || 0}g λιπ. • ${p.fiber || 0}g ίνες
                             </div>
                         </div>
-                        <button type="button" data-del-prod="${idx}" class="text-slate-400 hover:text-red-600 p-1 text-sm" title="Διαγραφή">🗑️</button>
+                        <button type="button" data-del-prod="${idx}" class="text-slate-400 hover:text-red-600 p-1 text-sm" title="Διαγραφή">✕</button>
                     </li>
                 `).join('');
             }
@@ -1911,18 +1951,18 @@
                 if (products.length === 0) {
                     dd.innerHTML = `
                         <div class="p-3 text-center">
-                            <p class="text-xs text-slate-500 mb-2">Δεν υπάρχουν αποθηκευμένες ετικέτες.</p>
-                            <button type="button" class="open-products-shortcut px-3 py-1.5 rounded-xl bg-fuchsia-600 text-white text-xs font-bold">+ Προσθήκη Προϊόντος</button>
+                            <p class="text-xs text-slate-500 mb-2">Δεν έχεις αποθηκεύσει ετικέτες προϊόντων.</p>
+                            <button type="button" class="open-products-shortcut px-3 py-1.5 rounded-xl bg-fuchsia-600 text-white text-xs font-bold">+ Προσθήκη Ετικέτας</button>
                         </div>
                     `;
                     dd.classList.remove('hidden');
                     return;
                 }
 
-                // Extract last segment split by comma or natural delimiters 'και', 'συν' and optional leading number
-                const parts = splitMealString(inputEl.value, true);
-                const lastSegment = parts[parts.length - 1].trim();
-                const qtyMatch = lastSegment.match(/^(\d+(?:[.,]\d+)?\s*(?:x|×)?\s*)(.*)$/i);
+                // Extract last segment after comma, "και", or "συν"
+                const segments = inputEl.value.split(/,|(?<![\p{L}\p{N}])(?:και|συν)(?![\p{L}\p{N}])/iu);
+                const lastSegment = segments[segments.length - 1].trim();
+                const qtyMatch = lastSegment.match(/^(\d+(?:[.,]\d+)?\s*(?:g|γρ\.?|γ\.?|gr\.?|x|×)?\s*)(.*)$/i);
                 const typedQuery = qtyMatch ? qtyMatch[2].trim() : lastSegment;
                 const normQuery = normalizeGreek(typedQuery);
 
@@ -1982,12 +2022,14 @@
                     const targetId = selectBtn.getAttribute('data-target-input');
                     const inputEl = document.getElementById(targetId);
                     if (inputEl) {
-                        const parts = splitMealString(inputEl.value, true);
-                        const lastSegment = parts[parts.length - 1].trim();
-                        const qtyMatch = lastSegment.match(/^(\d+(?:[.,]\d+)?\s*(?:x|×)?\s*)(.*)$/i);
+                        const val = inputEl.value;
+                        const sepRegex = /(,|(?<![\p{L}\p{N}])(?:και|συν)(?![\p{L}\p{N}]))/giu;
+                        const tokens = val.split(sepRegex);
+                        const lastSegment = tokens[tokens.length - 1].trim();
+                        const qtyMatch = lastSegment.match(/^(\d+(?:[.,]\d+)?\s*(?:g|γρ\.?|γ\.?|gr\.?|x|×)?\s*)(.*)$/i);
                         const prefixQty = qtyMatch ? qtyMatch[1] : '';
-                        parts[parts.length - 1] = prefixQty + prodName;
-                        inputEl.value = parts.join('');
+                        tokens[tokens.length - 1] = (tokens.length > 1 ? ' ' : '') + prefixQty + prodName;
+                        inputEl.value = normalizeGramsFormat(tokens.join(''));
                         inputEl.focus();
                     }
                     closeAllAutocompleteDropdowns();
@@ -2007,50 +2049,64 @@
                 }
             });
 
-            // Built-in Greek Foods Database (per standard portion)
+            // Built-in Greek Foods Database (values per 100g or per standard portion)
             const BUILTIN_FOODS = [
-                { keys: ['γιαούρτι 2%', 'γιαούρτι', 'γιαουρτι'], cal: 140, prot: 16, fiber: 0 },
-                { keys: ['cottage', 'κότατζ', 'κοτατζ'], cal: 110, prot: 14, fiber: 0 },
-                { keys: ['αυγό', 'αυγά', 'αυγο', 'αυγα', 'ομελέτα', 'ομελετα'], cal: 75, prot: 6.5, fiber: 0 },
-                { keys: ['τόνος', 'τονος', 'τονοσαλάτα', 'τονοσαλατα'], cal: 150, prot: 28, fiber: 1 },
-                { keys: ['κοτόπουλο', 'κοτοπουλο', 'στήθος κοτόπουλο', 'φιλέτο'], cal: 220, prot: 34, fiber: 0 },
-                { keys: ['μπιφτέκι', 'μπιφτεκι', 'κιμάς', 'κιμας', 'μοσχάρι', 'μοσχαρι'], cal: 230, prot: 24, fiber: 1 },
-                { keys: ['ψάρι', 'ψαρι', 'σολομός', 'σολομος', 'τσιπούρα', 'τσιπουρα', 'λαβράκι'], cal: 240, prot: 28, fiber: 0 },
-                { keys: ['γαλοπούλα', 'γαλοπουλα'], cal: 35, prot: 6, fiber: 0 },
-                { keys: ['φέτα τυρί', 'τυρί', 'τυρι', 'φέτα', 'φετα', 'κασέρι', 'γραβιέρα'], cal: 80, prot: 6, fiber: 0 },
-                { keys: ['μπανάνα', 'μπανανα'], cal: 105, prot: 1.3, fiber: 3 },
-                { keys: ['μήλο', 'μηλο'], cal: 80, prot: 0.4, fiber: 4 },
-                { keys: ['πορτοκάλι', 'πορτοκαλι'], cal: 65, prot: 1.2, fiber: 3 },
-                { keys: ['αχλάδι', 'αχλαδι'], cal: 85, prot: 0.5, fiber: 5 },
-                { keys: ['φρούτο', 'φρουτο', 'φρούτα', 'φρουτα', 'φράουλες', 'κεράσια', 'ροδάκινο'], cal: 80, prot: 0.8, fiber: 3 },
-                { keys: ['βρώμη', 'βρωμη', 'κουάκερ'], cal: 120, prot: 3.5, fiber: 3.5 },
-                { keys: ['ψωμί', 'ψωμι', 'φέτα ψωμί', 'φετα ψωμι', 'πολύσπορο'], cal: 80, prot: 3, fiber: 2 },
-                { keys: ['φρυγανιά', 'φρυγανιές', 'φρυγανια', 'φρυγανιες', 'ρυζογκοφρέτα', 'ρυζογκοφρέτες', 'wasa'], cal: 75, prot: 2, fiber: 1.5 },
-                { keys: ['παξιμάδι', 'παξιμαδι', 'ντάκος', 'ντακος'], cal: 150, prot: 4, fiber: 3 },
-                { keys: ['ρύζι', 'ρυζι', 'μακαρόνια', 'μακαρονια', 'ζυμαρικά', 'πατάτα', 'πατατα', 'πατάτες'], cal: 200, prot: 4.5, fiber: 2 },
-                { keys: ['τοστ', 'τορτίγια', 'τορτιγια', 'wrap'], cal: 240, prot: 12, fiber: 2.5 },
-                { keys: ['αμύγδαλα', 'αμυγδαλα', 'καρύδια', 'καρυδια', 'ξηροί καρποί', 'φυστικοβούτυρο'], cal: 120, prot: 3.5, fiber: 2 },
-                { keys: ['φακές', 'φακες', 'ρεβίθια', 'ρεβιθια', 'φασόλια', 'φασολια', 'όσπρια'], cal: 260, prot: 15, fiber: 10 },
-                { keys: ['σαλάτα', 'σαλατα', 'ντομάτα', 'αγγούρι', 'μαρούλι', 'λαχανικά', 'μπρόκολο'], cal: 60, prot: 2, fiber: 3.5 },
-                { keys: ['ελαιόλαδο', 'ελαιολαδο', 'λάδι', 'λαδι'], cal: 90, prot: 0, fiber: 0 },
-                { keys: ['γάλα', 'γαλα', 'ρόφημα αμυγδάλου'], cal: 85, prot: 5, fiber: 0 },
-                { keys: ['μέλι', 'μελι', 'μαρμελάδα'], cal: 45, prot: 0, fiber: 0 },
-                { keys: ['καφές', 'καφες', 'espresso', 'cappuccino', 'freddo', 'ελληνικός'], cal: 15, prot: 0.5, fiber: 0 },
-                { keys: ['πρωτεΐνη', 'scoop', 'whey', 'μπάρα πρωτεΐνης'], cal: 160, prot: 20, fiber: 2 }
+                { keys: ['γιαούρτι 2%', 'γιαούρτι'], cal: 140, prot: 16, fiber: 0, per100g: { cal: 70, prot: 8, fiber: 0 } },
+                { keys: ['cottage', 'κότατζ'], cal: 110, prot: 14, fiber: 0, per100g: { cal: 98, prot: 12.5, fiber: 0 } },
+                { keys: ['αυγό', 'αυγά'], cal: 75, prot: 6.5, fiber: 0, per100g: { cal: 155, prot: 13, fiber: 0 } },
+                { keys: ['τόνος', 'τονοσαλάτα', 'τόνο'], cal: 150, prot: 28, fiber: 1, per100g: { cal: 116, prot: 26, fiber: 0 } },
+                { keys: ['κοτόπουλο', 'στήθος κοτόπουλο'], cal: 220, prot: 34, fiber: 0, per100g: { cal: 165, prot: 31, fiber: 0 } },
+                { keys: ['μπιφτέκι', 'κιμάς'], cal: 230, prot: 24, fiber: 1, per100g: { cal: 215, prot: 24, fiber: 0 } },
+                { keys: ['ψάρι', 'σολομός', 'τσιπούρα', 'λαβράκι'], cal: 240, prot: 28, fiber: 0, per100g: { cal: 180, prot: 22, fiber: 0 } },
+                { keys: ['γαλοπούλα'], cal: 35, prot: 6, fiber: 0, per100g: { cal: 105, prot: 20, fiber: 0 } },
+                { keys: ['τυρί', 'φέτα', 'γραβιέρα', 'ανθότυρο'], cal: 80, prot: 6, fiber: 0, per100g: { cal: 265, prot: 18, fiber: 0 } },
+                { keys: ['μπανάνα'], cal: 105, prot: 1.3, fiber: 3, per100g: { cal: 89, prot: 1.1, fiber: 2.6 } },
+                { keys: ['μήλο'], cal: 80, prot: 0.4, fiber: 4, per100g: { cal: 52, prot: 0.3, fiber: 2.4 } },
+                { keys: ['πορτοκάλι'], cal: 65, prot: 1.2, fiber: 3, per100g: { cal: 47, prot: 0.9, fiber: 2.4 } },
+                { keys: ['αχλάδι'], cal: 85, prot: 0.5, fiber: 5, per100g: { cal: 57, prot: 0.4, fiber: 3.1 } },
+                { keys: ['φράουλες', 'μούρα'], cal: 80, prot: 0.8, fiber: 3, per100g: { cal: 35, prot: 0.7, fiber: 2 } },
+                { keys: ['ψωμί', 'φέτα ψωμί', 'ολικής'], cal: 120, prot: 3.5, fiber: 3.5, per100g: { cal: 250, prot: 9, fiber: 7 } },
+                { keys: ['παξιμάδι'], cal: 145, prot: 4, fiber: 2.5, per100g: { cal: 360, prot: 10, fiber: 6 } },
+                { keys: ['ρυζογκοφρέτα', 'ρυζογκοφρέτες'], cal: 35, prot: 0.8, fiber: 0.5, per100g: { cal: 385, prot: 8, fiber: 4 } },
+                { keys: ['βρώμη'], cal: 150, prot: 5, fiber: 4, per100g: { cal: 375, prot: 13, fiber: 10 } },
+                { keys: ['ρύζι'], cal: 200, prot: 4, fiber: 1, per100g: { cal: 130, prot: 2.7, fiber: 0.4 } },
+                { keys: ['μακαρόνια', 'ζυμαρικά'], cal: 240, prot: 8, fiber: 2.5, per100g: { cal: 158, prot: 5.8, fiber: 1.8 } },
+                { keys: ['πατάτα', 'πατάτες'], cal: 160, prot: 3, fiber: 3, per100g: { cal: 87, prot: 1.9, fiber: 1.8 } },
+                { keys: ['φακές', 'ρεβίθια', 'φασόλια', 'όσπρια'], cal: 260, prot: 15, fiber: 10, per100g: { cal: 130, prot: 8, fiber: 6 } },
+                { keys: ['σαλάτα', 'μαρούλι', 'ντομάτα', 'αγγούρι', 'λαχανικά'], cal: 60, prot: 2, fiber: 3.5, per100g: { cal: 25, prot: 1.2, fiber: 2 } },
+                { keys: ['ελαιόλαδο'], cal: 90, prot: 0, fiber: 0, per100g: { cal: 884, prot: 0, fiber: 0 } },
+                { keys: ['αμύγδαλα', 'καρύδια', 'ξηροί καρποί'], cal: 85, prot: 3, fiber: 1.5, per100g: { cal: 580, prot: 21, fiber: 12 } },
+                { keys: ['μέλι'], cal: 45, prot: 0, fiber: 0, per100g: { cal: 304, prot: 0.3, fiber: 0.2 } },
+                { keys: ['καφές', 'φρέντο', 'espresso', 'ελληνικός'], cal: 15, prot: 0.5, fiber: 0, per100g: { cal: 5, prot: 0.2, fiber: 0 } },
+                { keys: ['πρωτεΐνη', 'scoop', 'whey'], cal: 120, prot: 24, fiber: 0, per100g: { cal: 380, prot: 78, fiber: 0 } }
             ];
 
             function parseLeadingQuantity(segment) {
-                const trimmed = segment.trim();
+                const normalizedSeg = normalizeGramsFormat(segment);
+                const trimmed = normalizedSeg.trim();
+
+                // 1. Check explicit grams format like "200g Κοτόπουλο"
+                const gramsMatch = trimmed.match(/^(\d+(?:[.,]\d+)?)g\s+(.+)$/i);
+                if (gramsMatch) {
+                    return {
+                        qty: parseFloat(gramsMatch[1].replace(',', '.')),
+                        isGrams: true,
+                        rest: gramsMatch[2].trim()
+                    };
+                }
+
+                // 2. Check standard portion count like "2 αυγά" or "2x τοστ"
                 const wordMap = {
-                    'ένα': 1, 'ενα': 1, 'μία': 1, 'μια': 1, 'ένας': 1, 'ενας': 1,
-                    'δύο': 2, 'δυο': 2, 'τρία': 3, 'τρια': 3, 'τρεις': 3,
-                    'τέσσερα': 4, 'τεσσερα': 4, 'πέντε': 5, 'πεντε': 5,
-                    'μισό': 0.5, 'μισο': 0.5, 'μισή': 0.5, 'μιση': 0.5
+                    'ένα': 1, 'μια': 1, 'μία': 1,
+                    'δύο': 2, 'τρεις': 3, 'τρία': 3,
+                    'τέσσερις': 4, 'τέσσερα': 4, 'πέντε': 5,
+                    'μισό': 0.5, 'μισή': 0.5
                 };
                 const numMatch = trimmed.match(/^(\d+(?:[.,]\d+)?)\s*(?:x|×)?\s+(.+)$/i);
                 if (numMatch) {
                     return {
                         qty: parseFloat(numMatch[1].replace(',', '.')),
+                        isGrams: false,
                         rest: numMatch[2].trim()
                     };
                 }
@@ -2058,37 +2114,38 @@
                 if (wordMap[firstWord] !== undefined && trimmed.split(/\s+/).length > 1) {
                     return {
                         qty: wordMap[firstWord],
+                        isGrams: false,
                         rest: trimmed.split(/\s+/).slice(1).join(' ').trim()
                     };
                 }
-                return { qty: 1, rest: trimmed };
+                return { qty: 1, isGrams: false, rest: trimmed };
             }
 
             function estimateMealNutrition(text) {
                 if (!text || !text.trim()) return { calories: 0, protein: 0, fiber: 0 };
 
                 const customProducts = [...getCustomProducts()].sort((a, b) => b.name.length - a.name.length);
-                // Split by natural delimiters using the helper
-                const rawSegments = splitMealString(text).map(s => s.trim()).filter(Boolean);
+                const rawSegments = splitMealString(normalizeGramsFormat(text));
 
                 let totalCal = 0;
                 let totalProt = 0;
                 let totalFiber = 0;
 
                 rawSegments.forEach(seg => {
-                    const { qty, rest } = parseLeadingQuantity(seg);
+                    const { qty, isGrams, rest } = parseLeadingQuantity(seg);
                     const normRest = normalizeGreek(rest);
+                    const factor = isGrams ? (qty / 100) : qty;
 
-                    // 1. Check Custom Saved Products FIRST (exact or substring match)
+                    // 1. Check Custom Saved Products FIRST
                     const matchedCustom = customProducts.find(p => {
                         const normP = normalizeGreek(p.name);
                         return normRest === normP || normRest.includes(normP) || (normRest.length >= 3 && normP.includes(normRest));
                     });
 
                     if (matchedCustom) {
-                        totalCal += Number(matchedCustom.calories) * qty;
-                        totalProt += Number(matchedCustom.protein || 0) * qty;
-                        totalFiber += Number(matchedCustom.fiber || 0) * qty;
+                        totalCal += Number(matchedCustom.calories) * factor;
+                        totalProt += Number(matchedCustom.protein || 0) * factor;
+                        totalFiber += Number(matchedCustom.fiber || 0) * factor;
                         return;
                     }
 
@@ -2102,14 +2159,20 @@
                     }
 
                     if (matchedBuiltin) {
-                        totalCal += matchedBuiltin.cal * qty;
-                        totalProt += matchedBuiltin.prot * qty;
-                        totalFiber += matchedBuiltin.fiber * qty;
+                        if (isGrams && matchedBuiltin.per100g) {
+                            totalCal += matchedBuiltin.per100g.cal * factor;
+                            totalProt += matchedBuiltin.per100g.prot * factor;
+                            totalFiber += matchedBuiltin.per100g.fiber * factor;
+                        } else {
+                            totalCal += matchedBuiltin.cal * factor;
+                            totalProt += matchedBuiltin.prot * factor;
+                            totalFiber += matchedBuiltin.fiber * factor;
+                        }
                     } else {
-                        // Neutral fallback for unknown free-text item
-                        totalCal += 150 * qty;
-                        totalProt += 6 * qty;
-                        totalFiber += 1.5 * qty;
+                        // Neutral fallback for unknown free-text item (150 kcal per 100g or per portion)
+                        totalCal += 150 * factor;
+                        totalProt += 6 * factor;
+                        totalFiber += 1.5 * factor;
                     }
                 });
 
@@ -2190,7 +2253,7 @@
                 renderWaterTracker();
             });
 
-            // Quick Meal Chips (Splits comma-separated items into individual chips from recent meals)
+            // Quick Meal Chips (Splits comma, "και", and "συν" items into individual chips from recent meals)
             function renderQuickMealChips() {
                 const container = document.getElementById('quick-meal-chips');
                 if (!container) return;
@@ -2206,7 +2269,7 @@
                     for (const m of MEAL_FIELDS) {
                         const val = dayObj[m.key];
                         if (!val) continue;
-                        const subItems = splitMealString(val).map(s => s.trim()).filter(Boolean);
+                        const subItems = splitMealString(normalizeGramsFormat(val));
                         for (const item of subItems) {
                             const norm = normalizeGreek(item);
                             if (norm && !seenNorm.has(norm)) {
@@ -2221,7 +2284,7 @@
                 }
 
                 if (uniqueItems.length === 0) {
-                    container.innerHTML = `<span class="text-[11px] text-slate-400 italic">Τα πρόσφατα τρόφιμά σου θα εμφανίζονται εδώ για γρήγορο πάτημα.</span>`;
+                    container.innerHTML = `<span class="text-[11px] text-slate-400 italic">Τα πρόσφατα τρόφιμά σου θα εμφανίζονται εδώ για γρήγορη προσθήκη.</span>`;
                     return;
                 }
 
@@ -2240,7 +2303,7 @@
                 if (!targetInput) return;
 
                 const currentVal = targetInput.value.trim();
-                targetInput.value = currentVal ? `${currentVal}, ${itemText}` : itemText;
+                targetInput.value = normalizeGramsFormat(currentVal ? `${currentVal}, ${itemText}` : itemText);
                 highlightActiveMealInput(targetInput.id);
             });
 
@@ -2251,14 +2314,14 @@
                 const drafts = getMealDrafts();
                 const yDraft = drafts[yesterdayStr];
                 if (!yDraft) {
-                    showMessage('calories-msg', 'Δεν βρέθηκαν καταχωρημένα γεύματα την προηγούμενη ημέρα.', true);
+                    showMessage('calories-msg', 'Δεν βρέθηκαν καταχωρημένα γεύματα για την προηγούμενη ημέρα.', true);
                     return;
                 }
                 MEAL_FIELDS.forEach(m => {
                     const el = document.getElementById(m.id);
-                    if (el) el.value = yDraft[m.key] || '';
+                    if (el) el.value = normalizeGramsFormat(yDraft[m.key] || '');
                 });
-                showMessage('calories-msg', 'Αντιγράφηκαν τα χθεσινά γεύματα! Πάτησε «Υπολογισμός & Αποθήκευση».', false);
+                showMessage('calories-msg', 'Αντιγράφηκαν τα γεύματα από χθες! Πάτησε «Υπολογισμός & Αποθήκευση».', false);
             });
 
             function loadMealsForSelectedDate() {
@@ -2267,7 +2330,7 @@
                 const dayDraft = drafts[dStr] || {};
                 MEAL_FIELDS.forEach(m => {
                     const el = document.getElementById(m.id);
-                    if (el) el.value = dayDraft[m.key] || '';
+                    if (el) el.value = normalizeGramsFormat(dayDraft[m.key] || '');
                 });
                 renderWaterTracker();
                 renderDailyNutritionCard();
@@ -2305,7 +2368,7 @@
                 const remCal = calGoal - totalCal;
 
                 document.getElementById('cal-percent-badge').textContent = `${calPct}%`;
-                document.getElementById('cal-dynamic-note').textContent = `Προσαρμοσμένο στα ${latestKnownWeight.toFixed(1)} kg & προφίλ (${dyn.isMaintenance ? 'Συντήρηση' : '-750g/εβδ.'})`;
+                document.getElementById('cal-dynamic-note').textContent = `Βάσει βάρους ${latestKnownWeight.toFixed(1)} kg & προφίλ (${dyn.isMaintenance ? 'Συντήρηση' : '-750g/εβδ.'})`;
                 document.getElementById('cal-current-big').textContent = totalCal.toLocaleString('el-GR');
                 document.getElementById('cal-goal-display').textContent = calGoal.toLocaleString('el-GR');
 
@@ -2356,17 +2419,19 @@
                 let totalFiber = 0;
 
                 MEAL_FIELDS.forEach(m => {
-                    const val = (document.getElementById(m.id).value || '').trim();
-                    dayDraft[m.key] = val;
-                    if (val) {
-                        const est = estimateMealNutrition(val);
+                    const inpEl = document.getElementById(m.id);
+                    const normalizedVal = normalizeGramsFormat((inpEl.value || '').trim());
+                    inpEl.value = normalizedVal;
+                    dayDraft[m.key] = normalizedVal;
+                    if (normalizedVal) {
+                        const est = estimateMealNutrition(normalizedVal);
                         totalCal += est.calories;
                         totalProt += est.protein;
                         totalFiber += est.fiber;
                         mealsBreakdown.push({
                             key: m.key,
                             label: m.label,
-                            text: val,
+                            text: normalizedVal,
                             calories: est.calories,
                             protein: est.protein,
                             fiber: est.fiber
@@ -2383,7 +2448,7 @@
                     saveCaloriesHistory(calMap);
                     renderDailyNutritionCard();
                     renderCaloriesSection();
-                    showMessage('calories-msg', 'Καταχώρησε τουλάχιστον ένα γεύμα για υπολογισμό.', true);
+                    showMessage('calories-msg', 'Συμπλήρωσε τουλάχιστον ένα γεύμα.', true);
                     return;
                 }
 
@@ -2398,7 +2463,7 @@
                 renderQuickMealChips();
                 renderDailyNutritionCard();
                 renderCaloriesSection();
-                showMessage('calories-msg', `Υπολογίστηκαν ${totalCal.toLocaleString('el-GR')} kcal & ${totalProt}g πρωτεΐνη!`, false);
+                showMessage('calories-msg', `Αποθηκεύτηκαν ${totalCal.toLocaleString('el-GR')} kcal & ${totalProt}g πρωτεΐνης!`, false);
             });
 
             // Edit & Delete Individual Logged Meal
@@ -2459,7 +2524,7 @@
                 const dayRecord = calMap[dStr];
                 if (!dayRecord || !dayRecord.meals || !editingMealKey) return;
 
-                const newText = document.getElementById('edit-meal-text').value.trim();
+                const newText = normalizeGramsFormat(document.getElementById('edit-meal-text').value.trim());
                 const newCal = parseFloat(document.getElementById('edit-meal-calories').value);
                 if (!newText || isNaN(newCal) || newCal < 0) return;
 
@@ -2488,6 +2553,7 @@
                 saveCaloriesHistory(calMap);
 
                 editMealModal.classList.add('hidden');
+                renderQuickMealChips();
                 renderDailyNutritionCard();
                 renderCaloriesSection();
             });
@@ -2676,7 +2742,7 @@
 
             // --- 3. DYNAMIC WORKOUT TRACKER (UP TO 2 WORKOUTS PER DAY) ---
             const AEROBIC_TYPES = new Set([
-                'Run/Walk', 'Power Walk', 'Τρέξιμο', 'Ποδήλατο', 'Κολύμβηση', 'Ελλειπτικό / Διάδρομος'
+                'Run/Walk', 'Power Walk', 'Τρέξιμο', 'Ποδήλατο', 'Κολύμβηση', 'Ελλειπτικό / Κωπηλατική'
             ]);
             const ANAEROBIC_TYPES = new Set([
                 'Ενδυνάμωση Σπίτι', 'TRX', 'Βάρη / Kettlebell', 'HIIT / Κυκλική'
@@ -2769,8 +2835,8 @@
                         phaseBannerEl.innerHTML = `
                             <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-3 flex items-center justify-between gap-2 text-xs">
                                 <div>
-                                    <span class="font-extrabold text-emerald-900">🛡️ Φάση 1: Ασφαλής Προετοιμασία</span>
-                                    <p class="text-emerald-800/85 mt-0.5">Power Walk, Run/Walk &amp; Ενδυνάμωση (απομένουν <strong>${diff} kg</strong> για ξεκλείδωμα τρεξίματος στα ${runUnlock} kg).</p>
+                                    <span class="font-extrabold text-emerald-900">🛡️ Φάση 1: Προστασία Αρθρώσεων</span>
+                                    <p class="text-emerald-800/85 mt-0.5">Power Walk, Run/Walk &amp; Ενδυνάμωση (απομένουν <strong>${diff} kg</strong> για το ξεκλείδωμα στα ${runUnlock} kg).</p>
                                 </div>
                                 <span class="px-2.5 py-1 rounded-xl bg-emerald-600 text-white font-extrabold shrink-0">3-4x/εβδ.</span>
                             </div>
@@ -2782,10 +2848,10 @@
                         phaseBannerEl.innerHTML = `
                             <div class="bg-fuchsia-50 border border-fuchsia-200 rounded-2xl p-3 flex items-center justify-between gap-2 text-xs">
                                 <div>
-                                    <span class="font-extrabold text-fuchsia-900">🏃‍♂️ Φάση 2: Το Τρέξιμο Ξεκλειδώθηκε!</span>
-                                    <p class="text-fuchsia-800/85 mt-0.5">Προοδευτική αύξηση χιλιομέτρων (στόχος κορυφής ${maxKm} χλμ/εβδ.).</p>
+                                    <span class="font-extrabold text-fuchsia-900">🚀 Φάση 2: Ελεύθερο Τρέξιμο Ξεκλειδώθηκε!</span>
+                                    <p class="text-fuchsia-800/85 mt-0.5">Προοδευτική αύξηση χιλιομέτρων (έως ${maxKm} km/εβδ.).</p>
                                 </div>
-                                <span class="px-2.5 py-1 rounded-xl bg-fuchsia-600 text-white font-extrabold shrink-0">Στόχος: ${dynamicKmTarget} χλμ</span>
+                                <span class="px-2.5 py-1 rounded-xl bg-fuchsia-600 text-white font-extrabold shrink-0">Στόχος: ${dynamicKmTarget} km</span>
                             </div>
                         `;
                     }
@@ -2805,7 +2871,7 @@
                         const isToday = dStr === todayStr;
                         const workouts = normalizeDayWorkouts(wMap[dStr]);
 
-                        let rightHtml = `<span class="text-xs font-semibold text-slate-400">+ Καταχώρηση</span>`;
+                        let rightHtml = `<span class="text-xs font-semibold text-slate-400">+ Προσθήκη</span>`;
                         if (workouts.length > 0) {
                             rightHtml = `<div class="flex flex-wrap items-center justify-end gap-1.5">` + workouts.map(w => {
                                 const cat = getWorkoutCategory(w.type);
@@ -2814,7 +2880,7 @@
                                     : (cat === 'Αναερόβια' ? 'bg-fuchsia-100 text-fuchsia-900 border-fuchsia-200' : 'bg-teal-100 text-teal-900 border-teal-200');
                                 const extra = [
                                     w.duration ? `${w.duration}'` : '',
-                                    w.distance ? `${w.distance} χλμ` : ''
+                                    w.distance ? `${w.distance} km` : ''
                                 ].filter(Boolean).join(' • ');
                                 return `
                                     <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-xl border text-[11px] font-bold ${badgeClass}">
@@ -2873,7 +2939,7 @@
 
                     document.getElementById('month-total-workouts').textContent = String(totalSessions);
                     document.getElementById('month-total-mins').textContent = `${totalMins}'`;
-                    document.getElementById('month-total-km').innerHTML = `${totalKm.toFixed(1)} <span class="text-xs font-bold">χλμ</span>`;
+                    document.getElementById('month-total-km').innerHTML = `${totalKm.toFixed(1)} <span class="text-xs font-bold">km</span>`;
 
                     const breakdownEl = document.getElementById('month-breakdown-list');
                     if (breakdownEl) {
@@ -2888,7 +2954,7 @@
                     const logUl = document.getElementById('month-workouts-log');
                     if (logUl) {
                         if (monthEntries.length === 0) {
-                            logUl.innerHTML = `<li class="text-xs text-slate-400 italic py-2 text-center">Δεν υπάρχουν καταγραφές αυτόν τον μήνα.</li>`;
+                            logUl.innerHTML = `<li class="text-xs text-slate-400 italic py-2 text-center">Δεν υπάρχουν καταγεγραμμένες προπονήσεις αυτόν τον μήνα.</li>`;
                         } else {
                             logUl.innerHTML = [...monthEntries].reverse().map(entry => {
                                 const desc = entry.workouts.map(w => `${w.type}${w.duration ? ` (${w.duration}')` : ''}`).join(' + ');
@@ -3079,7 +3145,7 @@
                         const wCount = Array.isArray(data.weightHistory) ? data.weightHistory.length : 0;
                         const pCount = Array.isArray(data.customProducts) ? data.customProducts.length : 0;
                         document.getElementById('restore-summary-text').textContent =
-                            `Βρέθηκαν ${wCount} μετρήσεις βάρους και ${pCount} αποθηκευμένα προϊόντα. Θέλεις να γίνει επαναφορά;`;
+                            `Βρέθηκαν ${wCount} καταγραφές βάρους και ${pCount} ετικέτες προϊόντων. Θέλεις να γίνει επαναφορά;`;
                         restoreModal.classList.remove('hidden');
                     } catch (err) {
                         showMessage('backup-status-msg', 'Μη έγκυρο αρχείο αντιγράφου backup.', true);
@@ -3110,11 +3176,36 @@
                 pendingRestorePayload = null;
                 restoreModal.classList.add('hidden');
                 initAll();
-                showMessage('backup-status-msg', 'Η επαναφορά ολοκληρώθηκε επιτυχώς!', false);
+                showMessage('backup-status-msg', 'Τα δεδομένα επαναφέρθηκαν επιτυχώς!', false);
             });
+
+            // --- GENERATE CRISP HOME SCREEN ICON (GREEN & MAGENTA HEALTH LOGO) ---
+            function generateHomeScreenIcon() {
+                try {
+                    const appleLink = document.getElementById('app-apple-icon');
+                    const faviconLink = document.getElementById('app-favicon');
+                    if (!appleLink || !faviconLink || !faviconLink.href) return;
+
+                    const img = new Image();
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        canvas.width = 180;
+                        canvas.height = 180;
+                        const ctx = canvas.getContext('2d');
+                        if (ctx) {
+                            ctx.fillStyle = '#059669';
+                            ctx.fillRect(0, 0, 180, 180);
+                            ctx.drawImage(img, 0, 0, 180, 180);
+                            appleLink.href = canvas.toDataURL('image/png');
+                        }
+                    };
+                    img.src = faviconLink.href;
+                } catch (e) {}
+            }
 
             // --- INITIALIZE EVERYTHING ---
             function initAll() {
+                generateHomeScreenIcon();
                 applySettingsToUI();
                 renderDailyQuote();
                 renderWeightSection();

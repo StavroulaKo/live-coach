@@ -7,85 +7,8 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Live Coach">
-    <link id="apple-touch-icon-link" rel="apple-touch-icon" sizes="180x180">
-    <link id="favicon-link" rel="icon" type="image/png">
-    <script>
-        // Generate crisp 180x180 vibrant green & magenta health/wellness icon for iOS & Android Home Screen
-        (function() {
-            try {
-                const c = document.createElement('canvas');
-                c.width = 180;
-                c.height = 180;
-                const ctx = c.getContext('2d');
-                if (!ctx) return;
-
-                // Vibrant lively green background
-                ctx.fillStyle = '#10b981';
-                ctx.fillRect(0, 0, 180, 180);
-
-                // Fresh emerald outer border frame
-                ctx.strokeStyle = '#059669';
-                ctx.lineWidth = 8;
-                ctx.strokeRect(4, 4, 172, 172);
-
-                // Crisp white circular badge in upper center
-                ctx.beginPath();
-                ctx.arc(90, 78, 49, 0, Math.PI * 2);
-                ctx.fillStyle = '#ffffff';
-                ctx.fill();
-
-                // Fresh green nutrition/nature leaf sprouting top-right of the heart
-                ctx.beginPath();
-                ctx.moveTo(106, 57);
-                ctx.quadraticCurveTo(109, 43, 123, 45);
-                ctx.quadraticCurveTo(120, 58, 106, 57);
-                ctx.closePath();
-                ctx.fillStyle = '#16a34a';
-                ctx.fill();
-
-                // Vibrant magenta health heart
-                ctx.beginPath();
-                ctx.moveTo(90, 66);
-                ctx.bezierCurveTo(90, 61, 82, 55, 74, 55);
-                ctx.bezierCurveTo(61, 55, 61, 72, 61, 72);
-                ctx.bezierCurveTo(61, 84, 75, 95, 90, 106);
-                ctx.bezierCurveTo(105, 95, 119, 84, 119, 72);
-                ctx.bezierCurveTo(119, 72, 119, 55, 106, 55);
-                ctx.bezierCurveTo(98, 55, 90, 61, 90, 66);
-                ctx.closePath();
-                ctx.fillStyle = '#d946ef';
-                ctx.fill();
-
-                // Crisp white cardio heartbeat pulse line across the heart
-                ctx.beginPath();
-                ctx.moveTo(66, 78);
-                ctx.lineTo(76, 78);
-                ctx.lineTo(81, 68);
-                ctx.lineTo(88, 90);
-                ctx.lineTo(95, 65);
-                ctx.lineTo(100, 82);
-                ctx.lineTo(104, 78);
-                ctx.lineTo(114, 78);
-                ctx.strokeStyle = '#ffffff';
-                ctx.lineWidth = 4;
-                ctx.lineCap = 'round';
-                ctx.lineJoin = 'round';
-                ctx.stroke();
-
-                // Clean "LIVE COACH" label at bottom
-                ctx.fillStyle = '#ffffff';
-                ctx.font = '900 17px -apple-system, BlinkMacSystemFont, sans-serif';
-                ctx.textAlign = 'center';
-                ctx.fillText('LIVE COACH', 90, 154);
-
-                const pngUrl = c.toDataURL('image/png');
-                const appleLink = document.getElementById('apple-touch-icon-link');
-                const favLink = document.getElementById('favicon-link');
-                if (appleLink) appleLink.href = pngUrl;
-                if (favLink) favLink.href = pngUrl;
-            } catch (e) {}
-        })();
-    </script>
+    <link rel="apple-touch-icon" sizes="180x180" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' fill='%2310b981'/%3E%3Crect x='4' y='4' width='172' height='172' fill='none' stroke='%23059669' stroke-width='8'/%3E%3Ccircle cx='90' cy='78' r='49' fill='%23ffffff'/%3E%3Cpath d='M106 57 Q109 43 123 45 Q120 58 106 57 Z' fill='%2316a34a'/%3E%3Cpath d='M90 66 C90 61 82 55 74 55 C61 55 61 72 61 72 C61 84 75 95 90 106 C105 95 119 84 119 72 C119 72 119 55 106 55 C98 55 90 61 90 66 Z' fill='%23d946ef'/%3E%3Cpolyline points='66,78 76,78 81,68 88,90 95,65 100,82 104,78 114,78' fill='none' stroke='%23ffffff' stroke-width='4.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3Ctext x='90' y='154' fill='%23ffffff' font-family='-apple-system, BlinkMacSystemFont, sans-serif' font-weight='900' font-size='17' text-anchor='middle'%3ELIVE COACH%3C/text%3E%3C/svg%3E">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180'%3E%3Crect width='180' height='180' rx='36' fill='%2310b981'/%3E%3Ccircle cx='90' cy='90' r='58' fill='%23ffffff'/%3E%3Cpath d='M108 66 Q112 50 128 52 Q124 67 108 66 Z' fill='%2316a34a'/%3E%3Cpath d='M90 76 C90 70 81 63 72 63 C57 63 57 83 57 83 C57 97 73 110 90 123 C107 110 123 97 123 83 C123 83 123 63 108 63 C99 63 90 70 90 76 Z' fill='%23d946ef'/%3E%3Cpolyline points='63,90 74,90 80,78 88,104 96,75 102,95 107,90 118,90' fill='none' stroke='%23ffffff' stroke-width='5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
     <!-- Google Font: Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

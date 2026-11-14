@@ -45,7 +45,7 @@
                         <span>⚡</span> Personal Fitness &amp; Nutrition
                     </div>
                     <h1 class="text-2xl sm:text-3xl font-black text-slate-900 tracking-tight">Live Coach</h1>
-                    <p id="header-goals-summary" class="text-sm text-slate-600 mt-1">Αρχικό βάρος: <strong>90 kg</strong> • Τελικός στόχος: <strong>65 kg</strong></p>
+                    <p id="header-goals-summary" class="text-sm text-slate-600 mt-1">Αρχικό βάρος: <strong>80 kg</strong> • Τελικός στόχος: <strong>65 kg</strong></p>
 
                     <!-- Backup, Product Labels & Settings Toolbar -->
                     <div class="flex flex-wrap items-center gap-2 mt-3">
@@ -113,9 +113,9 @@
                     <div class="bg-slate-50/90 border border-slate-200/80 rounded-2xl p-4 mb-6">
                         <div class="flex items-center justify-between mb-1">
                             <span class="text-xs font-extrabold uppercase tracking-wider text-slate-600">Δείκτης Μάζας Σώματος (BMI)</span>
-                            <span id="bmi-value-display" class="text-2xl font-black text-slate-900">31.9</span>
+                            <span id="bmi-value-display" class="text-2xl font-black text-slate-900">28.3</span>
                         </div>
-                        <p id="bmi-category-display" class="text-xs text-slate-600 mb-4">Ύψος: <strong>1.68m</strong> &nbsp;|&nbsp; Κατηγορία: <strong class="text-red-600">Παχυσαρκία 1</strong></p>
+                        <p id="bmi-category-display" class="text-xs text-slate-600 mb-4">Ύψος: <strong>1.68m</strong> &nbsp;|&nbsp; Κατηγορία: <strong class="text-yellow-600">Υπέρβαρο</strong></p>
 
                         <!-- Smooth 4-Zone Gradient Bar -->
                         <div class="relative pt-2 pb-1">
@@ -644,7 +644,7 @@
 
     <!-- WORKOUT LOGGING MODAL -->
     <div id="workout-modal" class="fixed inset-0 bg-slate-900/40 hidden flex items-center justify-center z-50 px-4 backdrop-blur-sm">
-        <div class="bg-white rounded-3xl p-6 shadow-2xl w-full max-w-md border border-slate-100">
+        <div class="bg-white rounded-3xl p-6 shadow-2xl w-full max-w-md border border-slate-100 max-h-[90vh] overflow-y-auto custom-scrollbar">
             <div class="flex justify-between items-center mb-4">
                 <div>
                     <h3 class="text-lg font-bold text-slate-800">🏃 Καταγραφή Ημέρας</h3>
@@ -654,30 +654,85 @@
             </div>
 
             <div class="space-y-4">
-                <div>
-                    <label for="modal-workout-type" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Είδος Δραστηριότητας</label>
-                    <select id="modal-workout-type" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-3 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                        <option value="Run/Walk">🏃‍♂️ Run/Walk</option>
-                        <option value="Power Walk">🚶‍♂️ Power Walk</option>
-                        <option value="Τρέξιμο">🏅 Τρέξιμο</option>
-                        <option value="Ποδήλατο">🚴‍♂️ Ποδήλατο</option>
-                        <option value="Κολύμπι">🏊‍♂️ Κολύμπι</option>
-                        <option value="Ελλειπτικό / Διάδρομος">👟 Ελλειπτικό / Διάδρομος</option>
-                        <option value="Μυϊκή Ενδυνάμωση">💪 Μυϊκή Ενδυνάμωση</option>
-                        <option value="TRX">🪢 TRX</option>
-                        <option value="Stretching / Mobility">🧘‍♂️ Stretching / Mobility</option>
-                        <option value="Ξεκούραση">🌱 Ξεκούραση</option>
-                    </select>
+                <!-- Workout 1 -->
+                <div class="bg-emerald-50/50 border border-emerald-200/80 rounded-2xl p-3.5 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <span class="text-[11px] font-extrabold uppercase tracking-wider text-emerald-800">1η Προπόνηση</span>
+                        <span id="modal-cat-badge-1" class="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-emerald-100 text-emerald-800">Αερόβια</span>
+                    </div>
+                    <div>
+                        <label for="modal-workout-type" class="block text-xs font-bold text-slate-600 mb-1">Είδος Δραστηριότητας</label>
+                        <select id="modal-workout-type" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <option value="Run/Walk">🏃‍♂️ Run/Walk (Αερόβια)</option>
+                            <option value="Power Walk">🚶‍♂️ Power Walk (Αερόβια)</option>
+                            <option value="Τρέξιμο">🏅 Τρέξιμο (Αερόβια)</option>
+                            <option value="Ποδήλατο">🚴‍♂️ Ποδήλατο (Αερόβια)</option>
+                            <option value="Κολύμπι">🏊‍♂️ Κολύμπι (Αερόβια)</option>
+                            <option value="Ελλειπτικό / Διάδρομος">👟 Ελλειπτικό / Διάδρομος (Αερόβια)</option>
+                            <option value="Μυϊκή Ενδυνάμωση">💪 Μυϊκή Ενδυνάμωση (Αναερόβια)</option>
+                            <option value="TRX">🪢 TRX (Αναερόβια)</option>
+                            <option value="Βάρη / Kettlebell">🏋️‍♂️ Βάρη / Kettlebell (Αναερόβια)</option>
+                            <option value="HIIT / Διαλειμματική">⚡ HIIT / Διαλειμματική (Αναερόβια)</option>
+                            <option value="Stretching / Mobility">🧘‍♂️ Stretching / Mobility</option>
+                            <option value="Ξεκούραση">🌱 Ξεκούραση</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div id="modal-duration-group">
+                            <label for="modal-duration" class="block text-xs font-bold text-slate-600 mb-1">Διάρκεια (λεπτά)</label>
+                            <input type="number" id="modal-duration" min="1" max="600" placeholder="Λεπτά" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        </div>
+
+                        <div id="modal-distance-group">
+                            <label for="modal-distance" class="block text-xs font-bold text-slate-600 mb-1">Απόσταση (χλμ)</label>
+                            <input type="number" id="modal-distance" step="0.1" min="0" max="300" placeholder="Χλμ" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                        </div>
+                    </div>
                 </div>
 
-                <div id="modal-duration-group">
-                    <label for="modal-duration" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Διάρκεια (λεπτά)</label>
-                    <input type="number" id="modal-duration" min="1" max="600" placeholder="Λεπτά" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-base font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                </div>
+                <!-- Add 2nd Workout Button -->
+                <button id="add-second-workout-btn" type="button" class="w-full py-2.5 px-3 rounded-2xl border border-dashed border-fuchsia-300 bg-fuchsia-50/60 hover:bg-fuchsia-100/70 text-fuchsia-800 text-xs font-extrabold flex items-center justify-center gap-1.5 transition-colors">
+                    <span>+ Προσθήκη 2ης Προπόνησης (Αερόβια / Αναερόβια)</span>
+                </button>
 
-                <div id="modal-distance-group">
-                    <label for="modal-distance" class="block text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5">Απόσταση (χλμ)</label>
-                    <input type="number" id="modal-distance" step="0.1" min="0" max="300" placeholder="Χιλιόμετρα" class="w-full bg-slate-50 border border-slate-200 rounded-2xl px-3.5 py-2.5 text-base font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <!-- Workout 2 (Hidden by default unless added or already logged) -->
+                <div id="second-workout-section" class="hidden bg-fuchsia-50/50 border border-fuchsia-200/80 rounded-2xl p-3.5 space-y-3">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center gap-2">
+                            <span class="text-[11px] font-extrabold uppercase tracking-wider text-fuchsia-900">2η Προπόνηση</span>
+                            <span id="modal-cat-badge-2" class="text-[10px] font-extrabold px-2 py-0.5 rounded-md bg-fuchsia-100 text-fuchsia-800">Αναερόβια</span>
+                        </div>
+                        <button id="remove-second-workout-btn" type="button" class="text-[11px] font-bold text-slate-400 hover:text-red-600 px-1.5 py-0.5 rounded-lg hover:bg-red-50 transition-colors">✕ Αφαίρεση</button>
+                    </div>
+                    <div>
+                        <label for="modal-workout-type-2" class="block text-xs font-bold text-slate-600 mb-1">Είδος Δραστηριότητας</label>
+                        <select id="modal-workout-type-2" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2.5 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
+                            <option value="Μυϊκή Ενδυνάμωση">💪 Μυϊκή Ενδυνάμωση (Αναερόβια)</option>
+                            <option value="TRX">🪢 TRX (Αναερόβια)</option>
+                            <option value="Βάρη / Kettlebell">🏋️‍♂️ Βάρη / Kettlebell (Αναερόβια)</option>
+                            <option value="HIIT / Διαλειμματική">⚡ HIIT / Διαλειμματική (Αναερόβια)</option>
+                            <option value="Run/Walk">🏃‍♂️ Run/Walk (Αερόβια)</option>
+                            <option value="Power Walk">🚶‍♂️ Power Walk (Αερόβια)</option>
+                            <option value="Τρέξιμο">🏅 Τρέξιμο (Αερόβια)</option>
+                            <option value="Ποδήλατο">🚴‍♂️ Ποδήλατο (Αερόβια)</option>
+                            <option value="Κολύμπι">🏊‍♂️ Κολύμπι (Αερόβια)</option>
+                            <option value="Ελλειπτικό / Διάδρομος">👟 Ελλειπτικό / Διάδρομος (Αερόβια)</option>
+                            <option value="Stretching / Mobility">🧘‍♂️ Stretching / Mobility</option>
+                        </select>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div id="modal-duration-group-2">
+                            <label for="modal-duration-2" class="block text-xs font-bold text-slate-600 mb-1">Διάρκεια (λεπτά)</label>
+                            <input type="number" id="modal-duration-2" min="1" max="600" placeholder="Λεπτά" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
+                        </div>
+
+                        <div id="modal-distance-group-2" class="hidden">
+                            <label for="modal-distance-2" class="block text-xs font-bold text-slate-600 mb-1">Απόσταση (χλμ)</label>
+                            <input type="number" id="modal-distance-2" step="0.1" min="0" max="300" placeholder="Χλμ" class="w-full bg-white border border-slate-200 rounded-xl px-3 py-2 text-sm font-bold text-slate-800 focus:outline-none focus:ring-2 focus:ring-fuchsia-500">
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -1014,23 +1069,23 @@
                 age: 40,
                 gender: 'male',
                 activityLevel: 1.55,
-                startWeight: 90,
-                midGoal: 85,
-                runUnlock: 85,
-                finalGoal: 75,
+                startWeight: 80,
+                midGoal: 75,
+                runUnlock: 75,
+                finalGoal: 65,
                 weeklyKmGoal: 40,
                 waterGoal: 8
             };
 
-            let latestKnownWeight = 90.0;
+            let latestKnownWeight = 80.0;
 
             function getDynamicNutritionTargets(weightKg, settings) {
-                const w = Number(weightKg) || settings.startWeight || 90;
+                const w = Number(weightKg) || settings.startWeight || 80;
                 const hCm = (Number(settings.height) || 1.68) * 100;
                 const age = Number(settings.age) || 40;
                 const gender = settings.gender || 'male';
                 const pal = Number(settings.activityLevel) || 1.55;
-                const finalGoal = Number(settings.finalGoal) || 75;
+                const finalGoal = Number(settings.finalGoal) || 65;
 
                 // Mifflin-St Jeor BMR equation
                 const bmr = gender === 'female'
@@ -1067,7 +1122,28 @@
                     const saved = localStorage.getItem(STORAGE_KEY_SETTINGS);
                     if (saved) {
                         const parsed = JSON.parse(saved);
-                        return { ...DEFAULT_SETTINGS, ...parsed };
+                        const merged = { ...DEFAULT_SETTINGS, ...parsed };
+                        let changed = false;
+                        if (Number(merged.startWeight) > 80) {
+                            merged.startWeight = 80;
+                            changed = true;
+                        }
+                        if (Number(merged.finalGoal) > 65 && (merged.finalGoal === 75 || merged.finalGoal === 72)) {
+                            merged.finalGoal = 65;
+                            changed = true;
+                        }
+                        if (Number(merged.midGoal) > 80) {
+                            merged.midGoal = 75;
+                            changed = true;
+                        }
+                        if (Number(merged.runUnlock) > 80) {
+                            merged.runUnlock = 75;
+                            changed = true;
+                        }
+                        if (changed) {
+                            localStorage.setItem(STORAGE_KEY_SETTINGS, JSON.stringify(merged));
+                        }
+                        return merged;
                     }
                 } catch (e) {}
                 return { ...DEFAULT_SETTINGS };
@@ -1119,8 +1195,8 @@
                     age: parseInt(document.getElementById('set-age').value, 10) || 40,
                     gender: document.getElementById('set-gender').value || 'male',
                     activityLevel: parseFloat(document.getElementById('set-activity').value) || 1.55,
-                    finalGoal: parseFloat(document.getElementById('set-final-goal').value) || 75,
-                    startWeight: parseFloat(document.getElementById('set-start-weight').value) || 90
+                    finalGoal: parseFloat(document.getElementById('set-final-goal').value) || 65,
+                    startWeight: parseFloat(document.getElementById('set-start-weight').value) || 80
                 };
                 const dyn = getDynamicNutritionTargets(latestKnownWeight, tempSettings);
                 previewEl.innerHTML = `BMR: <strong>${dyn.bmr.toLocaleString('el-GR')}</strong> • Συντήρηση (TDEE): <strong>${dyn.tdee.toLocaleString('el-GR')} kcal</strong><br>Στόχος απώλειας (-750g/εβδ): <strong>${dyn.calorieGoal.toLocaleString('el-GR')} kcal/ημ</strong> • Πρωτεΐνη: <strong>${dyn.proteinGoal}g/ημ</strong>`;
@@ -1165,10 +1241,10 @@
             document.getElementById('settings-save-btn').addEventListener('click', () => {
                 const updated = {
                     height: parseFloat(document.getElementById('set-height').value) || 1.68,
-                    startWeight: parseFloat(document.getElementById('set-start-weight').value) || 90,
-                    midGoal: parseFloat(document.getElementById('set-mid-goal').value) || 85,
-                    runUnlock: parseFloat(document.getElementById('set-run-unlock').value) || 85,
-                    finalGoal: parseFloat(document.getElementById('set-final-goal').value) || 75,
+                    startWeight: parseFloat(document.getElementById('set-start-weight').value) || 80,
+                    midGoal: parseFloat(document.getElementById('set-mid-goal').value) || 75,
+                    runUnlock: parseFloat(document.getElementById('set-run-unlock').value) || 75,
+                    finalGoal: parseFloat(document.getElementById('set-final-goal').value) || 65,
                     weeklyKmGoal: parseInt(document.getElementById('set-weekly-km').value, 10) || 40,
                     age: parseInt(document.getElementById('set-age').value, 10) || 40,
                     waterGoal: parseInt(document.getElementById('set-water-goal').value, 10) || 8,
@@ -1190,13 +1266,22 @@
                     const saved = localStorage.getItem(STORAGE_KEY_WEIGHT_HISTORY);
                     if (saved) {
                         const parsed = JSON.parse(saved);
-                        if (Array.isArray(parsed) && parsed.length > 0) {
-                            return parsed.sort((a, b) => parseLocalDate(a.date) - parseLocalDate(b.date));
+                        if (Array.isArray(parsed)) {
+                            const filtered = parsed.filter(item => Number(item.weight) <= 80);
+                            if (filtered.length !== parsed.length) {
+                                if (filtered.length > 0) {
+                                    const sortedFiltered = filtered.sort((a, b) => parseLocalDate(a.date) - parseLocalDate(b.date));
+                                    localStorage.setItem(STORAGE_KEY_WEIGHT_HISTORY, JSON.stringify(sortedFiltered));
+                                    return sortedFiltered;
+                                }
+                            } else if (filtered.length > 0) {
+                                return filtered.sort((a, b) => parseLocalDate(a.date) - parseLocalDate(b.date));
+                            }
                         }
                     }
                 } catch (e) {}
                 const s = getSettings();
-                const initial = [{ date: todayStr, weight: s.startWeight || 90.0 }];
+                const initial = [{ date: todayStr, weight: Math.min(80, Number(s.startWeight) || 80.0) }];
                 localStorage.setItem(STORAGE_KEY_WEIGHT_HISTORY, JSON.stringify(initial));
                 return initial;
             }
@@ -1209,7 +1294,7 @@
 
             function getActiveIntermediateMilestone(currentWeight, s, history = []) {
                 const startW = Number(s.startWeight) || currentWeight;
-                const finalW = Number(s.finalGoal) || 75;
+                const finalW = Number(s.finalGoal) || 65;
                 const maxRecorded = history.length > 0
                     ? Math.max(...history.map(h => Number(h.weight) || 0))
                     : startW;
@@ -2747,10 +2832,12 @@
             // --- 3. DYNAMIC WORKOUT TRACKER (WEEK & MONTH + AUTO-ADJUST PHASE) ---
             const DISTANCE_TYPES = new Set(['Run/Walk', 'Power Walk', 'Τρέξιμο', 'Ποδήλατο', 'Κολύμπι', 'Ελλειπτικό / Διάδρομος']);
             const AEROBIC_TYPES = new Set(['Run/Walk', 'Power Walk', 'Τρέξιμο', 'Ποδήλατο', 'Κολύμπι', 'Ελλειπτικό / Διάδρομος']);
+            const ANAEROBIC_TYPES = new Set(['Μυϊκή Ενδυνάμωση', 'TRX', 'Βάρη / Kettlebell', 'HIIT / Διαλειμματική']);
 
             let wWeekMonday = getMonday(todayStr);
             let wMonthFirst = `${todayStr.slice(0, 7)}-01`;
             let activeWorkoutModalDate = null;
+            let secondWorkoutEnabled = false;
 
             function getWorkoutHistory() {
                 try {
@@ -2761,6 +2848,22 @@
                 }
             }
 
+            // Supports both single workout objects (legacy) and arrays of 1-2 workouts per day
+            function getDayWorkouts(hist, dateStr) {
+                const raw = hist ? hist[dateStr] : null;
+                if (!raw) return [];
+                if (Array.isArray(raw)) return raw.filter(item => item && item.type);
+                if (typeof raw === 'object' && raw.type) return [raw];
+                return [];
+            }
+
+            function getWorkoutCategoryMeta(type) {
+                if (type === 'Ξεκούραση') return { label: 'Ξεκούραση', badgeClass: 'bg-slate-200 text-slate-700', icon: '🌱' };
+                if (AEROBIC_TYPES.has(type)) return { label: 'Αερόβια', badgeClass: 'bg-emerald-100 text-emerald-800', icon: '🏃' };
+                if (ANAEROBIC_TYPES.has(type)) return { label: 'Αναερόβια', badgeClass: 'bg-fuchsia-100 text-fuchsia-800', icon: '💪' };
+                return { label: 'Mobility', badgeClass: 'bg-teal-100 text-teal-800', icon: '🧘' };
+            }
+
             function renderAutoPhaseBanner(weekWorkouts) {
                 const bannerEl = document.getElementById('auto-phase-banner');
                 if (!bannerEl) return;
@@ -2768,17 +2871,17 @@
 
                 if (latestKnownWeight > s.runUnlock) {
                     const aerobicDone = weekWorkouts.filter(w => AEROBIC_TYPES.has(w.type)).length;
-                    const strengthDone = weekWorkouts.filter(w => w.type === 'Μυϊκή Ενδυνάμωση' || w.type === 'TRX').length;
+                    const strengthDone = weekWorkouts.filter(w => ANAEROBIC_TYPES.has(w.type)).length;
 
                     bannerEl.innerHTML = `
                         <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-2 text-xs">
                             <div>
                                 <span class="font-extrabold text-emerald-900">🌱 Φάση Βάσης (&gt; ${s.runUnlock} kg)</span>
-                                <p class="text-slate-600 mt-0.5">Στόχος εβδομάδας: 3 αερόβιες + 2 ενδυναμώσεις</p>
+                                <p class="text-slate-600 mt-0.5">Στόχος εβδομάδας: 3 αερόβιες + 2 αναερόβιες</p>
                             </div>
                             <div class="flex gap-2">
-                                <span class="px-2.5 py-1 rounded-xl bg-white border border-emerald-200 font-extrabold text-emerald-800">Αερόβιες: ${aerobicDone}/3</span>
-                                <span class="px-2.5 py-1 rounded-xl bg-white border border-fuchsia-200 font-extrabold text-fuchsia-800">Ενδυνάμωση: ${strengthDone}/2</span>
+                                <span class="px-2.5 py-1 rounded-xl bg-white border border-emerald-200 font-extrabold text-emerald-800">Αερόβια: ${aerobicDone}/3</span>
+                                <span class="px-2.5 py-1 rounded-xl bg-white border border-fuchsia-200 font-extrabold text-fuchsia-800">Αναερόβια: ${strengthDone}/2</span>
                             </div>
                         </div>
                     `;
@@ -2818,31 +2921,57 @@
 
                 for (let i = 0; i < 7; i++) {
                     const dStr = addDaysStr(wWeekMonday, i);
-                    const entry = hist[dStr];
-                    if (entry) weekEntries.push(entry);
+                    const sessions = getDayWorkouts(hist, dStr);
+                    sessions.forEach(s => weekEntries.push(s));
 
                     const isToday = dStr === todayStr;
                     const btn = document.createElement('button');
                     btn.type = 'button';
 
-                    if (entry) {
-                        const isRest = entry.type === 'Ξεκούραση';
-                        const details = isRest
-                            ? 'Ημέρα Ξεκούρασης'
-                            : `${entry.duration ? entry.duration + "'" : ''}${entry.distance ? ' • ' + entry.distance + ' χλμ' : ''}`;
-
-                        btn.className = `w-full text-left px-4 py-3 rounded-2xl border flex items-center justify-between gap-2 transition-all ${
+                    if (sessions.length > 0) {
+                        const isRest = sessions.length === 1 && sessions[0].type === 'Ξεκούραση';
+                        btn.className = `w-full text-left px-4 py-3 rounded-2xl border transition-all ${
                             isRest
                                 ? 'bg-slate-50 border-slate-200 text-slate-700'
                                 : 'bg-emerald-50/80 border-emerald-300 text-emerald-950 shadow-2xs'
                         }`;
-                        btn.innerHTML = `
-                            <div>
-                                <div class="text-xs font-extrabold ${isToday ? 'text-fuchsia-700' : 'text-slate-600'}">${dayNames[i]} • ${formatDisplayDate(dStr)} ${isToday ? '(Σήμερα)' : ''}</div>
-                                <div class="text-sm font-black mt-0.5">${isRest ? '🌱' : '✅'} ${entry.type}</div>
-                            </div>
-                            <span class="text-xs font-extrabold px-2.5 py-1 rounded-xl bg-white border border-slate-200/80 text-slate-700 shrink-0">${details}</span>
-                        `;
+
+                        if (isRest) {
+                            btn.innerHTML = `
+                                <div class="flex items-center justify-between gap-2">
+                                    <div>
+                                        <div class="text-xs font-extrabold ${isToday ? 'text-fuchsia-700' : 'text-slate-600'}">${dayNames[i]} • ${formatDisplayDate(dStr)} ${isToday ? '(Σήμερα)' : ''}</div>
+                                        <div class="text-sm font-black mt-0.5">🌱 Ξεκούραση</div>
+                                    </div>
+                                    <span class="text-xs font-extrabold px-2.5 py-1 rounded-xl bg-white border border-slate-200/80 text-slate-600 shrink-0">Ημέρα Ξεκούρασης</span>
+                                </div>
+                            `;
+                        } else {
+                            const rowsHtml = sessions.map(entry => {
+                                const meta = getWorkoutCategoryMeta(entry.type);
+                                const details = `${entry.duration ? entry.duration + "'" : ''}${entry.distance ? (entry.duration ? ' • ' : '') + entry.distance + ' χλμ' : ''}`;
+                                return `
+                                    <div class="flex items-center justify-between gap-2 pt-1.5 first:pt-0">
+                                        <div class="flex items-center gap-1.5 min-w-0">
+                                            <span class="text-xs">✅</span>
+                                            <span class="text-sm font-black truncate">${entry.type}</span>
+                                            <span class="text-[10px] font-extrabold px-2 py-0.5 rounded-md shrink-0 ${meta.badgeClass}">${meta.label}</span>
+                                        </div>
+                                        ${details ? `<span class="text-xs font-extrabold px-2.5 py-0.5 rounded-xl bg-white border border-slate-200/80 text-slate-700 shrink-0">${details}</span>` : ''}
+                                    </div>
+                                `;
+                            }).join('');
+
+                            btn.innerHTML = `
+                                <div class="flex items-center justify-between mb-1">
+                                    <span class="text-xs font-extrabold ${isToday ? 'text-fuchsia-700' : 'text-slate-600'}">${dayNames[i]} • ${formatDisplayDate(dStr)} ${isToday ? '(Σήμερα)' : ''}</span>
+                                    ${sessions.length === 1 ? '<span class="text-[10px] font-bold text-fuchsia-700">+ 2η προπόνηση</span>' : '<span class="text-[10px] font-extrabold text-fuchsia-700 bg-fuchsia-100 px-2 py-0.5 rounded-full">2 Προπονήσεις</span>'}
+                                </div>
+                                <div class="space-y-1 divide-y divide-emerald-200/60">
+                                    ${rowsHtml}
+                                </div>
+                            `;
+                        }
                     } else {
                         btn.className = `w-full text-left px-4 py-3 rounded-2xl border border-dashed ${
                             isToday ? 'border-fuchsia-400 bg-fuchsia-50/30' : 'border-slate-200 bg-white hover:bg-slate-50'
@@ -2850,7 +2979,7 @@
                         btn.innerHTML = `
                             <div>
                                 <div class="text-xs font-extrabold ${isToday ? 'text-fuchsia-700' : 'text-slate-700'}">${dayNames[i]} • ${formatDisplayDate(dStr)} ${isToday ? '(Σήμερα)' : ''}</div>
-                                <div class="text-xs text-slate-400 mt-0.5">Πάτησε για καταγραφή προπόνησης</div>
+                                <div class="text-xs text-slate-400 mt-0.5">Πάτησε για καταγραφή (1 ή 2 προπονήσεις)</div>
                             </div>
                             <span class="text-xs font-bold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-xl">+ Καταγραφή</span>
                         `;
@@ -2879,8 +3008,8 @@
 
                 for (let d = 1; d <= daysInMonth; d++) {
                     const dStr = `${year}-${String(month).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-                    const entry = hist[dStr];
-                    if (entry) {
+                    const sessions = getDayWorkouts(hist, dStr);
+                    sessions.forEach(entry => {
                         logItems.push({ date: dStr, ...entry });
                         if (entry.type !== 'Ξεκούραση') {
                             totalWorkouts++;
@@ -2891,7 +3020,7 @@
                             byType[entry.type].mins += Number(entry.duration) || 0;
                             byType[entry.type].km += Number(entry.distance) || 0;
                         }
-                    }
+                    });
                 }
 
                 document.getElementById('month-total-workouts').textContent = totalWorkouts;
@@ -2906,12 +3035,12 @@
                 } else {
                     types.forEach(t => {
                         const info = byType[t];
-                        const isAer = AEROBIC_TYPES.has(t);
+                        const meta = getWorkoutCategoryMeta(t);
                         const div = document.createElement('div');
                         div.className = 'bg-slate-50 border border-slate-200/80 rounded-xl px-3 py-2 flex items-center justify-between text-xs';
                         div.innerHTML = `
                             <div class="flex items-center gap-2">
-                                <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold ${isAer ? 'bg-emerald-100 text-emerald-800' : 'bg-fuchsia-100 text-fuchsia-800'}">${isAer ? 'Αερόβια' : 'Ενδυνάμωση'}</span>
+                                <span class="px-2 py-0.5 rounded-md text-[10px] font-extrabold ${meta.badgeClass}">${meta.label}</span>
                                 <span class="font-extrabold text-slate-800">${t}</span>
                             </div>
                             <span class="font-bold text-slate-700">${info.count}x • ${info.mins}'${info.km > 0 ? ` • ${info.km.toFixed(1)} χλμ` : ''}</span>
@@ -2926,14 +3055,18 @@
                     logEl.innerHTML = '<li class="text-xs text-slate-400 italic">Κενό ημερολόγιο μήνα.</li>';
                 } else {
                     logItems.reverse().forEach(item => {
+                        const meta = getWorkoutCategoryMeta(item.type);
                         const li = document.createElement('li');
-                        li.className = 'bg-slate-50 border border-slate-200/80 rounded-xl px-3 py-2 flex items-center justify-between text-xs';
+                        li.className = 'bg-slate-50 border border-slate-200/80 rounded-xl px-3 py-2 flex items-center justify-between gap-2 text-xs';
                         const details = item.type === 'Ξεκούραση'
                             ? 'Ξεκούραση'
-                            : `${item.duration ? item.duration + "'" : ''}${item.distance ? ' • ' + item.distance + ' χλμ' : ''}`;
+                            : `${item.duration ? item.duration + "'" : ''}${item.distance ? (item.duration ? ' • ' : '') + item.distance + ' χλμ' : ''}`;
                         li.innerHTML = `
-                            <span class="font-bold text-slate-800">${formatFullDisplayDate(item.date)} — ${item.type}</span>
-                            <span class="font-semibold text-emerald-700">${details}</span>
+                            <div class="flex items-center gap-1.5 min-w-0">
+                                <span class="font-bold text-slate-800 truncate">${formatFullDisplayDate(item.date)} — ${item.type}</span>
+                                <span class="px-1.5 py-0.5 rounded text-[10px] font-extrabold shrink-0 ${meta.badgeClass}">${meta.label}</span>
+                            </div>
+                            <span class="font-semibold text-emerald-700 shrink-0">${details}</span>
                         `;
                         logEl.appendChild(li);
                     });
@@ -2979,45 +3112,123 @@
                 renderWorkoutMonth();
             });
 
-            // Workout Modal Controls
+            // Workout Modal Controls (Supports 1 or 2 Workouts per Day)
             const workoutModal = document.getElementById('workout-modal');
             const modalTypeSelect = document.getElementById('modal-workout-type');
             const modalDurationGroup = document.getElementById('modal-duration-group');
             const modalDistanceGroup = document.getElementById('modal-distance-group');
+            const modalCatBadge1 = document.getElementById('modal-cat-badge-1');
+
+            const addSecondWorkoutBtn = document.getElementById('add-second-workout-btn');
+            const secondWorkoutSection = document.getElementById('second-workout-section');
+            const removeSecondWorkoutBtn = document.getElementById('remove-second-workout-btn');
+            const modalTypeSelect2 = document.getElementById('modal-workout-type-2');
+            const modalDurationGroup2 = document.getElementById('modal-duration-group-2');
+            const modalDistanceGroup2 = document.getElementById('modal-distance-group-2');
+            const modalCatBadge2 = document.getElementById('modal-cat-badge-2');
 
             function updateWorkoutModalFieldsVisibility() {
-                const selectedType = modalTypeSelect.value;
-                if (selectedType === 'Ξεκούραση') {
+                const selectedType1 = modalTypeSelect.value;
+                const meta1 = getWorkoutCategoryMeta(selectedType1);
+                if (modalCatBadge1) {
+                    modalCatBadge1.textContent = meta1.label;
+                    modalCatBadge1.className = `text-[10px] font-extrabold px-2 py-0.5 rounded-md ${meta1.badgeClass}`;
+                }
+
+                if (selectedType1 === 'Ξεκούραση') {
                     modalDurationGroup.classList.add('hidden');
                     modalDistanceGroup.classList.add('hidden');
-                } else if (DISTANCE_TYPES.has(selectedType)) {
-                    modalDurationGroup.classList.remove('hidden');
-                    modalDistanceGroup.classList.remove('hidden');
+                    secondWorkoutEnabled = false;
+                    secondWorkoutSection.classList.add('hidden');
+                    addSecondWorkoutBtn.classList.add('hidden');
                 } else {
                     modalDurationGroup.classList.remove('hidden');
-                    modalDistanceGroup.classList.add('hidden');
+                    if (DISTANCE_TYPES.has(selectedType1)) {
+                        modalDistanceGroup.classList.remove('hidden');
+                    } else {
+                        modalDistanceGroup.classList.add('hidden');
+                    }
+
+                    if (secondWorkoutEnabled) {
+                        secondWorkoutSection.classList.remove('hidden');
+                        addSecondWorkoutBtn.classList.add('hidden');
+                    } else {
+                        secondWorkoutSection.classList.add('hidden');
+                        addSecondWorkoutBtn.classList.remove('hidden');
+                    }
+                }
+
+                const selectedType2 = modalTypeSelect2.value;
+                const meta2 = getWorkoutCategoryMeta(selectedType2);
+                if (modalCatBadge2) {
+                    modalCatBadge2.textContent = meta2.label;
+                    modalCatBadge2.className = `text-[10px] font-extrabold px-2 py-0.5 rounded-md ${meta2.badgeClass}`;
+                }
+                if (DISTANCE_TYPES.has(selectedType2)) {
+                    modalDistanceGroup2.classList.remove('hidden');
+                } else {
+                    modalDistanceGroup2.classList.add('hidden');
                 }
             }
 
             modalTypeSelect.addEventListener('change', updateWorkoutModalFieldsVisibility);
+            modalTypeSelect2.addEventListener('change', updateWorkoutModalFieldsVisibility);
+
+            addSecondWorkoutBtn.addEventListener('click', () => {
+                secondWorkoutEnabled = true;
+                // Automatically suggest complementary workout type (Anaerobic if 1st is Aerobic, and vice versa)
+                if (AEROBIC_TYPES.has(modalTypeSelect.value)) {
+                    modalTypeSelect2.value = 'Μυϊκή Ενδυνάμωση';
+                } else {
+                    modalTypeSelect2.value = 'Run/Walk';
+                }
+                document.getElementById('modal-duration-2').value = '';
+                document.getElementById('modal-distance-2').value = '';
+                updateWorkoutModalFieldsVisibility();
+            });
+
+            removeSecondWorkoutBtn.addEventListener('click', () => {
+                secondWorkoutEnabled = false;
+                document.getElementById('modal-duration-2').value = '';
+                document.getElementById('modal-distance-2').value = '';
+                updateWorkoutModalFieldsVisibility();
+            });
 
             function openWorkoutModal(dateStr, dayLabel) {
                 activeWorkoutModalDate = dateStr;
                 document.getElementById('modal-date-title').textContent = `${dayLabel} • ${formatFullDisplayDate(dateStr)}`;
 
                 const hist = getWorkoutHistory();
-                const existing = hist[dateStr];
+                const sessions = getDayWorkouts(hist, dateStr);
                 const delBtn = document.getElementById('modal-delete-btn');
 
-                if (existing) {
-                    modalTypeSelect.value = existing.type || 'Run/Walk';
-                    document.getElementById('modal-duration').value = existing.duration || '';
-                    document.getElementById('modal-distance').value = existing.distance || '';
+                if (sessions.length > 0) {
+                    const first = sessions[0];
+                    modalTypeSelect.value = first.type || 'Run/Walk';
+                    document.getElementById('modal-duration').value = first.duration || '';
+                    document.getElementById('modal-distance').value = first.distance || '';
                     delBtn.classList.remove('hidden');
+
+                    if (sessions.length >= 2) {
+                        secondWorkoutEnabled = true;
+                        const second = sessions[1];
+                        modalTypeSelect2.value = second.type || 'Μυϊκή Ενδυνάμωση';
+                        document.getElementById('modal-duration-2').value = second.duration || '';
+                        document.getElementById('modal-distance-2').value = second.distance || '';
+                    } else {
+                        secondWorkoutEnabled = false;
+                        modalTypeSelect2.value = 'Μυϊκή Ενδυνάμωση';
+                        document.getElementById('modal-duration-2').value = '';
+                        document.getElementById('modal-distance-2').value = '';
+                    }
                 } else {
                     modalTypeSelect.value = 'Run/Walk';
                     document.getElementById('modal-duration').value = '';
                     document.getElementById('modal-distance').value = '';
+                    secondWorkoutEnabled = false;
+                    modalTypeSelect2.value = 'Μυϊκή Ενδυνάμωση';
+                    document.getElementById('modal-duration-2').value = '';
+                    document.getElementById('modal-distance-2').value = '';
                     delBtn.classList.add('hidden');
                 }
 
@@ -3032,12 +3243,23 @@
 
             document.getElementById('modal-save-btn').addEventListener('click', () => {
                 if (!activeWorkoutModalDate) return;
-                const type = modalTypeSelect.value;
-                const duration = type === 'Ξεκούραση' ? 0 : (parseInt(document.getElementById('modal-duration').value, 10) || 0);
-                const distance = DISTANCE_TYPES.has(type) ? (parseFloat(document.getElementById('modal-distance').value) || 0) : 0;
+                const type1 = modalTypeSelect.value;
+                const duration1 = type1 === 'Ξεκούραση' ? 0 : (parseInt(document.getElementById('modal-duration').value, 10) || 0);
+                const distance1 = DISTANCE_TYPES.has(type1) ? (parseFloat(document.getElementById('modal-distance').value) || 0) : 0;
+
+                const sessions = [{ type: type1, duration: duration1, distance: distance1 }];
+
+                if (secondWorkoutEnabled && type1 !== 'Ξεκούραση') {
+                    const type2 = modalTypeSelect2.value;
+                    if (type2 && type2 !== 'Ξεκούραση') {
+                        const duration2 = parseInt(document.getElementById('modal-duration-2').value, 10) || 0;
+                        const distance2 = DISTANCE_TYPES.has(type2) ? (parseFloat(document.getElementById('modal-distance-2').value) || 0) : 0;
+                        sessions.push({ type: type2, duration: duration2, distance: distance2 });
+                    }
+                }
 
                 const hist = getWorkoutHistory();
-                hist[activeWorkoutModalDate] = { type, duration, distance };
+                hist[activeWorkoutModalDate] = sessions;
                 localStorage.setItem(STORAGE_KEY_WORKOUT_HISTORY, JSON.stringify(hist));
 
                 workoutModal.classList.add('hidden');

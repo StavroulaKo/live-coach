@@ -288,7 +288,7 @@
                         <div class="relative">
                             <label for="food-snack1" class="block text-[11px] font-bold text-slate-600 mb-0.5">Δεκατιανό</label>
                             <div class="relative">
-                                <input type="text" id="food-snack1" autocomplete="off" enterkeyhint="done" placeholder="1 μήλο συν 10 αμύγδαλα" class="meal-autocomplete-input w-full bg-slate-50 border border-slate-200 rounded-xl pl-3 pr-8 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                <input type="text" id="food-snack1" autocomplete="off" enterkeyhint="done" placeholder="1 μήλο + 10 αμύγδαλα" class="meal-autocomplete-input w-full bg-slate-50 border border-slate-200 rounded-xl pl-3 pr-8 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                                 <button type="button" data-picker-for="food-snack1" class="meal-picker-btn absolute right-2 top-1/2 -translate-y-1/2 text-xs opacity-60 hover:opacity-100 p-0.5" title="Επιλογή από αποθηκευμένες ετικέτες">🏷️</button>
                             </div>
                             <div id="dropdown-food-snack1" class="meal-autocomplete-dropdown hidden absolute left-0 right-0 top-full mt-1 bg-white border border-emerald-200 rounded-2xl shadow-xl z-40 max-h-52 overflow-y-auto custom-scrollbar"></div>
@@ -304,7 +304,7 @@
                         <div class="relative">
                             <label for="food-snack2" class="block text-[11px] font-bold text-slate-600 mb-0.5">Απογευματινό</label>
                             <div class="relative">
-                                <input type="text" id="food-snack2" autocomplete="off" enterkeyhint="done" placeholder="100g cottage και 2 ρυζογκοφρέτες" class="meal-autocomplete-input w-full bg-slate-50 border border-slate-200 rounded-xl pl-3 pr-8 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                <input type="text" id="food-snack2" autocomplete="off" enterkeyhint="done" placeholder="100g cottage συν 2 ρυζογκοφρέτες" class="meal-autocomplete-input w-full bg-slate-50 border border-slate-200 rounded-xl pl-3 pr-8 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                                 <button type="button" data-picker-for="food-snack2" class="meal-picker-btn absolute right-2 top-1/2 -translate-y-1/2 text-xs opacity-60 hover:opacity-100 p-0.5" title="Επιλογή από αποθηκευμένες ετικέτες">🏷️</button>
                             </div>
                             <div id="dropdown-food-snack2" class="meal-autocomplete-dropdown hidden absolute left-0 right-0 top-full mt-1 bg-white border border-emerald-200 rounded-2xl shadow-xl z-40 max-h-52 overflow-y-auto custom-scrollbar"></div>
@@ -312,7 +312,7 @@
                         <div class="sm:col-span-2 relative">
                             <label for="food-dinner" class="block text-[11px] font-bold text-slate-600 mb-0.5">Βραδινό</label>
                             <div class="relative">
-                                <input type="text" id="food-dinner" autocomplete="off" enterkeyhint="done" placeholder="2 αυγά, σαλάτα και 1 φέτα ψωμί ολικής" class="meal-autocomplete-input w-full bg-slate-50 border border-slate-200 rounded-xl pl-3 pr-8 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                                <input type="text" id="food-dinner" autocomplete="off" enterkeyhint="done" placeholder="2 αυγά, σαλάτα + 1 φέτα ψωμί ολικής" class="meal-autocomplete-input w-full bg-slate-50 border border-slate-200 rounded-xl pl-3 pr-8 py-2 text-xs font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-emerald-500">
                                 <button type="button" data-picker-for="food-dinner" class="meal-picker-btn absolute right-2 top-1/2 -translate-y-1/2 text-xs opacity-60 hover:opacity-100 p-0.5" title="Επιλογή από αποθηκευμένες ετικέτες">🏷️</button>
                             </div>
                             <div id="dropdown-food-dinner" class="meal-autocomplete-dropdown hidden absolute left-0 right-0 top-full mt-1 bg-white border border-emerald-200 rounded-2xl shadow-xl z-40 max-h-52 overflow-y-auto custom-scrollbar"></div>
@@ -1834,39 +1834,124 @@
 
             let activeMealInputId = 'food-breakfast';
 
-            // Splits meal text on comma ',', 'και', or 'συν' (Unicode-safe for Greek)
+            function normalizeGreek(str) {
+                return (str || '')
+                    .toLowerCase()
+                    .normalize('NFD')
+                    .replace(/[\u0300-\u036f]/g, '')
+                    .trim();
+            }
+
+            const GREEK_NUMBER_WORDS = {
+                'ενας': 1, 'ενα': 1, 'μια': 1,
+                'δυο': 2,
+                'τρεις': 3, 'τρια': 3,
+                'τεσσερις': 4, 'τεσσερα': 4,
+                'πεντε': 5,
+                'εξι': 6,
+                'επτα': 7, 'εφτα': 7,
+                'οκτω': 8, 'οχτω': 8,
+                'εννεα': 9, 'εννια': 9,
+                'δεκα': 10,
+                'εντεκα': 11,
+                'δωδεκα': 12,
+                'δεκατρεις': 13, 'δεκατρια': 13,
+                'δεκατεσσερις': 14, 'δεκατεσσερα': 14,
+                'δεκαπεντε': 15,
+                'δεκαεξι': 16,
+                'δεκαεπτα': 17, 'δεκαεφτα': 17,
+                'δεκαοκτω': 18, 'δεκαοχτω': 18,
+                'δεκαεννεα': 19, 'δεκαεννια': 19,
+                'εικοσι': 20,
+                'τριαντα': 30,
+                'σαραντα': 40,
+                'πενηντα': 50,
+                'εξηντα': 60,
+                'εβδομηντα': 70,
+                'ογδοντα': 80,
+                'ενενηντα': 90,
+                'εκατο': 100, 'εκατον': 100,
+                'διακοσια': 200, 'διακοσιοι': 200, 'διακοσιες': 200,
+                'τριακοσια': 300, 'τριακοσιοι': 300, 'τριακοσιες': 300,
+                'τετρακοσια': 400, 'τετρακοσιοι': 400, 'τετρακοσιες': 400,
+                'πεντακοσια': 500, 'πεντακοσιοι': 500, 'πεντακοσιες': 500,
+                'εξακοσια': 600, 'επτακοσια': 700, 'εφτακοσια': 700,
+                'οκτακοσια': 800, 'οχτακοσια': 800, 'εννιακοσια': 900,
+                'μισο': 0.5, 'μιση': 0.5, 'μισος': 0.5, 'μισα': 0.5, 'μισες': 0.5,
+                'εναμισι': 1.5, 'εναμιση': 1.5,
+                'δυομισι': 2.5, 'τρισημισι': 3.5
+            };
+
+            // Converts all Greek number words (including compound numbers like "εκατόν πενήντα") to digits
+            function convertGreekNumberWordsToDigits(text) {
+                if (!text) return '';
+                const tokens = text.split(/(\s+|[,;+()])/);
+                let out = '';
+                let i = 0;
+
+                while (i < tokens.length) {
+                    const tok = tokens[i];
+                    if (!tok) {
+                        i++;
+                        continue;
+                    }
+                    const norm = normalizeGreek(tok);
+                    if (GREEK_NUMBER_WORDS[norm] !== undefined) {
+                        let sum = GREEK_NUMBER_WORDS[norm];
+                        let j = i + 1;
+                        while (j + 1 < tokens.length && /^\s+$/.test(tokens[j])) {
+                            const nextNorm = normalizeGreek(tokens[j + 1]);
+                            if (GREEK_NUMBER_WORDS[nextNorm] !== undefined) {
+                                sum += GREEK_NUMBER_WORDS[nextNorm];
+                                j += 2;
+                            } else {
+                                break;
+                            }
+                        }
+                        out += String(sum);
+                        i = j;
+                    } else {
+                        out += tok;
+                        i++;
+                    }
+                }
+                return out;
+            }
+
+            // Splits meal text on comma ',', 'και', 'συν', or '+' (while preserving trailing '+' in names like 'WASA protein+')
             function splitMealString(text) {
                 if (!text || !text.trim()) return [];
                 return text
-                    .split(/,|(?<![\p{L}\p{N}])(?:και|συν)(?![\p{L}\p{N}])/iu)
+                    .split(/,|(?<![\p{L}\p{N}])(?:και|συν)(?![\p{L}\p{N}])|\s+\+(?=\s*[\p{L}\p{N}])|(?<=[\p{L}\p{N}])\+(?=\s*[\p{L}\p{N}])/iu)
                     .map(s => s.trim())
                     .filter(Boolean);
             }
 
             // Normalizes meal text:
-            // 1. Converts "μία", "μια", "ένα", "ενα", "ένας", "ενας" -> "1"
+            // 1. Converts all Greek number words -> digits ("1", "2", "150", "200", "0.5", etc.)
             // 2. Converts any gram notation ("200 g", "200g", "200 γ", "200γ", "200 γ.", "200 γρ", "200γρ", "200 γρ.", "200 γραμμάρια", "200 gr.") -> "200g"
-            // 3. Never uses periods '.' when adding foods (keeps only decimal points between digits like 1.5)
+            // 3. Normalizes ml ("200 ml" -> "200ml")
+            // 4. Never uses periods '.' when adding foods (keeps only decimal points between digits like 1.5)
             function normalizeGramsFormat(text) {
                 if (!text) return '';
-                let res = text;
+                let res = convertGreekNumberWordsToDigits(text);
 
-                // 1. Replace standalone "μία", "μια", "ένα", "ενα", "ένας", "ενας" with "1"
+                // Convert any gram variant to "200g"
                 res = res.replace(
-                    /(?<![\p{L}\p{N}])(?:ένας|ενας|ένα|ενα|μία|μια)(?![\p{L}\p{N}])/giu,
-                    '1'
-                );
-
-                // 2. Convert any gram variant (with/without space, with/without dot, stuck to number or next word) to "200g"
-                res = res.replace(
-                    /(^|[\s,;(])(\d+(?:[.,]\d+)?)\s*(?:(?:γραμμάρια|γραμμαρια|γραμ|γρ|γ)\.(?=\s|$|[,;.)]|[\p{L}\p{N}])|(?:gr|g)\.(?=\s|$|[,;.)]|[\p{L}\p{N}])|(?:γραμμάρια|γραμμαρια|γραμ|γρ|γ)(?=\s|$|[,;.)])|(?:gr|g)(?=\s|$|[,;.)]|[^\x00-\x7F]))/giu,
+                    /(^|[\s,;+(])(\d+(?:[.,]\d+)?)\s*(?:(?:γραμμάρια|γραμμαρια|γραμ|γρ|γ)\.(?=\s|$|[,;+.)]|[\p{L}\p{N}])|(?:gr|g)\.(?=\s|$|[,;+.)]|[\p{L}\p{N}])|(?:γραμμάρια|γραμμαρια|γραμ|γρ|γ)(?=\s|$|[,;+.)])|(?:gr|g)(?=\s|$|[,;+.)]|[^\x00-\x7F]))/giu,
                     (_, prefix, num) => `${prefix}${num.replace(',', '.')}g`
                 );
 
-                // Ensure single space between "200g" and the food name if stuck together (e.g. "200gΧ" -> "200g Χ")
-                res = res.replace(/(\d+(?:\.\d+)?g)(?=[\p{L}\p{N}])/gu, '$1 ');
+                // Convert ml variant to "200ml"
+                res = res.replace(
+                    /(^|[\s,;+(])(\d+(?:[.,]\d+)?)\s*(?:ml|μλ)\.?(?=\s|$|[,;+.)]|[\p{L}\p{N}])/giu,
+                    (_, prefix, num) => `${prefix}${num.replace(',', '.')}ml`
+                );
 
-                // 3. Never use periods '.' when adding foods (keep only decimal points between digits)
+                // Ensure single space between "200g" or "200ml" and the food name if stuck together
+                res = res.replace(/(\d+(?:\.\d+)?(?:g|ml))(?=[\p{L}\p{N}])/gu, '$1 ');
+
+                // Never use periods '.' when adding foods (keep only decimal points between digits)
                 res = res.replace(/(?<!\d)\.(?!\d)/g, '');
 
                 return res.replace(/\s{2,}/g, ' ').trim();
@@ -1893,31 +1978,20 @@
                     el.addEventListener('focus', () => highlightActiveMealInput(m.id));
                     el.addEventListener('click', () => highlightActiveMealInput(m.id));
                     el.addEventListener('blur', () => {
-                        if (el.value.trim()) {
-                            el.value = normalizeGramsFormat(el.value);
-                        }
+                        el.value = normalizeGramsFormat(el.value);
                     });
                     el.addEventListener('keydown', (e) => {
                         if (e.key === 'Enter') {
                             e.preventDefault();
+                            el.value = normalizeGramsFormat(el.value);
                             closeAllAutocompleteDropdowns();
-                            if (el.value.trim()) {
-                                el.value = normalizeGramsFormat(el.value);
-                            }
+                            el.blur();
                             const calcBtn = document.getElementById('calc-calories-btn');
                             if (calcBtn) calcBtn.click();
                         }
                     });
                 }
             });
-
-            function normalizeGreek(str) {
-                return (str || '')
-                    .toLowerCase()
-                    .normalize('NFD')
-                    .replace(/[\u0300-\u036f]/g, '')
-                    .trim();
-            }
 
             function getCustomProducts() {
                 try {
@@ -1937,7 +2011,7 @@
                 if (!ul) return;
 
                 if (list.length === 0) {
-                    ul.innerHTML = `<li class="text-xs text-slate-400 italic py-3 text-center">Δεν έχεις προσθέσει δικές σου ετικέτες ακόμα.</li>`;
+                    ul.innerHTML = `<li class="text-xs text-slate-400 italic py-3 text-center">Δεν έχεις προσθέσει ακόμα δικές σου ετικέτες.</li>`;
                     return;
                 }
 
@@ -1947,7 +2021,7 @@
                             <div class="font-bold text-slate-800">${p.name}</div>
                             <div class="text-[11px] text-slate-500 mt-0.5">
                                 <strong class="text-fuchsia-700">${p.calories} kcal</strong> • 
-                                <strong class="text-emerald-700">${p.protein}g πρωτ.</strong> • 
+                                <strong class="text-emerald-700">${p.protein}g πρ.</strong> • 
                                 ${p.fat || 0}g λιπ. • ${p.fiber || 0}g ίνες
                             </div>
                         </div>
@@ -1964,7 +2038,7 @@
             document.getElementById('products-close-btn').addEventListener('click', () => productsModal.classList.add('hidden'));
 
             document.getElementById('add-custom-product-btn').addEventListener('click', () => {
-                const name = normalizeGramsFormat(document.getElementById('prod-name-input').value);
+                const name = normalizeGramsFormat(document.getElementById('prod-name-input').value.trim());
                 const calories = parseFloat(document.getElementById('prod-cal-input').value);
                 const protein = parseFloat(document.getElementById('prod-prot-input').value) || 0;
                 const fat = parseFloat(document.getElementById('prod-fat-input').value) || 0;
@@ -2006,7 +2080,7 @@
                 if (products.length === 0) {
                     dd.innerHTML = `
                         <div class="p-3 text-center">
-                            <p class="text-xs text-slate-500 mb-2">Δεν έχεις αποθηκεύσει ετικέτες προϊόντων.</p>
+                            <p class="text-xs text-slate-500 mb-2">Δεν έχεις αποθηκευμένες ετικέτες προϊόντων.</p>
                             <button type="button" class="open-products-shortcut px-3 py-1.5 rounded-xl bg-fuchsia-600 text-white text-xs font-bold">+ Προσθήκη Ετικέτας</button>
                         </div>
                     `;
@@ -2014,10 +2088,10 @@
                     return;
                 }
 
-                // Extract last segment separated by comma, "και", or "συν"
+                // Extract last segment separated by ',', 'και', 'συν', or '+'
                 const segments = splitMealString(inputEl.value);
                 const lastSegment = segments.length > 0 ? segments[segments.length - 1] : '';
-                const qtyMatch = lastSegment.match(/^(\d+(?:[.,]\d+)?\s*(?:g|x|×)?\s*)(.*)$/i);
+                const qtyMatch = lastSegment.match(/^(\d+(?:[.,]\d+)?\s*(?:g|γρ?|gr|ml)?\s*(?:x|×)?\s*)(.*)$/i);
                 const typedQuery = qtyMatch ? qtyMatch[2].trim() : lastSegment;
                 const normQuery = normalizeGreek(typedQuery);
 
@@ -2042,7 +2116,7 @@
                 dd.innerHTML = matches.map(p => `
                     <button type="button" data-select-product="${p.name.replace(/"/g, '&quot;')}" data-target-input="${inputEl.id}" class="w-full text-left px-3 py-2 hover:bg-emerald-50 border-b border-slate-100 last:border-b-0 flex items-center justify-between gap-2 transition-colors">
                         <span class="text-xs font-bold text-slate-800">${p.name}</span>
-                        <span class="text-[10px] font-extrabold text-fuchsia-700 bg-fuchsia-50 px-2 py-0.5 rounded-md shrink-0">${p.calories} kcal • ${p.protein}g πρωτ.</span>
+                        <span class="text-[10px] font-extrabold text-fuchsia-700 bg-fuchsia-50 px-2 py-0.5 rounded-md shrink-0">${p.calories} kcal • ${p.protein}g πρ.</span>
                     </button>
                 `).join('') + `
                     <div class="p-1.5 bg-slate-50 border-t border-slate-100 text-center">
@@ -2078,10 +2152,10 @@
                     const inputEl = document.getElementById(targetId);
                     if (inputEl) {
                         const normalizedCurrent = normalizeGramsFormat(inputEl.value);
-                        const segMatch = normalizedCurrent.match(/^(.*?(?:,|(?<![\p{L}\p{N}])(?:και|συν)(?![\p{L}\p{N}]))\s*)?(.*)$/iu);
+                        const segMatch = normalizedCurrent.match(/^(.*?(?:,|(?<![\p{L}\p{N}])(?:και|συν)(?![\p{L}\p{N}])|\s+\+|(?<=[\p{L}\p{N}])\+)\s*)?(.*)$/iu);
                         const leadingHistory = segMatch && segMatch[1] ? segMatch[1] : '';
                         const lastSegment = segMatch && segMatch[2] ? segMatch[2].trim() : '';
-                        const qtyMatch = lastSegment.match(/^(\d+(?:\.\d+)?g\s+|\d+(?:\.\d+)?\s*(?:x|×)?\s*)(.*)$/i);
+                        const qtyMatch = lastSegment.match(/^(\d+(?:\.\d+)?(?:g|ml)\s+|\d+(?:\.\d+)?\s*(?:x|×)?\s*)(.*)$/i);
                         const prefixQty = qtyMatch ? qtyMatch[1] : '';
                         inputEl.value = normalizeGramsFormat(`${leadingHistory}${prefixQty}${prodName}`);
                         inputEl.focus();
@@ -2103,76 +2177,106 @@
                 }
             });
 
-            // Built-in Greek Foods Database (portion + per100g nutrition values)
+            // Built-in Greek Foods Database (accurate realistic portion + per100g/100ml + spoon values)
             const BUILTIN_FOODS = [
-                { keys: ['γιαουρτι 2%', 'γιαουρτι'], cal: 140, prot: 16, fiber: 0, per100: { cal: 70, prot: 8, fiber: 0 } },
-                { keys: ['cottage', 'κοτατζ'], cal: 110, prot: 14, fiber: 0, per100: { cal: 98, prot: 11, fiber: 0 } },
-                { keys: ['αυγο', 'αυγα'], cal: 75, prot: 6.5, fiber: 0, per100: { cal: 155, prot: 13, fiber: 0 } },
-                { keys: ['τονος', 'τονου', 'τονοσαλατα'], cal: 150, prot: 28, fiber: 1, per100: { cal: 116, prot: 26, fiber: 0 } },
-                { keys: ['κοτοπουλο', 'στηθος κοτοπουλο'], cal: 220, prot: 34, fiber: 0, per100: { cal: 165, prot: 31, fiber: 0 } },
-                { keys: ['σολομος', 'σολομο'], cal: 230, prot: 24, fiber: 1, per100: { cal: 208, prot: 20, fiber: 0 } },
-                { keys: ['μοσχαρι', 'μπιφτεκι', 'κιμας', 'κρεας'], cal: 240, prot: 28, fiber: 0, per100: { cal: 215, prot: 26, fiber: 0 } },
-                { keys: ['γαλοπουλα'], cal: 35, prot: 6, fiber: 0, per100: { cal: 110, prot: 20, fiber: 0 } },
-                { keys: ['τυρι', 'φετα', 'ανθοτυρο', 'κατικι'], cal: 80, prot: 6, fiber: 0, per100: { cal: 240, prot: 17, fiber: 0 } },
-                { keys: ['μπανανα'], cal: 105, prot: 1.3, fiber: 3, per100: { cal: 89, prot: 1.1, fiber: 2.6 } },
-                { keys: ['μηλο'], cal: 80, prot: 0.4, fiber: 4, per100: { cal: 52, prot: 0.3, fiber: 2.4 } },
-                { keys: ['πορτοκαλι'], cal: 65, prot: 1.2, fiber: 3, per100: { cal: 47, prot: 0.9, fiber: 2.4 } },
-                { keys: ['αχλαδι'], cal: 85, prot: 0.5, fiber: 5, per100: { cal: 57, prot: 0.4, fiber: 3.1 } },
-                { keys: ['φρουτο', 'φρουτα'], cal: 80, prot: 0.8, fiber: 3, per100: { cal: 60, prot: 0.6, fiber: 2.5 } },
-                { keys: ['ψωμι', 'φετα ολικης', 'φρυγανια'], cal: 120, prot: 3.5, fiber: 3.5, per100: { cal: 250, prot: 9, fiber: 7 } },
-                { keys: ['παξιμαδι'], cal: 145, prot: 4, fiber: 2.5, per100: { cal: 360, prot: 10, fiber: 6 } },
-                { keys: ['ρυζογκοφρετα', 'ρυζογκοφρετες'], cal: 35, prot: 0.8, fiber: 0.4, per100: { cal: 380, prot: 8, fiber: 4 } },
-                { keys: ['βρωμη'], cal: 150, prot: 5, fiber: 4, per100: { cal: 375, prot: 13, fiber: 10 } },
-                { keys: ['ρυζι'], cal: 200, prot: 4, fiber: 1, per100: { cal: 130, prot: 2.7, fiber: 0.4 } },
-                { keys: ['μακαρονια', 'ζυμαρικα'], cal: 240, prot: 8, fiber: 2.5, per100: { cal: 155, prot: 5.5, fiber: 1.8 } },
-                { keys: ['πατατα', 'πατατες'], cal: 160, prot: 3, fiber: 3, per100: { cal: 87, prot: 1.9, fiber: 1.8 } },
-                { keys: ['φακες', 'ρεβιθια', 'φασολια', 'οσπρια'], cal: 260, prot: 15, fiber: 10, per100: { cal: 135, prot: 8.5, fiber: 6 } },
-                { keys: ['σαλατα', 'μαρουλι', 'ντοματα', 'αγγουρι', 'λαχανικα'], cal: 60, prot: 2, fiber: 3.5, per100: { cal: 25, prot: 1.2, fiber: 2 } },
-                { keys: ['ελαιολαδο'], cal: 90, prot: 0, fiber: 0, per100: { cal: 884, prot: 0, fiber: 0 } },
-                { keys: ['αμυγδαλα', 'καρυδια', 'ξηροι καρποι'], cal: 85, prot: 3, fiber: 1.5, per100: { cal: 580, prot: 21, fiber: 12 } },
-                { keys: ['μελι'], cal: 45, prot: 0, fiber: 0, per100: { cal: 304, prot: 0.3, fiber: 0.2 } },
-                { keys: ['καφες', 'φρεντο', 'espresso', 'γαλα'], cal: 15, prot: 0.5, fiber: 0, per100: { cal: 45, prot: 3.2, fiber: 0 } },
-                { keys: ['πρωτεινη', 'scoop', 'whey'], cal: 120, prot: 24, fiber: 0, per100: { cal: 380, prot: 78, fiber: 0 } }
+                { keys: ['γιαουρτι 0%'], cal: 110, prot: 18, fiber: 0, tbsp: 12, per100: { cal: 55, prot: 9, fiber: 0 } },
+                { keys: ['γιαουρτι 2%', 'γιαουρτι'], cal: 135, prot: 16, fiber: 0, tbsp: 15, per100: { cal: 68, prot: 8, fiber: 0 } },
+                { keys: ['cottage', 'κοτατζ'], cal: 98, prot: 11, fiber: 0, tbsp: 20, per100: { cal: 98, prot: 11, fiber: 0 } },
+                { keys: ['ασπραδι', 'ασπραδια'], cal: 17, prot: 3.6, fiber: 0, per100: { cal: 52, prot: 11, fiber: 0 } },
+                { keys: ['αυγο', 'αυγα', 'ομελετα'], cal: 72, prot: 6.3, fiber: 0, per100: { cal: 155, prot: 13, fiber: 0 } },
+                { keys: ['τονος', 'τονου', 'τονοσαλατα'], cal: 125, prot: 27, fiber: 0, per100: { cal: 112, prot: 25, fiber: 0 } },
+                { keys: ['κοτοπουλο', 'στηθος κοτοπουλο'], cal: 210, prot: 40, fiber: 0, per100: { cal: 150, prot: 29, fiber: 0 } },
+                { keys: ['σολομος', 'σολομο'], cal: 260, prot: 28, fiber: 0, per100: { cal: 195, prot: 20, fiber: 0 } },
+                { keys: ['ψαρι', 'τσιπουρα', 'λαβρακι', 'μπακαλιαρος'], cal: 200, prot: 34, fiber: 0, per100: { cal: 120, prot: 21, fiber: 0 } },
+                { keys: ['μοσχαρι', 'μπιφτεκι', 'κιμας', 'κρεας'], cal: 250, prot: 32, fiber: 0, per100: { cal: 185, prot: 24, fiber: 0 } },
+                { keys: ['χοιρινο'], cal: 240, prot: 32, fiber: 0, per100: { cal: 180, prot: 24, fiber: 0 } },
+                { keys: ['γαλοπουλα'], cal: 25, prot: 4.5, fiber: 0, per100: { cal: 105, prot: 20, fiber: 0 } },
+                { keys: ['τυρι', 'φετα', 'ανθοτυρο', 'κατικι'], cal: 70, prot: 6, fiber: 0, tbsp: 35, per100: { cal: 230, prot: 17, fiber: 0 } },
+                { keys: ['τοστ'], cal: 220, prot: 15, fiber: 2, per100: { cal: 230, prot: 15, fiber: 2 } },
+                { keys: ['αραβικη', 'τορτιγια', 'wrap'], cal: 140, prot: 4, fiber: 2, per100: { cal: 290, prot: 8, fiber: 4 } },
+                { keys: ['φρυγανια', 'φρυγανιες'], cal: 38, prot: 1.2, fiber: 1, per100: { cal: 380, prot: 12, fiber: 8 } },
+                { keys: ['κριτσινι', 'κριτσινια'], cal: 35, prot: 1, fiber: 0.8, per100: { cal: 390, prot: 10, fiber: 6 } },
+                { keys: ['ψωμι', 'φετα ολικης'], cal: 70, prot: 2.5, fiber: 2, per100: { cal: 245, prot: 9, fiber: 6.5 } },
+                { keys: ['παξιμαδι'], cal: 110, prot: 3, fiber: 2, per100: { cal: 360, prot: 10, fiber: 6 } },
+                { keys: ['ρυζογκοφρετα', 'ρυζογκοφρετες'], cal: 28, prot: 0.7, fiber: 0.3, per100: { cal: 380, prot: 8, fiber: 4 } },
+                { keys: ['βρωμη'], cal: 145, prot: 5, fiber: 4, tbsp: 37, tsp: 13, per100: { cal: 370, prot: 13, fiber: 10 } },
+                { keys: ['δημητριακα'], cal: 145, prot: 3, fiber: 2, tbsp: 35, per100: { cal: 375, prot: 8, fiber: 5 } },
+                { keys: ['μπαρα'], cal: 160, prot: 10, fiber: 3, per100: { cal: 380, prot: 22, fiber: 7 } },
+                { keys: ['ρυζι'], cal: 190, prot: 4, fiber: 0.6, tbsp: 26, per100: { cal: 130, prot: 2.7, fiber: 0.4 } },
+                { keys: ['μακαρονια', 'ζυμαρικα'], cal: 210, prot: 7.5, fiber: 2, per100: { cal: 140, prot: 5, fiber: 1.5 } },
+                { keys: ['πατατα', 'πατατες'], cal: 125, prot: 2.8, fiber: 2.5, per100: { cal: 85, prot: 1.9, fiber: 1.8 } },
+                { keys: ['φακες', 'ρεβιθια', 'φασολια', 'οσπρια'], cal: 220, prot: 14, fiber: 9, tbsp: 25, per100: { cal: 120, prot: 8, fiber: 5.5 } },
+                { keys: ['αβοκαντο'], cal: 120, prot: 1.5, fiber: 5, tbsp: 24, per100: { cal: 160, prot: 2, fiber: 6.7 } },
+                { keys: ['σαλατα', 'μαρουλι', 'ντοματα', 'αγγουρι', 'λαχανικα', 'μπροκολο', 'κολοκυθακια', 'σπανακι', 'πιπερια', 'λαχανο', 'καροτο'], cal: 35, prot: 1.5, fiber: 2.5, per100: { cal: 25, prot: 1.2, fiber: 2 } },
+                { keys: ['ντοματινι', 'ντοματινια'], cal: 4, prot: 0.2, fiber: 0.2, per100: { cal: 18, prot: 0.9, fiber: 1.2 } },
+                { keys: ['ελαια', 'ελιες'], cal: 5, prot: 0, fiber: 0.2, per100: { cal: 115, prot: 0.8, fiber: 3.2 } },
+                { keys: ['ελαιολαδο', 'λαδι'], cal: 110, prot: 0, fiber: 0, tbsp: 115, tsp: 40, per100: { cal: 884, prot: 0, fiber: 0 } },
+                { keys: ['αμυγδαλο', 'αμυγδαλα'], cal: 7, prot: 0.25, fiber: 0.15, tbsp: 58, per100: { cal: 580, prot: 21, fiber: 12 } },
+                { keys: ['καρυδι', 'καρυδια'], cal: 26, prot: 0.6, fiber: 0.3, tbsp: 65, per100: { cal: 654, prot: 15, fiber: 6.7 } },
+                { keys: ['φουντουκι', 'φουντουκια', 'κασιους', 'φιστικι', 'φιστικια', 'ξηροι καρποι'], cal: 8, prot: 0.2, fiber: 0.1, per100: { cal: 590, prot: 18, fiber: 8 } },
+                { keys: ['ταχινι', 'φυστικοβουτυρο'], cal: 90, prot: 3, fiber: 1.2, tbsp: 90, tsp: 32, per100: { cal: 590, prot: 22, fiber: 7 } },
+                { keys: ['μελι'], cal: 22, prot: 0, fiber: 0, tbsp: 62, tsp: 21, per100: { cal: 304, prot: 0.3, fiber: 0.2 } },
+                { keys: ['ζαχαρη'], cal: 16, prot: 0, fiber: 0, tbsp: 48, tsp: 16, per100: { cal: 387, prot: 0, fiber: 0 } },
+                { keys: ['σοκολατα'], cal: 52, prot: 0.7, fiber: 0.8, per100: { cal: 535, prot: 7, fiber: 8 } },
+                { keys: ['μπανανα'], cal: 95, prot: 1.2, fiber: 2.8, per100: { cal: 89, prot: 1.1, fiber: 2.6 } },
+                { keys: ['μηλο'], cal: 75, prot: 0.4, fiber: 3.6, per100: { cal: 52, prot: 0.3, fiber: 2.4 } },
+                { keys: ['πορτοκαλι'], cal: 62, prot: 1.2, fiber: 3, per100: { cal: 47, prot: 0.9, fiber: 2.4 } },
+                { keys: ['αχλαδι'], cal: 80, prot: 0.5, fiber: 4.5, per100: { cal: 57, prot: 0.4, fiber: 3.1 } },
+                { keys: ['ακτινιδιο'], cal: 42, prot: 0.8, fiber: 2.1, per100: { cal: 61, prot: 1.1, fiber: 3 } },
+                { keys: ['μανταρινι'], cal: 35, prot: 0.6, fiber: 1.4, per100: { cal: 53, prot: 0.8, fiber: 1.8 } },
+                { keys: ['ροδακινο', 'νεκταρινι'], cal: 55, prot: 1.2, fiber: 2, per100: { cal: 42, prot: 0.9, fiber: 1.6 } },
+                { keys: ['φραουλα', 'φραουλες', 'κερασι', 'κερασια'], cal: 5, prot: 0.1, fiber: 0.3, per100: { cal: 35, prot: 0.7, fiber: 2 } },
+                { keys: ['καρπουζι', 'πεπονι'], cal: 65, prot: 1.2, fiber: 0.8, per100: { cal: 32, prot: 0.6, fiber: 0.5 } },
+                { keys: ['φρουτο', 'φρουτα'], cal: 70, prot: 0.8, fiber: 2.8, per100: { cal: 55, prot: 0.6, fiber: 2.4 } },
+                { keys: ['γαλα'], cal: 115, prot: 8, fiber: 0, tbsp: 8, per100: { cal: 46, prot: 3.3, fiber: 0 } },
+                { keys: ['καφες', 'φρεντο', 'espresso', 'αμερικανο'], cal: 10, prot: 0.3, fiber: 0, per100: { cal: 5, prot: 0.2, fiber: 0 } },
+                { keys: ['πρωτεινη', 'scoop', 'whey'], cal: 115, prot: 24, fiber: 0, tbsp: 38, per100: { cal: 380, prot: 78, fiber: 0 } }
             ];
 
             function parseLeadingQuantity(segment) {
                 const normalized = normalizeGramsFormat(segment);
 
-                // Check for gram-based quantity first (e.g. "200g κοτόπουλο")
-                const gramMatch = normalized.match(/^(\d+(?:\.\d+)?)g\s+(.+)$/i);
+                // 1. Gram or ml quantity (e.g. "200g κοτόπουλο", "200ml γάλα")
+                const gramMatch = normalized.match(/^(\d+(?:\.\d+)?)(?:g|ml)\s+(.+)$/i);
                 if (gramMatch) {
                     return {
                         qty: parseFloat(gramMatch[1]),
-                        isGrams: true,
+                        unitType: 'grams',
                         rest: gramMatch[2].trim()
                     };
                 }
 
-                // Check for unit/portion quantity (e.g. "2 αυγά", "1 μπανάνα")
+                // 2. Tablespoon quantity (e.g. "1 κσ ελαιόλαδο", "2 κουταλιές cottage")
+                const tbspMatch = normalized.match(/^(\d+(?:\.\d+)?)\s*(?:κσ|κουταλια(?:\s+της\s+σουπας)?|κουταλιες(?:\s+της\s+σουπας)?)\s+(.+)$/iu);
+                if (tbspMatch) {
+                    return {
+                        qty: parseFloat(tbspMatch[1]),
+                        unitType: 'tbsp',
+                        rest: tbspMatch[2].trim()
+                    };
+                }
+
+                // 3. Teaspoon quantity (e.g. "1 κγ μέλι", "2 κουταλάκια ζάχαρη")
+                const tspMatch = normalized.match(/^(\d+(?:\.\d+)?)\s*(?:κγ|κουταλακι(?:\s+του\s+γλυκου)?|κουταλακια(?:\s+του\s+γλυκου)?)\s+(.+)$/iu);
+                if (tspMatch) {
+                    return {
+                        qty: parseFloat(tspMatch[1]),
+                        unitType: 'tsp',
+                        rest: tspMatch[2].trim()
+                    };
+                }
+
+                // 4. Unit/portion quantity (e.g. "2 αυγά", "10 αμύγδαλα", "0.5 μπανάνα")
                 const numMatch = normalized.match(/^(\d+(?:\.\d+)?)\s*(?:x|×)?\s+(.+)$/i);
                 if (numMatch) {
                     return {
                         qty: parseFloat(numMatch[1]),
-                        isGrams: false,
+                        unitType: 'unit',
                         rest: numMatch[2].trim()
                     };
                 }
 
-                const wordMap = {
-                    'δυο': 2, 'τρεις': 3, 'τρια': 3,
-                    'τεσσερις': 4, 'τεσσερα': 4, 'πεντε': 5,
-                    'μισο': 0.5, 'μιση': 0.5
-                };
-                const firstWord = normalizeGreek(normalized.split(/\s+/)[0]);
-                if (wordMap[firstWord] !== undefined && normalized.split(/\s+/).length > 1) {
-                    return {
-                        qty: wordMap[firstWord],
-                        isGrams: false,
-                        rest: normalized.split(/\s+/).slice(1).join(' ').trim()
-                    };
-                }
-
-                return { qty: 1, isGrams: false, rest: normalized };
+                return { qty: 1, unitType: 'unit', rest: normalized };
             }
 
             function estimateMealNutrition(text) {
@@ -2186,9 +2290,11 @@
                 let totalFiber = 0;
 
                 rawSegments.forEach(seg => {
-                    const { qty, isGrams, rest } = parseLeadingQuantity(seg);
+                    const { qty, unitType, rest } = parseLeadingQuantity(seg);
                     const normRest = normalizeGreek(rest);
-                    const mult = isGrams ? (qty / 100) : qty;
+                    const mult = unitType === 'grams'
+                        ? (qty / 100)
+                        : (unitType === 'tbsp' ? qty * 0.15 : (unitType === 'tsp' ? qty * 0.05 : qty));
 
                     // 1. Check Custom Saved Products FIRST
                     const matchedCustom = customProducts.find(p => {
@@ -2213,20 +2319,51 @@
                     }
 
                     if (matchedBuiltin) {
-                        if (isGrams && matchedBuiltin.per100) {
-                            totalCal += matchedBuiltin.per100.cal * mult;
-                            totalProt += matchedBuiltin.per100.prot * mult;
-                            totalFiber += matchedBuiltin.per100.fiber * mult;
+                        if (unitType === 'grams' && matchedBuiltin.per100) {
+                            totalCal += matchedBuiltin.per100.cal * (qty / 100);
+                            totalProt += matchedBuiltin.per100.prot * (qty / 100);
+                            totalFiber += matchedBuiltin.per100.fiber * (qty / 100);
+                        } else if (unitType === 'tbsp') {
+                            const calPerTbsp = matchedBuiltin.tbsp !== undefined
+                                ? matchedBuiltin.tbsp
+                                : (matchedBuiltin.per100 ? matchedBuiltin.per100.cal * 0.15 : matchedBuiltin.cal * 0.25);
+                            totalCal += calPerTbsp * qty;
+                            totalProt += (matchedBuiltin.per100 ? matchedBuiltin.per100.prot * 0.15 : matchedBuiltin.prot * 0.25) * qty;
+                            totalFiber += (matchedBuiltin.per100 ? matchedBuiltin.per100.fiber * 0.15 : matchedBuiltin.fiber * 0.25) * qty;
+                        } else if (unitType === 'tsp') {
+                            const calPerTsp = matchedBuiltin.tsp !== undefined
+                                ? matchedBuiltin.tsp
+                                : (matchedBuiltin.tbsp !== undefined ? matchedBuiltin.tbsp / 3 : (matchedBuiltin.per100 ? matchedBuiltin.per100.cal * 0.05 : matchedBuiltin.cal * 0.1));
+                            totalCal += calPerTsp * qty;
+                            totalProt += (matchedBuiltin.per100 ? matchedBuiltin.per100.prot * 0.05 : matchedBuiltin.prot * 0.1) * qty;
+                            totalFiber += (matchedBuiltin.per100 ? matchedBuiltin.per100.fiber * 0.05 : matchedBuiltin.fiber * 0.1) * qty;
                         } else {
                             totalCal += matchedBuiltin.cal * qty;
                             totalProt += matchedBuiltin.prot * qty;
                             totalFiber += matchedBuiltin.fiber * qty;
                         }
                     } else {
-                        // Neutral fallback for unknown free-text item (per 100g if grams specified, else per portion)
-                        totalCal += 150 * mult;
-                        totalProt += 6 * mult;
-                        totalFiber += 1.5 * mult;
+                        // Realistic fallback for unknown free-text item
+                        if (unitType === 'grams') {
+                            totalCal += 110 * (qty / 100);
+                            totalProt += 5 * (qty / 100);
+                            totalFiber += 1.5 * (qty / 100);
+                        } else if (unitType === 'tbsp') {
+                            totalCal += 35 * qty;
+                            totalProt += 1 * qty;
+                            totalFiber += 0.5 * qty;
+                        } else if (unitType === 'tsp') {
+                            totalCal += 15 * qty;
+                            totalProt += 0.3 * qty;
+                            totalFiber += 0.2 * qty;
+                        } else {
+                            // If qty > 3 (e.g. small pieces/berries/nuts), treat as small per-piece (~15 kcal) instead of 150 kcal
+                            const unitCal = qty > 3 ? 15 : 85;
+                            const unitProt = qty > 3 ? 0.5 : 3;
+                            totalCal += unitCal * qty;
+                            totalProt += unitProt * qty;
+                            totalFiber += 1 * qty;
+                        }
                     }
                 });
 
@@ -2286,7 +2423,7 @@
                     for (let i = 1; i <= goal; i++) {
                         const filled = i <= count;
                         html += `
-                            <button type="button" data-water-glass="${i}" class="w-7 h-7 rounded-xl border text-xs flex items-center justify-center transition-all ${filled ? 'bg-teal-500 border-teal-600 text-white shadow-xs scale-105' : 'bg-white border-slate-200 text-slate-300 hover:border-teal-300'}" title="${i} ποτήρια">
+                            <button type="button" data-water-glass="${i}" class="w-7 h-7 rounded-xl border text-xs flex items-center justify-center transition-all ${filled ? 'bg-teal-500 border-teal-600 text-white shadow-xs scale-105' : 'bg-white border-slate-200 text-slate-300 hover:border-teal-300'}" title="${i}ο ποτήρι">
                                 💧
                             </button>
                         `;
@@ -2307,7 +2444,7 @@
                 renderWaterTracker();
             });
 
-            // Quick Meal Chips (Splits comma, "και", and "συν" into individual normalized chips)
+            // Quick Meal Chips (Splits items separated by ',', 'και', 'συν', or '+' into individual chips)
             function renderQuickMealChips() {
                 const container = document.getElementById('quick-meal-chips');
                 if (!container) return;
@@ -2325,21 +2462,20 @@
                         if (!val) continue;
                         const subItems = splitMealString(normalizeGramsFormat(val));
                         for (const item of subItems) {
-                            const cleanItem = normalizeGramsFormat(item);
-                            const norm = normalizeGreek(cleanItem);
+                            const norm = normalizeGreek(item);
                             if (norm && !seenNorm.has(norm)) {
                                 seenNorm.add(norm);
-                                uniqueItems.push(cleanItem);
+                                uniqueItems.push(item);
                             }
-                            if (uniqueItems.length >= 12) break;
+                            if (uniqueItems.length >= 10) break;
                         }
-                        if (uniqueItems.length >= 12) break;
+                        if (uniqueItems.length >= 10) break;
                     }
-                    if (uniqueItems.length >= 12) break;
+                    if (uniqueItems.length >= 10) break;
                 }
 
                 if (uniqueItems.length === 0) {
-                    container.innerHTML = `<span class="text-[11px] text-slate-400 italic">Τα πρόσφατα τρόφιμά σου θα εμφανίζονται εδώ για άμεση προσθήκη.</span>`;
+                    container.innerHTML = `<span class="text-[11px] text-slate-400 italic">Τα πρόσφατα τρόφιμα που καταχωρείς θα εμφανίζονται εδώ για γρήγορη επιλογή.</span>`;
                     return;
                 }
 
@@ -2357,7 +2493,7 @@
                 const targetInput = document.getElementById(activeMealInputId) || document.getElementById('food-breakfast');
                 if (!targetInput) return;
 
-                const currentVal = normalizeGramsFormat(targetInput.value);
+                const currentVal = normalizeGramsFormat(targetInput.value.trim());
                 targetInput.value = currentVal ? `${currentVal}, ${itemText}` : itemText;
                 highlightActiveMealInput(targetInput.id);
             });
@@ -2369,7 +2505,7 @@
                 const drafts = getMealDrafts();
                 const yDraft = drafts[yesterdayStr];
                 if (!yDraft) {
-                    showMessage('calories-msg', 'Δεν βρέθηκαν καταχωρημένα γεύματα για την προηγούμενη ημέρα.', true);
+                    showMessage('calories-msg', 'Δεν βρέθηκαν καταγεγραμμένα γεύματα την προηγούμενη ημέρα.', true);
                     return;
                 }
                 MEAL_FIELDS.forEach(m => {
@@ -2474,19 +2610,19 @@
                 let totalFiber = 0;
 
                 MEAL_FIELDS.forEach(m => {
-                    const inpEl = document.getElementById(m.id);
-                    const val = normalizeGramsFormat(inpEl ? inpEl.value : '');
-                    if (inpEl) inpEl.value = val;
-                    dayDraft[m.key] = val;
-                    if (val) {
-                        const est = estimateMealNutrition(val);
+                    const inp = document.getElementById(m.id);
+                    const normalizedVal = normalizeGramsFormat((inp.value || '').trim());
+                    inp.value = normalizedVal;
+                    dayDraft[m.key] = normalizedVal;
+                    if (normalizedVal) {
+                        const est = estimateMealNutrition(normalizedVal);
                         totalCal += est.calories;
                         totalProt += est.protein;
                         totalFiber += est.fiber;
                         mealsBreakdown.push({
                             key: m.key,
                             label: m.label,
-                            text: val,
+                            text: normalizedVal,
                             calories: est.calories,
                             protein: est.protein,
                             fiber: est.fiber
@@ -2503,7 +2639,7 @@
                     saveCaloriesHistory(calMap);
                     renderDailyNutritionCard();
                     renderCaloriesSection();
-                    showMessage('calories-msg', 'Συμπλήρωσε τουλάχιστον ένα γεύμα.', true);
+                    showMessage('calories-msg', 'Καταχώρησε τουλάχιστον ένα γεύμα.', true);
                     return;
                 }
 
@@ -2579,7 +2715,7 @@
                 const dayRecord = calMap[dStr];
                 if (!dayRecord || !dayRecord.meals || !editingMealKey) return;
 
-                const newText = normalizeGramsFormat(document.getElementById('edit-meal-text').value);
+                const newText = normalizeGramsFormat(document.getElementById('edit-meal-text').value.trim());
                 const newCal = parseFloat(document.getElementById('edit-meal-calories').value);
                 if (!newText || isNaN(newCal) || newCal < 0) return;
 
@@ -2737,13 +2873,13 @@
                     const mLogUl = document.getElementById('month-calories-log');
                     if (mLogUl) {
                         if (monthLogs.length === 0) {
-                            mLogUl.innerHTML = `<li class="text-xs text-slate-400 italic py-2 text-center">Δεν υπάρχουν καταγραφές αυτόν τον μήνα.</li>`;
+                            mLogUl.innerHTML = `<li class="text-xs text-slate-400 italic py-2 text-center">Καμία καταγραφή αυτόν τον μήνα.</li>`;
                         } else {
                             mLogUl.innerHTML = [...monthLogs].reverse().map(item => `
                                 <li>
                                     <button type="button" data-jump-food-date="${item.date}" class="w-full flex items-center justify-between px-3 py-2 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200/80 text-xs transition-colors">
                                         <span class="font-bold text-slate-700">${formatFullDisplayDate(item.date)}</span>
-                                        <span class="font-extrabold text-fuchsia-700">${item.calories.toLocaleString('el-GR')} kcal <span class="text-emerald-700">• ${item.protein}g πρωτ.</span></span>
+                                        <span class="font-extrabold text-fuchsia-700">${item.calories.toLocaleString('el-GR')} kcal <span class="text-emerald-700">• ${item.protein}g πρ.</span></span>
                                     </button>
                                 </li>
                             `).join('');
@@ -2890,8 +3026,8 @@
                         phaseBannerEl.innerHTML = `
                             <div class="bg-emerald-50 border border-emerald-200 rounded-2xl p-3 flex items-center justify-between gap-2 text-xs">
                                 <div>
-                                    <span class="font-extrabold text-emerald-900">ΦΑΣΗ 1: ΠΡΟΣΤΑΣΙΑ ΑΡΘΡΩΣΕΩΝ</span>
-                                    <p class="text-emerald-800/85 mt-0.5">Power Walk, Run/Walk &amp; Ενδυνάμωση (απομένουν <strong>${diff} kg</strong> για ξεκλείδωμα τρεξίματος στα ${runUnlock} kg).</p>
+                                    <span class="font-extrabold text-emerald-900">🛡️ Φάση 1: Προστασία Αρθρώσεων</span>
+                                    <p class="text-emerald-800/85 mt-0.5">Power Walk, Run/Walk &amp; Ενδυνάμωση (απομένουν <strong>${diff} kg</strong> για το τρέξιμο στα ${runUnlock} kg).</p>
                                 </div>
                                 <span class="px-2.5 py-1 rounded-xl bg-emerald-600 text-white font-extrabold shrink-0">3-4x/εβδ.</span>
                             </div>
@@ -2903,8 +3039,8 @@
                         phaseBannerEl.innerHTML = `
                             <div class="bg-fuchsia-50 border border-fuchsia-200 rounded-2xl p-3 flex items-center justify-between gap-2 text-xs">
                                 <div>
-                                    <span class="font-extrabold text-fuchsia-900">ΦΑΣΗ 2: ΤΡΕΞΙΜΟ ΞΕΚΛΕΙΔΩΘΗΚΕ!</span>
-                                    <p class="text-fuchsia-800/85 mt-0.5">Προοδευτική αύξηση χιλιομέτρων προς τον στόχο (${maxKm} km/εβδ.).</p>
+                                    <span class="font-extrabold text-fuchsia-900">🚀 Φάση 2: Το Τρέξιμο Ξεκλειδώθηκε!</span>
+                                    <p class="text-fuchsia-800/85 mt-0.5">Σταδιακή αύξηση χιλιομέτρων προς τον στόχο (${maxKm} km/εβδ.).</p>
                                 </div>
                                 <span class="px-2.5 py-1 rounded-xl bg-fuchsia-600 text-white font-extrabold shrink-0">Στόχος: ${dynamicKmTarget} km</span>
                             </div>
@@ -3009,7 +3145,7 @@
                     const logUl = document.getElementById('month-workouts-log');
                     if (logUl) {
                         if (monthEntries.length === 0) {
-                            logUl.innerHTML = `<li class="text-xs text-slate-400 italic py-2 text-center">Δεν υπάρχουν καταγραφές αυτόν τον μήνα.</li>`;
+                            logUl.innerHTML = `<li class="text-xs text-slate-400 italic py-2 text-center">Καμία καταγραφή αυτόν τον μήνα.</li>`;
                         } else {
                             logUl.innerHTML = [...monthEntries].reverse().map(entry => {
                                 const desc = entry.workouts.map(w => `${w.type}${w.duration ? ` (${w.duration}')` : ''}`).join(' + ');
@@ -3183,7 +3319,7 @@
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
-                showMessage('backup-status-msg', 'Το αρχείο Backup αποθηκεύτηκε!', false);
+                showMessage('backup-status-msg', 'Το αρχείο Backup κατέβηκε!', false);
             });
 
             let pendingRestorePayload = null;
@@ -3200,7 +3336,7 @@
                         const wCount = Array.isArray(data.weightHistory) ? data.weightHistory.length : 0;
                         const pCount = Array.isArray(data.customProducts) ? data.customProducts.length : 0;
                         document.getElementById('restore-summary-text').textContent =
-                            `Βρέθηκαν ${wCount} ζυγίσεις και ${pCount} αποθηκευμένα προϊόντα. Θέλεις να γίνει επαναφορά;`;
+                            `Βρέθηκαν ${wCount} καταγραφές βάρους και ${pCount} αποθηκευμένα προϊόντα. Θέλεις να γίνει επαναφορά;`;
                         restoreModal.classList.remove('hidden');
                     } catch (err) {
                         showMessage('backup-status-msg', 'Μη έγκυρο αρχείο JSON backup.', true);
